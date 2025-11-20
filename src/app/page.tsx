@@ -1,14 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/firebase';
 import Header from '@/components/dashboard/header';
 import FocusTimer from '@/components/dashboard/focus-timer';
 import AmbientSounds from '@/components/dashboard/ambient-sounds';
 import Summarizer from '@/components/dashboard/summarizer';
 import WebsiteBlocker from '@/components/dashboard/website-blocker';
+import { useState } from 'react';
 
 export default function Home() {
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
   const [isBlocking, setIsBlocking] = useState(false);
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="flex min-h-screen w-full flex-col items-center justify-center">
+        <p>Caricamento in corso...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen w-full flex-col">
