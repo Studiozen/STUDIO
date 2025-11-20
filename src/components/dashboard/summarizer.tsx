@@ -35,9 +35,7 @@ import { summarizeStudyMaterial, type SummarizeStudyMaterialOutput } from '@/ai/
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
-  text: z.string().min(50, {
-    message: 'Inserisci almeno 50 caratteri per riassumere.',
-  }),
+  text: z.string(),
   style: z.enum(['concise', 'detailed', 'keywords', 'bullet-points']),
 });
 
@@ -55,6 +53,14 @@ const Summarizer: FC = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    if (values.text.trim().length === 0) {
+        toast({
+            variant: 'destructive',
+            title: 'Testo mancante',
+            description: 'Per favore, inserisci il testo da riassumere.'
+        });
+        return;
+    }
     setSummary(null);
     startTransition(async () => {
       const result = await summarizeStudyMaterial(values);

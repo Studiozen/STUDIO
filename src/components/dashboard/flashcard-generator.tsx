@@ -37,9 +37,7 @@ import { cn } from '@/lib/utils';
 import React from 'react';
 
 const formSchema = z.object({
-  text: z.string().min(50, {
-    message: 'Inserisci almeno 50 caratteri per generare le flashcard.',
-  }),
+  text: z.string(),
 });
 
 const FlashcardGenerator: FC = () => {
@@ -60,6 +58,14 @@ const FlashcardGenerator: FC = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    if (values.text.trim().length === 0) {
+        toast({
+            variant: 'destructive',
+            title: 'Testo mancante',
+            description: 'Per favore, inserisci il testo per creare le flashcard.'
+        });
+        return;
+    }
     setFlashcards(null);
     setIsFlipped(false);
     startTransition(async () => {
