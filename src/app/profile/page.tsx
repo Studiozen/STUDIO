@@ -8,9 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Brain, Clock, Calendar, BarChart3 } from 'lucide-react';
+import { Brain, Clock, BarChart3, Medal, Trophy, Star } from 'lucide-react';
 import { collection } from 'firebase/firestore';
 import type { FocusSession } from '@/types/focus-session';
+import { cn } from '@/lib/utils';
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
@@ -51,6 +52,34 @@ export default function ProfilePage() {
       totalMinutes: totalMinutes,
     };
   }, [focusSessions]);
+
+  const achievements = useMemo(() => [
+    {
+      icon: Star,
+      title: 'Primi Passi',
+      description: 'Completa la tua prima sessione di concentrazione.',
+      isUnlocked: studyStats.totalSessions >= 1,
+    },
+    {
+      icon: Medal,
+      title: 'Studente Costante',
+      description: 'Completa 10 sessioni di concentrazione.',
+      isUnlocked: studyStats.totalSessions >= 10,
+    },
+    {
+      icon: Clock,
+      title: 'Maratoneta Principiante',
+      description: 'Raggiungi 120 minuti totali di studio.',
+      isUnlocked: studyStats.totalMinutes >= 120,
+    },
+    {
+      icon: Trophy,
+      title: 'Guru della Concentrazione',
+      description: 'Raggiungi 600 minuti totali di studio.',
+      isUnlocked: studyStats.totalMinutes >= 600,
+    },
+  ], [studyStats]);
+
 
   const formatCreationTime = (creationTime?: string) => {
     if (!creationTime) return 'N/D';
@@ -135,6 +164,29 @@ export default function ProfilePage() {
                 </div>
             </CardContent>
            </Card>
+
+           <Card>
+             <CardHeader>
+                <CardTitle>I Miei Riconoscimenti</CardTitle>
+                <CardDescription>Sblocca obiettivi e celebra i tuoi successi nello studio.</CardDescription>
+             </CardHeader>
+             <CardContent className='grid gap-4 sm:grid-cols-2'>
+                {achievements.map((achievement, index) => (
+                    <div key={index} className={cn("flex items-center gap-4 rounded-lg border p-4 transition-all", achievement.isUnlocked ? 'bg-accent/10' : 'bg-muted/50 opacity-60')}>
+                        <div className={cn("p-3 rounded-full", achievement.isUnlocked ? 'bg-accent text-accent-foreground' : 'bg-muted-foreground/20 text-muted-foreground')}>
+                            <achievement.icon className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <p className={cn("font-semibold", achievement.isUnlocked ? 'text-accent-foreground' : 'text-foreground')}>
+                                {achievement.title}
+                            </p>
+                            <p className="text-sm text-muted-foreground">{achievement.description}</p>
+                        </div>
+                    </div>
+                ))}
+             </CardContent>
+           </Card>
+
         </div>
       </main>
     </div>
