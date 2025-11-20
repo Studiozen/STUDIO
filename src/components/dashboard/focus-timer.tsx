@@ -70,9 +70,11 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     const newIsActive = !isActive;
     setIsActive(newIsActive);
     
+    // Only set blocking if starting a work session
     if (newIsActive && !isBreak) {
       setIsBlocking(true);
     } else {
+       // Unset blocking if pausing or if it's a break
       setIsBlocking(false);
     }
   };
@@ -111,7 +113,7 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
           {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
           {isActive ? 'Pausa' : 'Avvia'}
         </Button>
-        <Button onClick={handleReset} variant="outline" size="lg">
+        <Button onClick={handleReset} variant="outline" size="lg" disabled={isActive}>
           <RefreshCw />
         </Button>
       </CardFooter>
