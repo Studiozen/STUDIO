@@ -12,17 +12,17 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateSummarizationStylesInputSchema = z.object({
-  text: z.string().describe('The text to summarize.'),
+  text: z.string().describe('Il testo da riassumere.'),
   style: z
     .enum(['bullet points', 'concise paragraph', 'key concepts'])
-    .describe('The summarization style.'),
+    .describe('Lo stile di riassunto.'),
 });
 export type GenerateSummarizationStylesInput = z.infer<
   typeof GenerateSummarizationStylesInputSchema
 >;
 
 const GenerateSummarizationStylesOutputSchema = z.object({
-  summary: z.string().describe('The summarized text.'),
+  summary: z.string().describe('Il testo riassunto.'),
 });
 export type GenerateSummarizationStylesOutput = z.infer<
   typeof GenerateSummarizationStylesOutputSchema
@@ -38,7 +38,7 @@ const prompt = ai.definePrompt({
   name: 'generateSummarizationStylesPrompt',
   input: {schema: GenerateSummarizationStylesInputSchema},
   output: {schema: GenerateSummarizationStylesOutputSchema},
-  prompt: `You are an expert summarizer. Summarize the following text in the style of {{{style}}}.\n\nText: {{{text}}}`,
+  prompt: `Sei un esperto riassuntore. Riassumi il seguente testo nello stile di {{{style}}}.\n\nTesto: {{{text}}}`,
 });
 
 const generateSummarizationStylesFlow = ai.defineFlow(

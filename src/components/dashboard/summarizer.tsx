@@ -36,7 +36,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   text: z.string().min(50, {
-    message: 'Please enter at least 50 characters to summarize.',
+    message: 'Inserisci almeno 50 caratteri per riassumere.',
   }),
   style: z.enum(['concise', 'detailed', 'keywords']),
 });
@@ -61,7 +61,7 @@ const Summarizer: FC = () => {
       if ('error' in result) {
         toast({
           variant: 'destructive',
-          title: 'Error',
+          title: 'Errore',
           description: result.error,
         });
         return;
@@ -75,10 +75,10 @@ const Summarizer: FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TextQuote className="h-5 w-5" />
-          AI Summarizer
+          Riassunto AI
         </CardTitle>
         <CardDescription>
-          Paste your study material below to get a quick summary.
+          Incolla il tuo materiale di studio qui sotto per ottenere un riassunto veloce.
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -89,10 +89,10 @@ const Summarizer: FC = () => {
               name="text"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Study Material</FormLabel>
+                  <FormLabel>Materiale di Studio</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Paste your text here..."
+                      placeholder="Incolla il tuo testo qui..."
                       className="min-h-48 resize-y"
                       {...field}
                     />
@@ -106,20 +106,20 @@ const Summarizer: FC = () => {
               name="style"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Summarization Style</FormLabel>
+                  <FormLabel>Stile di Riassunto</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a style" />
+                        <SelectValue placeholder="Seleziona uno stile" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="concise">Concise</SelectItem>
-                      <SelectItem value="detailed">Detailed</SelectItem>
-                      <SelectItem value="keywords">Keywords</SelectItem>
+                      <SelectItem value="concise">Conciso</SelectItem>
+                      <SelectItem value="detailed">Dettagliato</SelectItem>
+                      <SelectItem value="keywords">Parole Chiave</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -134,7 +134,7 @@ const Summarizer: FC = () => {
               ) : (
                 <Sparkles className="mr-2 h-4 w-4" />
               )}
-              Summarize
+              Riassumi
             </Button>
           </CardFooter>
         </form>
@@ -148,7 +148,7 @@ const Summarizer: FC = () => {
       )}
       {summary && (
         <CardContent>
-          <h3 className="mb-2 text-lg font-semibold font-headline">Summary</h3>
+          <h3 className="mb-2 text-lg font-semibold font-headline">Riassunto</h3>
           <div className="prose prose-sm max-w-none rounded-md border bg-muted/50 p-4 whitespace-pre-wrap">
             {summary.summary}
           </div>

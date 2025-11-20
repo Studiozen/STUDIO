@@ -81,12 +81,12 @@ const FocusTimer: FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Timer className="h-5 w-5 text-accent" />
-          Focus Timer
+          Timer Concentrazione
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center gap-4 text-center">
         <div className="relative h-48 w-48 flex flex-col justify-center items-center">
-           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">{isBreak ? 'Break' : 'Focus'}</p>
+           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">{isBreak ? 'Pausa' : 'Concentrazione'}</p>
            <p className="text-7xl font-bold font-mono text-center my-2 text-primary">
             {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
           </p>
@@ -96,7 +96,7 @@ const FocusTimer: FC = () => {
       <CardFooter className="flex justify-center gap-4">
         <Button onClick={toggleTimer} size="lg" className="w-28 bg-primary hover:bg-primary/90">
           {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
-          {isActive ? 'Pause' : 'Start'}
+          {isActive ? 'Pausa' : 'Avvia'}
         </Button>
         <Button onClick={handleReset} variant="outline" size="lg">
           <RefreshCw />

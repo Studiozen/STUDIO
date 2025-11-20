@@ -15,9 +15,9 @@ const soundOptions: {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
 }[] = [
-  { type: 'brown', label: 'Brown Noise', icon: Waves },
-  { type: 'pink', label: 'Pink Noise', icon: Wind },
-  { type: 'white', label: 'White Noise', icon: Volume2 },
+  { type: 'brown', label: 'Rumore Marrone', icon: Waves },
+  { type: 'pink', label: 'Rumore Rosa', icon: Wind },
+  { type: 'white', label: 'Rumore Bianco', icon: Volume2 },
 ];
 
 const AmbientSounds: FC = () => {
@@ -61,10 +61,10 @@ const AmbientSounds: FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Music className="h-5 w-5" />
-          Ambient Sounds
+          Suoni Ambientali
         </CardTitle>
         <CardDescription>
-          Use background sounds to help you focus.
+          Usa suoni di sottofondo per aiutarti a concentrarti.
         </CardDescription>
       </CardHeader>
       <CardContent>

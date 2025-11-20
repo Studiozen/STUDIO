@@ -11,16 +11,16 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const SummarizeStudyMaterialInputSchema = z.object({
-  text: z.string().describe('The study material text to summarize.'),
+  text: z.string().describe('Il testo del materiale di studio da riassumere.'),
   style: z
     .enum(['concise', 'detailed', 'keywords'])
     .default('concise')
-    .describe('The summarization style.'),
+    .describe('Lo stile di riassunto.'),
 });
 export type SummarizeStudyMaterialInput = z.infer<typeof SummarizeStudyMaterialInputSchema>;
 
 const SummarizeStudyMaterialOutputSchema = z.object({
-  summary: z.string().describe('The summarized text.'),
+  summary: z.string().describe('Il testo riassunto.'),
 });
 export type SummarizeStudyMaterialOutput = z.infer<typeof SummarizeStudyMaterialOutputSchema>;
 
@@ -34,9 +34,9 @@ const prompt = ai.definePrompt({
   name: 'summarizeStudyMaterialPrompt',
   input: {schema: SummarizeStudyMaterialInputSchema},
   output: {schema: SummarizeStudyMaterialOutputSchema},
-  prompt: `You are an expert summarizer, skilled at condensing information.
+  prompt: `Sei un esperto riassuntore, abile nel condensare le informazioni.
 
-  Summarize the following text in a {{{style}}} style:
+  Riassumi il seguente testo in uno stile {{{style}}}:
 
   {{text}}`,
 });
