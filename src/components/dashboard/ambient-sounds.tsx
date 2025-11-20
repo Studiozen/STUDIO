@@ -22,36 +22,30 @@ const soundOptions: {
 
 const AmbientSounds: FC = () => {
   const [playingSound, setPlayingSound] = useState<SoundType | null>(null);
-  const playersRef = useRef<Record<string, any>>({});
+  const playersRef = useRef<Record<string, { synth: any, loop: Tone.Loop }>>({});
 
   useEffect(() => {
     // Cleanup on unmount
     return () => {
-      Object.values(playersRef.current).forEach((player: any) => {
-        if (player.loop) player.loop.stop(0);
-        player.synth.dispose();
-      });
-      if (Tone.Transport.state === 'started') {
-        Tone.Transport.stop();
-        Tone.Transport.cancel();
-      }
+      stopAllSounds();
     };
   }, []);
 
   const stopAllSounds = () => {
-     if (Tone.Transport.state === 'started') {
-        Tone.Transport.stop();
-        Tone.Transport.cancel();
+    if (Tone.Transport.state === 'started') {
+      Tone.Transport.stop();
+      Tone.Transport.cancel();
     }
-    Object.values(playersRef.current).forEach((player: any) => {
-        if (player.loop) player.loop.stop(0).dispose();
-        player.synth.dispose();
+    Object.values(playersRef.current).forEach(player => {
+        player.loop?.stop(0).dispose();
+        player.synth?.dispose();
     });
     playersRef.current = {};
     setPlayingSound(null);
   }
 
   const playSound = (soundType: SoundType) => {
+    // Stop any currently playing sounds before starting a new one
     stopAllSounds();
 
     let synth: any;
@@ -99,19 +93,22 @@ const AmbientSounds: FC = () => {
     }
     
     playersRef.current[soundType] = { synth, loop };
-
+    
     if (Tone.Transport.state !== 'started') {
         Tone.Transport.start();
     }
+    setPlayingSound(soundType);
   };
 
   const toggleSound = async (soundType: SoundType) => {
-    await Tone.start();
+    if (Tone.context.state !== 'running') {
+      await Tone.start();
+    }
+    
     if (playingSound === soundType) {
       stopAllSounds();
     } else {
       playSound(soundType);
-      setPlayingSound(soundType);
     }
   };
 
