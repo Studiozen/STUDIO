@@ -1,0 +1,124 @@
+/**
+ * Core Philosophy: This ruleset enforces a strict user-ownership model. All user-specific data, such as website blocks and focus sessions, is nested within a user's own document tree. This ensures that users can only access and modify their own information, preventing any cross-user data access.
+ * Data Structure: The data is organized hierarchically under the `/users/{userId}` path. Each user has their own document containing their profile, and two subcollections: `websiteBlocks` for blocked sites and `focusSessions` for Pomodoro timer data.
+ * Key Security Decisions:
+ * - User Isolation: The primary security mechanism is path-based ownership. A user's authenticated UID must match the `{userId}` in the document path to gain access.
+ * - No Public User Listing: Listing documents in the top-level `/users` collection is explicitly disallowed to protect user privacy and prevent enumeration attacks.
+ * - Ownership Integrity: For all subcollection documents, the internal `userId` field must match the `{userId}` from the path upon creation, and this field is immutable. This creates a durable and verifiable link between the data and its owner.
+ * Denormalization for Authorization: The data structure is inherently optimized for security rules. By placing user-specific data in subcollections under `/users/{userId}`, ownership can be checked simply by inspecting the path. This avoids the need for slow and costly `get()` calls to other documents for authorization checks.
+ * Structural Segregation: The use of distinct collections (`users`, `websiteBlocks`, `focusSessions`) ensures that a single, clear security posture can be applied to each data type, simplifying the rules and enhancing security.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions to improve readability and reuse of logic.
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * This is the primary function for enforcing user ownership.
+     * @param userId The user ID to check against the authenticated user's UID.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Validates ownership for an existing document, ensuring it's not null.
+     * Crucial for safe update and delete operations.
+     * @param userId The user ID to check against the authenticated user's UID.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * Ensures the 'id' field of a user document matches the document's ID upon creation.
+     * This maintains consistency between the path and the document's content.
+     */
+    function hasValidUserIdForSelf() {
+      return request.resource.data.id == request.auth.uid;
+    }
+
+    /**
+     * Ensures the 'id' field of a user document cannot be changed after creation.
+     */
+    function isUserIdForSelfImmutable() {
+      return request.resource.data.id == resource.data.id;
+    }
+
+    /**
+     * Ensures a subcollection document's 'userId' field matches the parent user's ID on creation.
+     * This links the child document to its owner in the path.
+     * @param userId The ID from the path segment (e.g., from /users/{userId}/...).
+     */
+    function hasValidOwnerIdOnCreate(userId) {
+      return request.resource.data.userId == userId;
+    }
+
+    /**
+     * Ensures the 'userId' field linking a subcollection document to its owner is immutable.
+     */
+    function isOwnerIdImmutable() {
+      return request.resource.data.userId == resource.data.userId;
+    }
+
+    /**
+     * @description Rules for a user's own profile document.
+     * @path /users/{userId}
+     * @allow A logged-in user (auth.uid='user123') can create their own user document at /users/user123. (create)
+     * @deny An anonymous user cannot read a user document. (get)
+     * @deny A logged-in user (auth.uid='user123') cannot list all documents in the /users collection. (list)
+     * @deny A logged-in user (auth.uid='user123') cannot update another user's document at /users/user456. (update)
+     * @principle Restricts access to a user's own data tree and enforces relational integrity.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && hasValidUserIdForSelf();
+      allow update: if isExistingOwner(userId) && isUserIdForSelfImmutable();
+      allow delete: if isExistingOwner(userId);
+
+      /**
+       * @description Rules for website block configurations, which are private to each user.
+       * @path /users/{userId}/websiteBlocks/{websiteBlockId}
+       * @allow A logged-in user (auth.uid='user123') can create a new website block in their own subcollection. (create)
+       * @allow A logged-in user (auth.uid='user123') can list all of their own website blocks. (list)
+       * @deny A logged-in user (auth.uid='user123') cannot read a website block belonging to another user (/users/user456/...). (get)
+       * @deny A user cannot create a website block where the internal `userId` field does not match their own UID. (create)
+       * @principle Enforces strict data ownership within a user's private subcollection.
+       */
+      match /websiteBlocks/{websiteBlockId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && hasValidOwnerIdOnCreate(userId);
+        allow update: if isExistingOwner(userId) && isOwnerIdImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Rules for focus session data, which is private to each user.
+       * @path /users/{userId}/focusSessions/{focusSessionId}
+       * @allow A logged-in user (auth.uid='user123') can read one of their own past focus sessions. (get)
+       * @allow A logged-in user (auth.uid='user123') can delete one of their own focus sessions. (delete)
+       * @deny A logged-in user (auth.uid='user123') cannot update a focus session belonging to another user (/users/user456/...). (update)
+       * @deny A user cannot update a focus session to change its `userId` field. (update)
+       * @principle Enforces strict data ownership within a user's private subcollection.
+       */
+      match /focusSessions/{focusSessionId} {
+        allow get: if isOwner(userId);
+        allow list: if isOwner(userId);
+        allow create: if isOwner(userId) && hasValidOwnerIdOnCreate(userId);
+        allow update: if isExistingOwner(userId) && isOwnerIdImmutable();
+        allow delete: if isExistingOwner(userId);
+      }
+    }
+  }
+}
