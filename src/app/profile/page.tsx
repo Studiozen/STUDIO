@@ -1,17 +1,28 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@/firebase';
+import { useCollection, useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import Header from '@/components/dashboard/header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Brain, Clock, Calendar, BarChart3 } from 'lucide-react';
+import { collection } from 'firebase/firestore';
+import type { FocusSession } from '@/types/focus-session';
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
+  const firestore = useFirestore();
+
+  const focusSessionsQuery = useMemoFirebase(
+    () => (user ? collection(firestore, `users/${user.uid}/focusSessions`) : null),
+    [firestore, user]
+  );
+  
+  const { data: focusSessions, isLoading: isLoadingSessions } = useCollection<FocusSession>(focusSessionsQuery);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -27,7 +38,30 @@ export default function ProfilePage() {
       .join('');
   };
 
-  if (isUserLoading || !user) {
+  const studyStats = useMemo(() => {
+    if (!focusSessions) {
+      return {
+        totalSessions: 0,
+        totalMinutes: 0,
+      };
+    }
+    const totalMinutes = focusSessions.reduce((acc, session) => acc + (session.duration || 0), 0);
+    return {
+      totalSessions: focusSessions.length,
+      totalMinutes: totalMinutes,
+    };
+  }, [focusSessions]);
+
+  const formatCreationTime = (creationTime?: string) => {
+    if (!creationTime) return 'N/D';
+    return new Date(creationTime).toLocaleDateString('it-IT', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+  }
+
+  if (isUserLoading || !user || isLoadingSessions) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center">
         <p>Caricamento in corso...</p>
@@ -39,7 +73,7 @@ export default function ProfilePage() {
     <div className="flex min-h-screen w-full flex-col">
       <Header />
       <main className="flex flex-1 justify-center p-4 md:p-8">
-        <div className="w-full max-w-2xl">
+        <div className="w-full max-w-4xl space-y-8">
           <Card>
             <CardHeader>
               <CardTitle>Profilo Utente</CardTitle>
@@ -58,7 +92,7 @@ export default function ProfilePage() {
                   <p className="text-muted-foreground">{user.email}</p>
                 </div>
               </div>
-              <div className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
                  <div className="space-y-2">
                     <Label htmlFor="name">Nome</Label>
                     <Input id="name" value={user.displayName || ''} readOnly />
@@ -67,9 +101,40 @@ export default function ProfilePage() {
                     <Label htmlFor="email">Email</Label>
                     <Input id="email" value={user.email || ''} readOnly />
                 </div>
+                <div className="space-y-2">
+                    <Label htmlFor="creationDate">Membro dal</Label>
+                    <Input id="creationDate" value={formatCreationTime(user.metadata.creationTime)} readOnly />
+                </div>
               </div>
             </CardContent>
           </Card>
+
+           <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><BarChart3/>Statistiche di Studio</CardTitle>
+              <CardDescription>I tuoi progressi e le tue abitudini di studio.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-2">
+                <div className="flex items-center gap-4 rounded-lg border p-4">
+                    <div className="bg-primary/10 p-3 rounded-full">
+                        <Brain className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                        <p className="text-sm text-muted-foreground">Sessioni Completate</p>
+                        <p className="text-2xl font-bold">{studyStats.totalSessions}</p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-4 rounded-lg border p-4">
+                    <div className="bg-accent/10 p-3 rounded-full">
+                        <Clock className="h-6 w-6 text-accent" />
+                    </div>
+                    <div>
+                        <p className="text-sm text-muted-foreground">Minuti di Studio Totali</p>
+                        <p className="text-2xl font-bold">{studyStats.totalMinutes}</p>
+                    </div>
+                </div>
+            </CardContent>
+           </Card>
         </div>
       </main>
     </div>
