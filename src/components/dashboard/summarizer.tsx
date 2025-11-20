@@ -4,7 +4,7 @@ import { useState, useTransition, type FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, TextQuote, Sparkles } from 'lucide-react';
+import { Loader2, TextQuote, Sparkles, Volume2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { generateSummarizationStyles, type GenerateSummarizationStylesOutput } from '@/ai/flows/generate-summarization-styles';
+import { textToSpeech, type TextToSpeechOutput } from '@/ai/flows/text-to-speech';
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
@@ -40,8 +41,11 @@ const formSchema = z.object({
 });
 
 const Summarizer: FC = () => {
-  const [isPending, startTransition] = useTransition();
+  const [isSummarizing, startSummarizeTransition] = useTransition();
+  const [isFetchingAudio, startAudioTransition] = useTransition();
   const [summary, setSummary] = useState<GenerateSummarizationStylesOutput | null>(null);
+  const [audio, setAudio] = useState<TextToSpeechOutput | null>(null);
+
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -62,7 +66,8 @@ const Summarizer: FC = () => {
         return;
     }
     setSummary(null);
-    startTransition(async () => {
+    setAudio(null);
+    startSummarizeTransition(async () => {
       const result = await generateSummarizationStyles(values);
       if ('error' in result) {
         toast({
@@ -73,6 +78,23 @@ const Summarizer: FC = () => {
         return;
       }
       setSummary(result);
+    });
+  }
+
+  function onListen() {
+    if (!summary?.summary) return;
+    setAudio(null);
+    startAudioTransition(async () => {
+        const result = await textToSpeech({ text: summary.summary });
+        if('error' in result) {
+            toast({
+                variant: 'destructive',
+                title: 'Errore Audio',
+                description: "Impossibile generare l'audio."
+            })
+            return;
+        }
+        setAudio(result);
     });
   }
 
@@ -134,8 +156,8 @@ const Summarizer: FC = () => {
             />
           </CardContent>
           <CardFooter className="flex justify-end">
-            <Button type="submit" disabled={isPending}>
-              {isPending ? (
+            <Button type="submit" disabled={isSummarizing}>
+              {isSummarizing ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
                 <Sparkles className="mr-2 h-4 w-4" />
@@ -145,7 +167,7 @@ const Summarizer: FC = () => {
           </CardFooter>
         </form>
       </Form>
-      {isPending && !summary && (
+      {isSummarizing && !summary && (
         <CardContent>
           <div className="flex flex-col items-center justify-center rounded-md border border-dashed p-8">
             <Loader2 className="h-8 w-8 animate-spin" />
@@ -154,11 +176,34 @@ const Summarizer: FC = () => {
         </CardContent>
       )}
       {summary && (
-        <CardContent>
-          <h3 className="mb-2 text-lg font-semibold font-headline">Riassunto</h3>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold font-headline">Riassunto</h3>
+            <Button onClick={onListen} variant="outline" size="sm" disabled={isFetchingAudio}>
+                {isFetchingAudio ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                    <Volume2 className="mr-2 h-4 w-4" />
+                )}
+                Ascolta
+            </Button>
+          </div>
           <div className="prose prose-sm max-w-none rounded-md border bg-muted p-4 whitespace-pre-wrap">
             {summary.summary}
           </div>
+          {isFetchingAudio && !audio && (
+             <div className="flex items-center justify-center p-4">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <p className="text-sm text-muted-foreground">Creazione audio in corso...</p>
+            </div>
+          )}
+          {audio?.audio && (
+            <div>
+                <audio controls src={audio.audio} className="w-full">
+                    Il tuo browser non supporta l'elemento audio.
+                </audio>
+            </div>
+          )}
         </CardContent>
       )}
     </Card>
