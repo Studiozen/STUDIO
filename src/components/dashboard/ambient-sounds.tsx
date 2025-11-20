@@ -37,7 +37,7 @@ const AmbientSounds: FC = () => {
       Tone.Transport.cancel();
     }
     Object.values(playersRef.current).forEach(player => {
-        player.loop?.stop(0).dispose();
+        player.loop?.dispose();
         player.synth?.dispose();
     });
     playersRef.current = {};
@@ -130,10 +130,10 @@ const AmbientSounds: FC = () => {
               key={type}
               variant={playingSound === type ? 'default' : 'outline'}
               onClick={() => toggleSound(type)}
-              className={cn("flex flex-col h-24 gap-2")}
+              className={cn("flex flex-col h-24 gap-2 justify-center text-center")}
             >
               <Icon className="h-6 w-6" />
-              <span>{label}</span>
+              <span className="text-wrap">{label}</span>
             </Button>
           ))}
         </div>
