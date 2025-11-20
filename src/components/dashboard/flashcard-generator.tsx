@@ -41,9 +41,11 @@ const formSchema = z.object({
   text: z.string(),
 });
 
-interface FlashcardWithAudio extends GenerateFlashcardsOutput['flashcards'][0] {
+type Flashcard = GenerateFlashcardsOutput['flashcards'][0];
+type FlashcardWithAudio = Flashcard & {
     audioSrc?: string;
-}
+};
+
 
 const FlashcardGenerator: FC = () => {
   const [isPending, startTransition] = useTransition();
