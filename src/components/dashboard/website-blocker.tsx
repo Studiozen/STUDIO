@@ -77,20 +77,20 @@ const WebsiteBlocker: FC<WebsiteBlockerProps> = ({ isBlocking, setIsBlocking }) 
   }
 
   return (
-    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01] bg-background">
+    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01] bg-primary text-primary-foreground">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ShieldBan className="h-5 w-5" />
           Blocco Siti Web
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-primary-foreground/80">
           Crea un elenco di siti web che distraggono da bloccare durante le sessioni di concentrazione.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <Alert>
-            <AlertTriangle className="h-4 w-4 text-accent" />
-            <AlertTitle className="text-accent">Simulazione Funzionalità</AlertTitle>
+        <Alert variant="destructive" className="bg-yellow-500/20 text-yellow-300 border-yellow-400 [&>svg]:text-yellow-300">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle className="text-yellow-200">Simulazione Funzionalità</AlertTitle>
             <AlertDescription>
                 Il blocco effettivo dei siti web richiede un'estensione del browser. Questa è una dimostrazione dell'interfaccia utente.
             </AlertDescription>
@@ -104,18 +104,18 @@ const WebsiteBlocker: FC<WebsiteBlockerProps> = ({ isBlocking, setIsBlocking }) 
         <form onSubmit={form.handleSubmit(addSite)} className="flex items-start gap-2">
             <div className="grid gap-2 flex-1">
                 <Label htmlFor="site-url" className="sr-only">URL del sito web</Label>
-                <Input id="site-url" placeholder="es., https://youtube.com" {...form.register('site')} />
+                <Input id="site-url" placeholder="es., https://youtube.com" {...form.register('site')} className="bg-background/20 placeholder:text-primary-foreground/60" />
                 {form.formState.errors.site && <p className="text-sm text-destructive">{form.formState.errors.site.message}</p>}
             </div>
-            <Button type="submit"><Plus className="h-4 w-4 mr-2" />Aggiungi Sito</Button>
+            <Button type="submit" variant="secondary"><Plus className="h-4 w-4 mr-2" />Aggiungi Sito</Button>
         </form>
 
         <div className="space-y-2">
             <Label>Siti Web Bloccati</Label>
-            <div className="min-h-[40px] rounded-md border border-dashed p-2 flex flex-wrap gap-2 items-center">
+            <div className="min-h-[40px] rounded-md border border-dashed border-primary-foreground/50 p-2 flex flex-wrap gap-2 items-center">
             {sites.length > 0 ? (
                 sites.map((site, index) => (
-                    <Badge key={index} variant="secondary" className="pl-3 pr-1 py-1 text-sm">
+                    <Badge key={index} variant="secondary" className="pl-3 pr-1 py-1 text-sm bg-primary-foreground/20">
                         {new URL(site).hostname}
                         <Button variant="ghost" size="icon" className="h-5 w-5 ml-1 hover:bg-transparent" onClick={() => removeSite(site)}>
                             <X className="h-3 w-3" />
@@ -124,7 +124,7 @@ const WebsiteBlocker: FC<WebsiteBlockerProps> = ({ isBlocking, setIsBlocking }) 
                     </Badge>
                 ))
             ) : (
-                <p className="text-sm text-muted-foreground px-2">Nessun sito nell'elenco di blocco.</p>
+                <p className="text-sm text-primary-foreground/80 px-2">Nessun sito nell'elenco di blocco.</p>
             )}
             </div>
         </div>

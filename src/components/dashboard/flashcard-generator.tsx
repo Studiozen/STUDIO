@@ -139,13 +139,13 @@ const FlashcardGenerator: FC = () => {
 
 
   return (
-    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01] bg-background">
+    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01] bg-primary text-primary-foreground">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <HelpCircle className="h-5 w-5" />
           Generatore di Flashcard AI
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-primary-foreground/80">
           Trasforma il tuo materiale di studio in flashcard per un ripasso efficace.
         </CardDescription>
       </CardHeader>
@@ -162,7 +162,7 @@ const FlashcardGenerator: FC = () => {
                     <FormControl>
                       <Textarea
                         placeholder="Incolla qui il testo per creare le flashcard..."
-                        className="min-h-40 resize-y"
+                        className="min-h-40 resize-y bg-background/20 placeholder:text-primary-foreground/60"
                         {...field}
                       />
                     </FormControl>
@@ -172,7 +172,7 @@ const FlashcardGenerator: FC = () => {
               />
             </CardContent>
             <CardFooter className="flex justify-end">
-              <Button type="submit" disabled={isPending}>
+              <Button type="submit" disabled={isPending} variant="secondary">
                 {isPending ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
@@ -187,9 +187,9 @@ const FlashcardGenerator: FC = () => {
 
       {isPending && !flashcards && (
         <CardContent>
-          <div className="flex flex-col items-center justify-center rounded-md border border-dashed p-8">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-            <p className="mt-2 text-sm text-muted-foreground">{generationStatus || "L'IA sta creando le tue flashcard..."}</p>
+          <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-primary-foreground/50 p-8">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <p className="mt-2 text-sm">{generationStatus || "L'IA sta creando le tue flashcard..."}</p>
           </div>
         </CardContent>
       )}
@@ -201,7 +201,7 @@ const FlashcardGenerator: FC = () => {
                     {flashcards.map((card, index) => (
                     <CarouselItem key={index}>
                         <div className="p-1 space-y-4">
-                            <Card className="min-h-32">
+                            <Card className="min-h-32 bg-background/20">
                                 <CardHeader>
                                     <CardTitle className='text-lg'>Domanda</CardTitle>
                                 </CardHeader>
@@ -212,23 +212,23 @@ const FlashcardGenerator: FC = () => {
 
                             {checkedAnswers[index] ? (
                                 <div className='space-y-4'>
-                                    <Card>
+                                    <Card className="bg-destructive/80">
                                         <CardHeader>
-                                            <CardTitle className='text-lg flex items-center gap-2'><X className='text-destructive'/>La tua risposta</CardTitle>
+                                            <CardTitle className='text-lg flex items-center gap-2'><X />La tua risposta</CardTitle>
                                         </CardHeader>
                                         <CardContent>
-                                            <p className='text-muted-foreground'>{answerForm.getValues(`answers.${index}.userAnswer`) || "Non hai fornito una risposta."}</p>
+                                            <p className='text-primary-foreground/90'>{answerForm.getValues(`answers.${index}.userAnswer`) || "Non hai fornito una risposta."}</p>
                                         </CardContent>
                                     </Card>
-                                    <Card>
+                                    <Card className="bg-background/20">
                                         <CardHeader>
-                                            <CardTitle className='text-lg flex items-center gap-2'><Check className='text-primary'/>Risposta corretta</CardTitle>
+                                            <CardTitle className='text-lg flex items-center gap-2'><Check className='text-green-400'/>Risposta corretta</CardTitle>
                                         </CardHeader>
                                         <CardContent>
                                             <p>{card.answer}</p>
                                         </CardContent>
                                     </Card>
-                                    <Card>
+                                    <Card className="bg-accent/20">
                                         <CardHeader>
                                             <CardTitle className="flex items-center gap-2 text-lg">
                                                 <BookOpen className="h-5 w-5 text-accent" />
@@ -252,6 +252,7 @@ const FlashcardGenerator: FC = () => {
                                                 <FormControl>
                                                     <Textarea
                                                         placeholder="Scrivi qui la tua risposta..."
+                                                        className="bg-background/20 placeholder:text-primary-foreground/60"
                                                         {...field}
                                                     />
                                                 </FormControl>
@@ -259,7 +260,7 @@ const FlashcardGenerator: FC = () => {
                                                 </FormItem>
                                             )}
                                         />
-                                        <Button onClick={() => checkAnswer(index)} className='mt-4'>Verifica Risposta</Button>
+                                        <Button onClick={() => checkAnswer(index)} className='mt-4' variant="secondary">Verifica Risposta</Button>
                                     </form>
                                 </Form>
                             )}
@@ -267,14 +268,14 @@ const FlashcardGenerator: FC = () => {
                     </CarouselItem>
                     ))}
                 </CarouselContent>
-                <CarouselPrevious className="absolute left-[-50px] top-1/2 -translate-y-1/2" />
-                <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2" />
+                <CarouselPrevious className="absolute left-[-50px] top-1/2 -translate-y-1/2 text-primary-foreground" />
+                <CarouselNext className="absolute right-[-50px] top-1/2 -translate-y-1/2 text-primary-foreground" />
             </Carousel>
-            <div className="py-2 text-center text-sm text-muted-foreground">
+            <div className="py-2 text-center text-sm text-primary-foreground/80">
                 Flashcard {current} di {count}
             </div>
             <div className='flex justify-center'>
-                 <Button onClick={handleReset} variant="outline">
+                 <Button onClick={handleReset} variant="secondary">
                     Crea nuove flashcard
                 </Button>
             </div>
@@ -282,9 +283,9 @@ const FlashcardGenerator: FC = () => {
       )}
        {flashcards && flashcards.length === 0 && !isPending && (
          <CardContent>
-            <div className="flex flex-col items-center justify-center rounded-md border border-dashed p-8">
-                <p className="text-muted-foreground">L'IA non è riuscita a generare flashcard dal testo fornito.</p>
-                 <Button onClick={handleReset} variant="link">Riprova</Button>
+            <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-primary-foreground/50 p-8">
+                <p>L'IA non è riuscita a generare flashcard dal testo fornito.</p>
+                 <Button onClick={handleReset} variant="link" className="text-primary-foreground underline">Riprova</Button>
             </div>
          </CardContent>
        )}

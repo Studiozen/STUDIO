@@ -98,7 +98,7 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
   const progress = 100 - (elapsedSeconds / totalSeconds) * 100;
 
   return (
-    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01] bg-background">
+    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01] bg-primary text-primary-foreground">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Timer className="h-5 w-5 text-accent" />
@@ -107,8 +107,8 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center gap-4 text-center">
         <div className="relative h-48 w-48 flex flex-col justify-center items-center">
-           <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">{isBreak ? 'Pausa' : 'Concentrazione'}</p>
-           <p className="text-7xl font-bold font-mono text-center my-2 text-primary">
+           <p className="text-sm font-semibold uppercase tracking-widest">{isBreak ? 'Pausa' : 'Concentrazione'}</p>
+           <p className="text-7xl font-bold font-mono text-center my-2 text-primary-foreground">
             {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
           </p>
           <Progress value={progress} className="h-2 [&>div]:bg-accent" />
@@ -118,7 +118,8 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
         <Button 
             onClick={toggleTimer} 
             size="lg" 
-            className="w-28 bg-primary hover:bg-primary/90" 
+            className="w-28" 
+            variant="secondary"
             disabled={isBreak && isActive}
         >
           {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
