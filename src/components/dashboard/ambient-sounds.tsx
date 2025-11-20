@@ -10,9 +10,7 @@ import { cn } from '@/lib/utils';
 
 type SoundType = 'piano' | 'night' | 'nature';
 
-interface PlayerRef {
-    synth: any;
-    loop: Tone.Loop;
+interface Player {
     dispose: () => void;
 }
 
@@ -28,90 +26,79 @@ const soundOptions: {
 
 const AmbientSounds: FC = () => {
   const [playingSound, setPlayingSound] = useState<SoundType | null>(null);
-  const playerRef = useRef<PlayerRef | null>(null);
+  const playerRef = useRef<Player | null>(null);
 
-  // Effect to handle cleanup when the component unmounts
+  const stopCurrentSound = () => {
+    Tone.Transport.stop();
+    Tone.Transport.cancel();
+    if (playerRef.current) {
+      playerRef.current.dispose();
+      playerRef.current = null;
+    }
+    setPlayingSound(null);
+  };
+  
+  // Cleanup on unmount
   useEffect(() => {
-    // This is the cleanup function that will be called when the component is unmounted.
     return () => {
-      stopAllSounds();
+      stopCurrentSound();
     };
   }, []);
-
-  const stopAllSounds = () => {
-    if (Tone.Transport.state === 'started') {
-      Tone.Transport.stop();
-      Tone.Transport.cancel();
-    }
-    playerRef.current?.dispose();
-    playerRef.current = null;
-    setPlayingSound(null);
-  }
-
+  
   const playSound = (soundType: SoundType) => {
-    stopAllSounds();
+    stopCurrentSound();
 
-    let synth: any;
-    let loop: Tone.Loop;
-    let nodes: Tone.ToneAudioNode[] = [];
+    let newPlayer: Player | null = null;
 
     if (soundType === 'piano') {
-        synth = new Tone.FMSynth({
+        const synth = new Tone.FMSynth({
             harmonicity: 3.01,
             modulationIndex: 14,
             envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 1.2 },
             modulationEnvelope: { attack: 0.01, decay: 0.5, sustain: 0, release: 0.1 }
         }).toDestination();
         const notes = ['C4', 'E4', 'G4', 'B4', 'D5', 'A4', 'F4'];
-        loop = new Tone.Loop(time => {
+        const loop = new Tone.Loop(time => {
             const note = notes[Math.floor(Math.random() * notes.length)];
             synth.triggerAttackRelease(note, '8n', time);
         }, '4n').start(0);
+        newPlayer = { dispose: () => { loop.dispose(); synth.dispose(); }};
 
     } else if (soundType === 'night') {
         const reverb = new Tone.Reverb(2).toDestination();
         const chorus = new Tone.Chorus(2, 2.5, 0.7).connect(reverb);
-        synth = new Tone.PolySynth(Tone.Synth, {
+        const synth = new Tone.PolySynth(Tone.Synth, {
             oscillator: { type: 'sine' },
             envelope: { attack: 0.8, decay: 1.5, sustain: 0.2, release: 2 },
         }).connect(chorus);
         synth.volume.value = -12;
-        nodes.push(reverb, chorus);
         const notes = ['A3', 'C4', 'E4', 'G4', 'B4', 'D4'];
-        loop = new Tone.Loop(time => {
+        const loop = new Tone.Loop(time => {
             const note = notes[Math.floor(Math.random() * notes.length)];
             synth.triggerAttackRelease(note, '1n', time);
         }, '2n').start(0);
+        newPlayer = { dispose: () => { loop.dispose(); synth.dispose(); chorus.dispose(); reverb.dispose(); }};
 
     } else if (soundType === 'nature') {
         const vibrato = new Tone.Vibrato(5, 0.2).toDestination();
-        synth = new Tone.AMSynth({
+        const synth = new Tone.AMSynth({
             harmonicity: 1.5,
             envelope: { attack: 0.1, decay: 1, sustain: 0.3, release: 1.5 },
             modulationEnvelope: { attack: 0.5, decay: 0, sustain: 1, release: 0.5 }
         }).connect(vibrato);
-        nodes.push(vibrato);
         const notes = ['F#4', 'G#4', 'B4', 'C#5', 'D#5'];
-        loop = new Tone.Loop(time => {
+        const loop = new Tone.Loop(time => {
             const note = notes[Math.floor(Math.random() * notes.length)];
             synth.triggerAttackRelease(note, '4n', time);
         }, '3n').start(0);
+        newPlayer = { dispose: () => { loop.dispose(); synth.dispose(); vibrato.dispose(); }};
     }
     
-    playerRef.current = {
-        synth,
-        loop,
-        dispose: () => {
-            synth?.dispose();
-            loop?.dispose();
-            nodes.forEach(node => node.dispose());
-        }
-    };
-    
-    if (Tone.Transport.state !== 'started') {
+    if (newPlayer) {
+        playerRef.current = newPlayer;
         Tone.Transport.start();
+        setPlayingSound(soundType);
     }
-    setPlayingSound(soundType);
   };
 
   const toggleSound = async (soundType: SoundType) => {
@@ -121,7 +108,7 @@ const AmbientSounds: FC = () => {
     }
     
     if (playingSound === soundType) {
-      stopAllSounds();
+      stopCurrentSound();
     } else {
       playSound(soundType);
     }

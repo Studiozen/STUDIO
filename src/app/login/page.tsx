@@ -34,6 +34,7 @@ import {
 import { doc, setDoc } from 'firebase/firestore';
 import { Flower2 } from 'lucide-react';
 import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Inserisci un indirizzo email valido.' }),
@@ -61,6 +62,7 @@ export default function LoginPage() {
   const router = useRouter();
   const auth = useAuth();
   const firestore = useFirestore();
+  const loginImage = PlaceHolderImages.find(p => p.id === 'login-background');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -249,14 +251,16 @@ export default function LoginPage() {
             </div>
         </div>
       <div className="hidden bg-muted lg:block">
-        <Image
-          src="https://picsum.photos/seed/studiovibes/1200/1800"
-          alt="Ambiente di studio sereno con una pianta e luce naturale"
-          data-ai-hint="serene study"
-          width="1200"
-          height="1800"
-          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
+        {loginImage && (
+            <Image
+            src={loginImage.imageUrl}
+            alt={loginImage.description}
+            data-ai-hint={loginImage.imageHint}
+            width="1200"
+            height="1800"
+            className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+            />
+        )}
       </div>
     </div>
   );

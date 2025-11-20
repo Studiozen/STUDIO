@@ -1,3 +1,10 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "login-background",
+      "description": "Ambiente di studio sereno con una pianta e luce naturale",
+      "imageUrl": "https://images.unsplash.com/photo-1762978315877-bc6f8ba8b6b4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzZXJlbmUlMjBzdHVkeXxlbnwwfHx8fDE3NjM2Nzk5Mjd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "serene study"
+    }
+  ]
 }

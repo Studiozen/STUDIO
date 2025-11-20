@@ -9,7 +9,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import wav from 'wav';
 import { googleAI } from '@genkit-ai/google-genai';
 
 const TextToSpeechInputSchema = z.object({
@@ -28,32 +27,40 @@ export async function textToSpeech(
   return textToSpeechFlow(input);
 }
 
+// Helper function to encode PCM data to WAV format
 async function toWav(
   pcmData: Buffer,
   channels = 1,
-  rate = 24000,
-  sampleWidth = 2
+  sampleRate = 24000,
+  sampleWidth = 2 // 16-bit
 ): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const writer = new wav.Writer({
-      channels,
-      sampleRate: rate,
-      bitDepth: sampleWidth * 8,
-    });
+  const header = new Buffer(44);
+  const dataSize = pcmData.length;
+  const fileSize = dataSize + 44;
 
-    let bufs = [] as any[];
-    writer.on('error', reject);
-    writer.on('data', function (d) {
-      bufs.push(d);
-    });
-    writer.on('end', function () {
-      resolve(Buffer.concat(bufs).toString('base64'));
-    });
+  // RIFF header
+  header.write('RIFF', 0);
+  header.writeUInt32LE(fileSize - 8, 4);
+  header.write('WAVE', 8);
 
-    writer.write(pcmData);
-    writer.end();
-  });
+  // fmt chunk
+  header.write('fmt ', 12);
+  header.writeUInt32LE(16, 16); // Chunk size
+  header.writeUInt16LE(1, 20); // Audio format (1 for PCM)
+  header.writeUInt16LE(channels, 22);
+  header.writeUInt32LE(sampleRate, 24);
+  header.writeUInt32LE(sampleRate * channels * sampleWidth, 28); // Byte rate
+  header.writeUInt16LE(channels * sampleWidth, 32); // Block align
+  header.writeUInt16LE(sampleWidth * 8, 34); // Bits per sample
+
+  // data chunk
+  header.write('data', 36);
+  header.writeUInt32LE(dataSize, 40);
+
+  const wavBuffer = Buffer.concat([header, pcmData]);
+  return wavBuffer.toString('base64');
 }
+
 
 const textToSpeechFlow = ai.defineFlow(
   {
