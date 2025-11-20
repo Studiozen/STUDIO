@@ -98,20 +98,20 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
   const progress = 100 - (elapsedSeconds / totalSeconds) * 100;
 
   return (
-    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01] bg-primary text-primary-foreground">
+    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01]">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Timer className="h-5 w-5 text-accent" />
+          <Timer className="h-5 w-5 text-primary" />
           Timer Concentrazione
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center justify-center gap-4 text-center">
         <div className="relative h-48 w-48 flex flex-col justify-center items-center">
            <p className="text-sm font-semibold uppercase tracking-widest">{isBreak ? 'Pausa' : 'Concentrazione'}</p>
-           <p className="text-7xl font-bold font-mono text-center my-2 text-primary-foreground">
+           <p className="text-7xl font-bold font-mono text-center my-2">
             {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
           </p>
-          <Progress value={progress} className="h-2 [&>div]:bg-accent" />
+          <Progress value={progress} className="h-2" />
         </div>
       </CardContent>
       <CardFooter className="flex justify-center gap-4">
@@ -119,13 +119,12 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
             onClick={toggleTimer} 
             size="lg" 
             className="w-28" 
-            variant="secondary"
             disabled={isBreak && isActive}
         >
           {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
           {isActive ? 'Pausa' : isTimerRunningOrPaused ? 'Riprendi' : 'Avvia'}
         </Button>
-        <Button onClick={handleReset} variant="outline" size="lg" disabled={isTimerRunningOrPaused}>
+        <Button onClick={handleReset} variant="outline" size="lg" disabled={!isTimerRunningOrPaused}>
           <RefreshCw />
         </Button>
       </CardFooter>

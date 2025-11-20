@@ -77,13 +77,13 @@ const Summarizer: FC = () => {
   }
 
   return (
-    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01] bg-primary text-primary-foreground">
+    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01]">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TextQuote className="h-5 w-5" />
           Riassunto AI
         </CardTitle>
-        <CardDescription className="text-primary-foreground/80">
+        <CardDescription>
           Incolla il tuo materiale di studio e scegli uno stile di riassunto.
         </CardDescription>
       </CardHeader>
@@ -99,7 +99,7 @@ const Summarizer: FC = () => {
                   <FormControl>
                     <Textarea
                       placeholder="Incolla il tuo testo qui..."
-                      className="min-h-40 resize-y bg-background/20 placeholder:text-primary-foreground/60"
+                      className="min-h-40 resize-y"
                       {...field}
                     />
                   </FormControl>
@@ -118,7 +118,7 @@ const Summarizer: FC = () => {
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="bg-background/20">
+                      <SelectTrigger>
                         <SelectValue placeholder="Seleziona uno stile" />
                       </SelectTrigger>
                     </FormControl>
@@ -134,7 +134,7 @@ const Summarizer: FC = () => {
             />
           </CardContent>
           <CardFooter className="flex justify-end">
-            <Button type="submit" disabled={isPending} variant="secondary">
+            <Button type="submit" disabled={isPending}>
               {isPending ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
@@ -147,7 +147,7 @@ const Summarizer: FC = () => {
       </Form>
       {isPending && !summary && (
         <CardContent>
-          <div className="flex flex-col items-center justify-center rounded-md border border-dashed border-primary-foreground/50 p-8">
+          <div className="flex flex-col items-center justify-center rounded-md border border-dashed p-8">
             <Loader2 className="h-8 w-8 animate-spin" />
             <p className="mt-2 text-sm">L'IA sta elaborando il tuo riassunto...</p>
           </div>
@@ -156,7 +156,7 @@ const Summarizer: FC = () => {
       {summary && (
         <CardContent>
           <h3 className="mb-2 text-lg font-semibold font-headline">Riassunto</h3>
-          <div className="prose prose-sm max-w-none rounded-md border border-primary-foreground/30 bg-background/20 p-4 whitespace-pre-wrap text-primary-foreground">
+          <div className="prose prose-sm max-w-none rounded-md border bg-muted p-4 whitespace-pre-wrap">
             {summary.summary}
           </div>
         </CardContent>

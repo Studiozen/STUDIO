@@ -116,13 +116,13 @@ const AmbientSounds: FC = () => {
   };
 
   return (
-    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01] bg-primary text-primary-foreground">
+    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01]">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Music className="h-5 w-5" />
           Musica Rilassante
         </CardTitle>
-        <CardDescription className="text-primary-foreground/80">
+        <CardDescription>
           Scegli una musica di sottofondo per aiutarti a concentrarti.
         </CardDescription>
       </CardHeader>
@@ -131,9 +131,9 @@ const AmbientSounds: FC = () => {
           {soundOptions.map(({ type, label, icon: Icon }) => (
             <Button
               key={type}
-              variant={playingSound === type ? 'secondary' : 'outline'}
+              variant={playingSound === type ? 'default' : 'outline'}
               onClick={() => toggleSound(type)}
-              className={cn("flex flex-col h-24 gap-2", playingSound === type && 'bg-primary-foreground/20')}
+              className={cn("flex flex-col h-24 gap-2")}
             >
               <Icon className="h-6 w-6" />
               <span>{label}</span>
