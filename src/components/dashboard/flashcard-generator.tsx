@@ -34,8 +34,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { generateFlashcards, type GenerateFlashcardsInput } from '@/ai/flows/generate-flashcards';
 import { useToast } from '@/hooks/use-toast';
 import React from 'react';
-import { useDoc, useUser } from '@/firebase';
-import { doc, getFirestore } from 'firebase/firestore';
+import { useDoc, useUser, useFirestore, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 const generationFormSchema = z.object({
   text: z.string(),
@@ -62,9 +62,9 @@ const FlashcardGenerator: FC = () => {
   const [count, setCount] = React.useState(0)
   const [generationStatus, setGenerationStatus] = useState('');
   const { user } = useUser();
-  const firestore = getFirestore();
+  const firestore = useFirestore();
 
-  const userProfileRef = useMemo(() => user ? doc(firestore, `users/${user.uid}`) : null, [user, firestore]);
+  const userProfileRef = useMemoFirebase(() => user ? doc(firestore, `users/${user.uid}`) : null, [user, firestore]);
   const { data: userProfile } = useDoc(userProfileRef);
 
   const { toast } = useToast();
@@ -107,11 +107,11 @@ const FlashcardGenerator: FC = () => {
           learningStyle: userProfile?.learningStyle,
       }
       const result = await generateFlashcards(input);
-      if ('error' in result) {
+      if ('error' in result || !result.flashcards) {
         toast({
           variant: 'destructive',
           title: 'Errore nella generazione delle flashcard',
-          description: result.error,
+          description: ('error' in result && result.error) || "L'IA non è riuscita a generare le flashcard.",
         });
         setGenerationStatus('');
         return;

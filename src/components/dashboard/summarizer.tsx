@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, type FC } from 'react';
+import { useState, useTransition, type FC, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -34,9 +34,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { generateSummarizationStyles, type GenerateSummarizationStylesInput } from '@/ai/flows/generate-summarization-styles';
 import { textToSpeech, type TextToSpeechOutput } from '@/ai/flows/text-to-speech';
 import { useToast } from '@/hooks/use-toast';
-import { useDoc, useUser } from '@/firebase';
-import { doc, getFirestore } from 'firebase/firestore';
-import { useMemo } from 'react';
+import { useDoc, useUser, useFirestore, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 const formSchema = z.object({
   text: z.string(),
@@ -60,9 +59,9 @@ const Summarizer: FC = () => {
   const [summary, setSummary] = useState<string | null>(null);
   const [audio, setAudio] = useState<TextToSpeechOutput | null>(null);
   const { user } = useUser();
-  const firestore = getFirestore();
+  const firestore = useFirestore();
 
-  const userProfileRef = useMemo(() => user ? doc(firestore, `users/${user.uid}`) : null, [user, firestore]);
+  const userProfileRef = useMemoFirebase(() => user ? doc(firestore, `users/${user.uid}`) : null, [user, firestore]);
   const { data: userProfile } = useDoc(userProfileRef);
 
   const { toast } = useToast();

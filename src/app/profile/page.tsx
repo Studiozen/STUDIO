@@ -9,11 +9,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Brain, Clock, BarChart3, Medal, Trophy, Star, GraduationCap, Accessibility } from 'lucide-react';
-import { collection } from 'firebase/firestore';
+import { collection, doc } from 'firebase/firestore';
 import type { FocusSession } from '@/types/focus-session';
 import { cn } from '@/lib/utils';
 import { useDoc } from '@/firebase/firestore/use-doc';
-import { doc } from 'firebase/firestore';
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
@@ -91,11 +90,16 @@ export default function ProfilePage() {
 
   const formatCreationTime = (creationTime?: string) => {
     if (!creationTime) return 'N/D';
-    return new Date(creationTime).toLocaleDateString('it-IT', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
+    try {
+        const date = new Date(creationTime);
+        return date.toLocaleDateString('it-IT', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+    } catch {
+        return 'N/D'
+    }
   }
 
   const getSchoolTypeLabel = (schoolType?: string) => {

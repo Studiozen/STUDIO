@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, type FC } from 'react';
-import { ShieldBan, X, AlertTriangle } from 'lucide-react';
+import { ShieldBan, AlertTriangle } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import {
@@ -52,16 +52,16 @@ const WebsiteBlocker: FC<WebsiteBlockerProps> = ({ isBlocking }) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <Alert variant="destructive" className="bg-yellow-500/20 text-yellow-300 border-yellow-400 [&>svg]:text-yellow-300">
+        <Alert variant="destructive" className="border-yellow-500/50 text-yellow-500 dark:border-yellow-500/50 [&>svg]:text-yellow-500">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle className="text-yellow-200">Simulazione Funzionalità</AlertTitle>
-            <AlertDescription>
+            <AlertTitle>Simulazione Funzionalità</AlertTitle>
+            <AlertDescription className='text-yellow-700 dark:text-yellow-400'>
                 Il blocco effettivo dei siti web richiede un'estensione del browser. Questa è una dimostrazione dell'interfaccia utente.
             </AlertDescription>
         </Alert>
 
         <div className="flex items-center space-x-2">
-            <Switch id="blocking-mode" checked={isBlocking} aria-label={`La modalità di blocco è ${isBlocking ? 'ATTIVA' : 'DISATTIVATA'}`} disabled={true} />
+            <Switch id="blocking-mode" checked={isBlocking} aria-readonly disabled />
             <Label htmlFor="blocking-mode" className={isBlocking ? 'font-bold text-destructive' : ''}>La modalità di blocco è {isBlocking ? 'ATTIVA' : 'DISATTIVATA'}</Label>
         </div>
 

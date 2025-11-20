@@ -6,6 +6,8 @@ import { Timer, Play, Pause, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { useFirestore, useUser } from '@/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const WORK_MINUTES = 25;
 const BREAK_MINUTES = 5;
@@ -20,9 +22,10 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
-  const [isTimerRunningOrPaused, setIsTimerRunningOrPaused] = useState(false);
   
   const synthRef = useRef<Tone.Synth | null>(null);
+  const { user } = useUser();
+  const firestore = useFirestore();
 
   useEffect(() => {
     synthRef.current = new Tone.Synth().toDestination();
@@ -39,20 +42,36 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     });
   }, [isBreak]);
 
+  const saveFocusSession = useCallback(async () => {
+    if (!user || !firestore) return;
+    try {
+      const sessionData = {
+        userId: user.uid,
+        startTime: new Date(Date.now() - WORK_MINUTES * 60 * 1000).toISOString(),
+        endTime: new Date().toISOString(),
+        duration: WORK_MINUTES,
+        createdAt: serverTimestamp(),
+      };
+      await addDoc(collection(firestore, `users/${user.uid}/focusSessions`), sessionData);
+    } catch (error) {
+      console.error("Error saving focus session:", error);
+    }
+  }, [user, firestore]);
+
   const resetTimer = useCallback((startBreak: boolean) => {
     setIsActive(false);
     setIsBreak(startBreak);
     setMinutes(startBreak ? BREAK_MINUTES : WORK_MINUTES);
     setSeconds(0);
     
-    if (startBreak) {
+    if (startBreak) { // Completed a work session
+      saveFocusSession();
       setIsActive(true); // Automatically start the break
     } else {
-      // End of a full cycle
+      // End of a full cycle (break ended)
       setIsBlocking(false);
-      setIsTimerRunningOrPaused(false);
     }
-  }, [setIsBlocking]);
+  }, [setIsBlocking, saveFocusSession]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -78,9 +97,9 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     const newIsActive = !isActive;
     setIsActive(newIsActive);
     
-    if (!isTimerRunningOrPaused && newIsActive) {
-      setIsTimerRunningOrPaused(true);
-      setIsBlocking(true); 
+    // Manage blocking state only for work sessions
+    if (!isBreak) {
+        setIsBlocking(newIsActive);
     }
   };
   
@@ -90,8 +109,10 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     setMinutes(WORK_MINUTES);
     setSeconds(0);
     setIsBlocking(false);
-    setIsTimerRunningOrPaused(false);
   }
+  
+  // Timer is considered "in progress" if it's active or paused during a work session.
+  const isTimerRunningOrPaused = isActive || (!isActive && (minutes !== WORK_MINUTES || seconds !== 0) && !isBreak);
 
   const totalSeconds = (isBreak ? BREAK_MINUTES : WORK_MINUTES) * 60;
   const elapsedSeconds = minutes * 60 + seconds;
@@ -122,9 +143,9 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
             disabled={isBreak && isActive}
         >
           {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
-          {isActive ? 'Pausa' : isTimerRunningOrPaused ? 'Riprendi' : 'Avvia'}
+          {isActive ? 'Pausa' : (minutes === WORK_MINUTES && seconds === 0 && !isBreak) ? 'Avvia' : 'Riprendi'}
         </Button>
-        <Button onClick={handleReset} variant="outline" size="lg" disabled={!isTimerRunningOrPaused}>
+        <Button onClick={handleReset} variant="outline" size="lg" disabled={!isTimerRunningOrPaused && !isActive}>
           <RefreshCw />
         </Button>
       </CardFooter>
