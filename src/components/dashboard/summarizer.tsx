@@ -148,8 +148,9 @@ const Summarizer: FC = () => {
       </Form>
       {isPending && !summary && (
         <CardContent>
-          <div className="flex items-center justify-center rounded-md border border-dashed p-8">
+          <div className="flex flex-col items-center justify-center rounded-md border border-dashed p-8">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <p className="mt-2 text-sm text-muted-foreground">L'IA sta elaborando il tuo riassunto...</p>
           </div>
         </CardContent>
       )}
