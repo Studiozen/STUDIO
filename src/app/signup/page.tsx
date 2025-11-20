@@ -38,6 +38,7 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { it } from 'date-fns/locale';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Il nome deve contenere almeno 2 caratteri.' }),
@@ -49,6 +50,8 @@ const formSchema = z.object({
     required_error: "È richiesta una data di nascita.",
   }),
   country: z.string().min(2, { message: "Il paese deve contenere almeno 2 caratteri."}),
+  schoolType: z.string({ required_error: 'Per favore, seleziona il tuo tipo di scuola.' }),
+  learningStyle: z.string({ required_error: 'Per favore, seleziona uno stile di apprendimento.' }),
 });
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -78,6 +81,7 @@ export default function SignupPage() {
       email: '',
       password: '',
       country: '',
+      learningStyle: 'standard',
     },
   });
 
@@ -98,6 +102,8 @@ export default function SignupPage() {
         email: values.email,
         birthDate: values.birthDate.toISOString(),
         country: values.country,
+        schoolType: values.schoolType,
+        learningStyle: values.learningStyle,
       });
 
       toast({
@@ -126,12 +132,13 @@ export default function SignupPage() {
       const additionalUserInfo = getAdditionalUserInfo(result);
 
       if (additionalUserInfo?.isNewUser) {
-        // For Google Sign-in, we don't have birthDate and country
-        // We could prompt the user for it in a next step, but for now we'll leave them empty.
+        // For Google Sign-in, we prompt the user for the extra info on their profile page later
+        // or use default values for now.
         await setDoc(doc(firestore, 'users', user.uid), {
           id: user.uid,
           name: user.displayName,
           email: user.email,
+          learningStyle: 'standard', // default value
         });
       }
       
@@ -232,60 +239,107 @@ export default function SignupPage() {
                     </FormItem>
                   )}
                 />
+                <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                    control={form.control}
+                    name="birthDate"
+                    render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                        <FormLabel>Data di nascita</FormLabel>
+                        <Popover>
+                            <PopoverTrigger asChild>
+                            <FormControl>
+                                <Button
+                                variant={"outline"}
+                                className={cn(
+                                    "w-full pl-3 text-left font-normal",
+                                    !field.value && "text-muted-foreground"
+                                )}
+                                >
+                                {field.value ? (
+                                    format(field.value, "PPP", { locale: it })
+                                ) : (
+                                    <span>Scegli una data</span>
+                                )}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                            </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) =>
+                                date > new Date() || date < new Date("1900-01-01")
+                                }
+                                initialFocus
+                            />
+                            </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                    <FormField
+                    control={form.control}
+                    name="country"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Paese</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Es. Italia" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                </div>
                 <FormField
                   control={form.control}
-                  name="birthDate"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Data di nascita</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP", { locale: it })
-                              ) : (
-                                <span>Scegli una data</span>
-                              )}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="country"
+                  name="schoolType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Paese</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Es. Italia" {...field} />
-                      </FormControl>
+                      <FormLabel>Tipo di Scuola</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleziona il tuo livello di studi" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="middle-school">Scuola Media</SelectItem>
+                          <SelectItem value="high-school">Scuola Superiore</SelectItem>
+                          <SelectItem value="university">Università</SelectItem>
+                          <SelectItem value="other">Altro</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="learningStyle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Stile di Apprendimento</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleziona una preferenza" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="standard">Standard</SelectItem>
+                          <SelectItem value="simplified">Testo Semplificato (per DSA, ecc.)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                   {form.formState.isSubmitting ? 'Creazione in corso...' : 'Crea Account'}
                 </Button>

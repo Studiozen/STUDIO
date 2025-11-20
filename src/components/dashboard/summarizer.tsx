@@ -31,9 +31,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { generateSummarizationStyles, type GenerateSummarizationStylesOutput } from '@/ai/flows/generate-summarization-styles';
+import { generateSummarizationStyles, type GenerateSummarizationStylesInput } from '@/ai/flows/generate-summarization-styles';
 import { textToSpeech, type TextToSpeechOutput } from '@/ai/flows/text-to-speech';
 import { useToast } from '@/hooks/use-toast';
+import { useDoc, useUser } from '@/firebase';
+import { doc, getFirestore } from 'firebase/firestore';
+import { useMemo } from 'react';
 
 const formSchema = z.object({
   text: z.string(),
@@ -54,8 +57,13 @@ const SoundWaveAnimation = () => (
 const Summarizer: FC = () => {
   const [isSummarizing, startSummarizeTransition] = useTransition();
   const [isFetchingAudio, startAudioTransition] = useTransition();
-  const [summary, setSummary] = useState<GenerateSummarizationStylesOutput | null>(null);
+  const [summary, setSummary] = useState<string | null>(null);
   const [audio, setAudio] = useState<TextToSpeechOutput | null>(null);
+  const { user } = useUser();
+  const firestore = getFirestore();
+
+  const userProfileRef = useMemo(() => user ? doc(firestore, `users/${user.uid}`) : null, [user, firestore]);
+  const { data: userProfile } = useDoc(userProfileRef);
 
   const { toast } = useToast();
 
@@ -79,7 +87,11 @@ const Summarizer: FC = () => {
     setSummary(null);
     setAudio(null);
     startSummarizeTransition(async () => {
-      const result = await generateSummarizationStyles(values);
+      const input: GenerateSummarizationStylesInput = {
+        ...values,
+        learningStyle: userProfile?.learningStyle,
+      }
+      const result = await generateSummarizationStyles(input);
       if ('error' in result) {
         toast({
           variant: 'destructive',
@@ -88,15 +100,15 @@ const Summarizer: FC = () => {
         });
         return;
       }
-      setSummary(result);
+      setSummary(result.summary);
     });
   }
 
   function onListen() {
-    if (!summary?.summary) return;
+    if (!summary) return;
     setAudio(null);
     startAudioTransition(async () => {
-        const result = await textToSpeech({ text: summary.summary });
+        const result = await textToSpeech({ text: summary });
         if('error' in result) {
             toast({
                 variant: 'destructive',
@@ -117,7 +129,7 @@ const Summarizer: FC = () => {
           Riassunto AI
         </CardTitle>
         <CardDescription>
-          Incolla il tuo materiale di studio e scegli uno stile di riassunto.
+          Incolla il tuo materiale di studio e scegli uno stile di riassunto. L'IA adatterà la complessità al tuo stile di apprendimento.
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -200,7 +212,7 @@ const Summarizer: FC = () => {
             </Button>
           </div>
           <div className="prose prose-sm max-w-none rounded-md border bg-muted p-4 whitespace-pre-wrap">
-            {summary.summary}
+            {summary}
           </div>
           {isFetchingAudio && !audio && (
              <div className="flex flex-col items-center justify-center gap-2 p-4">

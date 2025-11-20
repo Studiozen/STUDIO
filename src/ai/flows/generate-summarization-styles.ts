@@ -16,6 +16,7 @@ const GenerateSummarizationStylesInputSchema = z.object({
   style: z
     .enum(['bullet points', 'concise paragraph', 'key concepts'])
     .describe('Lo stile di riassunto.'),
+  learningStyle: z.string().optional().describe('Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'),
 });
 export type GenerateSummarizationStylesInput = z.infer<
   typeof GenerateSummarizationStylesInputSchema
@@ -38,7 +39,12 @@ const prompt = ai.definePrompt({
   name: 'generateSummarizationStylesPrompt',
   input: {schema: GenerateSummarizationStylesInputSchema},
   output: {schema: GenerateSummarizationStylesOutputSchema},
-  prompt: `Sei un esperto riassuntore. Riassumi il seguente testo nello stile di {{{style}}}.\n\nTesto: {{{text}}}`,
+  prompt: `Sei un esperto riassuntore. Riassumi il seguente testo nello stile di {{{style}}}.
+{{#if learningStyle == 'simplified'}}
+Adatta la complessità del testo per un utente con bisogni specifici di apprendimento (come la dislessia). Usa frasi brevi, un linguaggio semplice e concetti chiari.
+{{/if}}
+
+Testo: {{{text}}}`,
 });
 
 const generateSummarizationStylesFlow = ai.defineFlow(

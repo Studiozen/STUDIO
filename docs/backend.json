@@ -27,6 +27,16 @@
         "country": {
           "type": "string",
           "description": "The user's country of origin."
+        },
+        "schoolType": {
+          "type": "string",
+          "description": "The user's type of school (e.g., high school, university).",
+          "enum": ["middle-school", "high-school", "university", "other"]
+        },
+        "learningStyle": {
+            "type": "string",
+            "description": "The user's preferred learning style, used to tailor AI-generated content.",
+            "enum": ["standard", "simplified"]
         }
       },
       "required": [
@@ -178,6 +188,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore structure is designed to ensure secure and scalable data management for the StudioZen application, focusing on authorization independence and clear data ownership. User-specific data (WebsiteBlocks, FocusSessions) is stored under path-based ownership (`/users/{userId}/...`), ensuring only the owning user can access their data. This structure avoids the need for complex security rules that require reading parent documents, thus enabling atomic operations. WebsiteBlock and FocusSession entities will exist as subcollections of user documents to ensure that only the authenticated user has access to this information. This approach achieves authorization independence by leveraging the inherent path-based ownership in Firestore, which simplifies security rules and enhances performance. The use of dedicated subcollections ensures that each collection maintains a homogeneous security posture, streamlining rule definitions and improving debuggability. This approach facilitates secure `list` operations, as each subcollection inherently belongs to a specific user, preventing unauthorized access."
+    "reasoning": "The Firestore structure is designed to ensure secure and scalable data management for the StudioZen application, focusing on authorization independence and clear data ownership. User-specific data (WebsiteBlocks, FocusSessions) is stored under path-based ownership (`/users/{userId}/...`), ensuring only the owning user can access their data. This structure avoids the need for complex security rules that require reading parent documents, thus enabling atomic operations. WebsiteBlock and FocusSession entities will exist as subcollections of user documents to ensure that the authenticated user has access to this information. This approach achieves authorization independence by leveraging the inherent path-based ownership in Firestore, which simplifies security rules and enhances performance. The use of dedicated subcollections ensures that each collection maintains a homogeneous security posture, streamlining rule definitions and improving debuggability. This approach facilitates secure `list` operations, as each subcollection inherently belongs to a specific user, preventing unauthorized access."
   }
 }

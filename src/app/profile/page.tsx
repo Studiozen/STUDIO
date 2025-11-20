@@ -8,15 +8,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Brain, Clock, BarChart3, Medal, Trophy, Star } from 'lucide-react';
+import { Brain, Clock, BarChart3, Medal, Trophy, Star, GraduationCap, Accessibility } from 'lucide-react';
 import { collection } from 'firebase/firestore';
 import type { FocusSession } from '@/types/focus-session';
 import { cn } from '@/lib/utils';
+import { useDoc } from '@/firebase/firestore/use-doc';
+import { doc } from 'firebase/firestore';
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const firestore = useFirestore();
+
+  const userDocRef = useMemoFirebase(
+    () => (user ? doc(firestore, `users/${user.uid}`) : null),
+    [firestore, user]
+  );
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
 
   const focusSessionsQuery = useMemoFirebase(
     () => (user ? collection(firestore, `users/${user.uid}/focusSessions`) : null),
@@ -90,7 +98,25 @@ export default function ProfilePage() {
     });
   }
 
-  if (isUserLoading || !user || isLoadingSessions) {
+  const getSchoolTypeLabel = (schoolType?: string) => {
+      switch(schoolType) {
+          case 'middle-school': return 'Scuola Media';
+          case 'high-school': return 'Scuola Superiore';
+          case 'university': return 'Università';
+          case 'other': return 'Altro';
+          default: return 'Non specificato';
+      }
+  }
+
+  const getLearningStyleLabel = (learningStyle?: string) => {
+      switch(learningStyle) {
+          case 'standard': return 'Standard';
+          case 'simplified': return 'Testo Semplificato';
+          default: return 'Non specificato';
+      }
+  }
+
+  if (isUserLoading || !user || isLoadingSessions || isProfileLoading) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center">
         <p>Caricamento in corso...</p>
@@ -133,6 +159,14 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                     <Label htmlFor="creationDate">Membro dal</Label>
                     <Input id="creationDate" value={formatCreationTime(user.metadata.creationTime)} readOnly />
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="schoolType" className='flex items-center gap-2'><GraduationCap className='w-4 h-4'/>Tipo di Scuola</Label>
+                    <Input id="schoolType" value={getSchoolTypeLabel(userProfile?.schoolType)} readOnly />
+                </div>
+                 <div className="space-y-2">
+                    <Label htmlFor="learningStyle" className='flex items-center gap-2'><Accessibility className='w-4 h-4'/>Stile di Apprendimento</Label>
+                    <Input id="learningStyle" value={getLearningStyleLabel(userProfile?.learningStyle)} readOnly />
                 </div>
               </div>
             </CardContent>

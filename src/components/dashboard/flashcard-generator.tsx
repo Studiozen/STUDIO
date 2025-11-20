@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition, type FC } from 'react';
+import { useState, useTransition, type FC, useMemo } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -31,9 +31,11 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
-import { generateFlashcards, type GenerateFlashcardsOutput } from '@/ai/flows/generate-flashcards';
+import { generateFlashcards, type GenerateFlashcardsInput } from '@/ai/flows/generate-flashcards';
 import { useToast } from '@/hooks/use-toast';
 import React from 'react';
+import { useDoc, useUser } from '@/firebase';
+import { doc, getFirestore } from 'firebase/firestore';
 
 const generationFormSchema = z.object({
   text: z.string(),
@@ -45,7 +47,11 @@ const answerFormSchema = z.object({
     }))
 });
 
-type Flashcard = GenerateFlashcardsOutput['flashcards'][0];
+type Flashcard = {
+    question: string;
+    answer: string;
+    explanation: string;
+}
 
 const FlashcardGenerator: FC = () => {
   const [isPending, startTransition] = useTransition();
@@ -55,6 +61,11 @@ const FlashcardGenerator: FC = () => {
   const [current, setCurrent] = React.useState(0)
   const [count, setCount] = React.useState(0)
   const [generationStatus, setGenerationStatus] = useState('');
+  const { user } = useUser();
+  const firestore = getFirestore();
+
+  const userProfileRef = useMemo(() => user ? doc(firestore, `users/${user.uid}`) : null, [user, firestore]);
+  const { data: userProfile } = useDoc(userProfileRef);
 
   const { toast } = useToast();
 
@@ -91,7 +102,11 @@ const FlashcardGenerator: FC = () => {
 
     startTransition(async () => {
       setGenerationStatus("Sto generando le flashcard...");
-      const result = await generateFlashcards(values);
+      const input: GenerateFlashcardsInput = {
+          ...values,
+          learningStyle: userProfile?.learningStyle,
+      }
+      const result = await generateFlashcards(input);
       if ('error' in result) {
         toast({
           variant: 'destructive',
@@ -146,7 +161,7 @@ const FlashcardGenerator: FC = () => {
           Generatore di Flashcard AI
         </CardTitle>
         <CardDescription>
-          Trasforma il tuo materiale di studio in flashcard per un ripasso efficace.
+          Trasforma il tuo materiale di studio in flashcard. L'IA adatterà la complessità al tuo stile di apprendimento.
         </CardDescription>
       </CardHeader>
       {!flashcards && (

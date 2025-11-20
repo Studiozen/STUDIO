@@ -13,6 +13,7 @@ import { z } from 'genkit';
 
 const GenerateFlashcardsInputSchema = z.object({
   text: z.string().describe('Il testo del materiale di studio da cui generare le flashcard.'),
+  learningStyle: z.string().optional().describe('Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'),
 });
 export type GenerateFlashcardsInput = z.infer<typeof GenerateFlashcardsInputSchema>;
 
@@ -38,6 +39,10 @@ const prompt = ai.definePrompt({
   input: { schema: GenerateFlashcardsInputSchema },
   output: { schema: GenerateFlashcardsOutputSchema },
   prompt: `Sei un tutor esperto. Crea una serie di domande e risposte (flashcard) basate sul testo fornito per aiutare uno studente a ripassare. Le domande dovrebbero coprire i concetti chiave e le informazioni importanti. Per ogni risposta, fornisci anche una breve spiegazione.
+
+{{#if learningStyle == 'simplified'}}
+Adatta la complessità delle domande, risposte e spiegazioni per un utente con bisogni specifici di apprendimento (come la dislessia). Usa frasi brevi, un linguaggio semplice e concetti chiari.
+{{/if}}
 
 Testo:
 {{{text}}}`,
