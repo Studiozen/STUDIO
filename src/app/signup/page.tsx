@@ -90,7 +90,7 @@ export default function SignupPage() {
 
       toast({
         title: 'Account creato!',
-        description: 'Sei stato registrato con successo.',
+        description: `Benvenuto, ${values.name}!`,
       });
       router.push('/');
     } catch (error: any) {
@@ -122,7 +122,7 @@ export default function SignupPage() {
       
       toast({
         title: 'Accesso effettuato!',
-        description: 'Benvenuto in StudioZen!',
+        description: `Benvenuto, ${user.displayName || 'utente'}!`,
       });
       router.push('/');
     } catch (error: any) {

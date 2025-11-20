@@ -72,10 +72,11 @@ export default function LoginPage() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
+      const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
+      const user = userCredential.user;
       toast({
         title: 'Accesso effettuato!',
-        description: 'Bentornato!',
+        description: `Bentornato, ${user.displayName || 'utente'}!`,
       });
       router.push('/');
     } catch (error: any) {
@@ -134,12 +135,12 @@ export default function LoginPage() {
         });
         toast({
           title: 'Account creato!',
-          description: 'Sei stato registrato con successo con Google.',
+          description: `Benvenuto, ${user.displayName || 'utente'}!`,
         });
       } else {
          toast({
           title: 'Accesso effettuato!',
-          description: 'Bentornato!',
+          description: `Bentornato, ${user.displayName || 'utente'}!`,
         });
       }
       router.push('/');
