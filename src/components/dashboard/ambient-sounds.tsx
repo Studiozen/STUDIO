@@ -116,7 +116,7 @@ const AmbientSounds: FC = () => {
   };
 
   return (
-    <Card className="transition-all duration-300 hover:shadow-md hover:scale-[1.01]">
+    <Card className="transition-all duration-300 hover:shadow-lg hover:scale-[1.01] bg-background">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Music className="h-5 w-5" />
