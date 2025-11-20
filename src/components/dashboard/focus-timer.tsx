@@ -46,7 +46,7 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     setSeconds(0);
     
     if (startBreak) {
-      setIsActive(true);
+      setIsActive(true); // Automatically start the break
     } else {
       setIsBlocking(false);
       setIsTimerRunningOrPaused(false);
@@ -77,11 +77,9 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     const newIsActive = !isActive;
     setIsActive(newIsActive);
     
-    if (!isTimerRunningOrPaused) {
+    if (!isTimerRunningOrPaused && newIsActive) {
       setIsTimerRunningOrPaused(true);
-      if (!isBreak) { // Activate blocking only when starting a work session
-        setIsBlocking(true);
-      }
+      setIsBlocking(true); 
     }
   };
   
@@ -125,7 +123,7 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
           {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
           {isActive ? 'Pausa' : isTimerRunningOrPaused ? 'Riprendi' : 'Avvia'}
         </Button>
-        <Button onClick={handleReset} variant="outline" size="lg" disabled={isActive && !isBreak}>
+        <Button onClick={handleReset} variant="outline" size="lg" disabled={isActive}>
           <RefreshCw />
         </Button>
       </CardFooter>
