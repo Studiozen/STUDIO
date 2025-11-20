@@ -91,6 +91,7 @@ export default function SignupPage() {
       toast({
         title: 'Account creato!',
         description: `Benvenuto, ${values.name}!`,
+        duration: 3000,
       });
       router.push('/');
     } catch (error: any) {
@@ -123,6 +124,7 @@ export default function SignupPage() {
       toast({
         title: 'Accesso effettuato!',
         description: `Benvenuto, ${user.displayName || 'utente'}!`,
+        duration: 3000,
       });
       router.push('/');
     } catch (error: any) {

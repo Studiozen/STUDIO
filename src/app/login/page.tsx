@@ -77,6 +77,7 @@ export default function LoginPage() {
       toast({
         title: 'Accesso effettuato!',
         description: `Bentornato, ${user.displayName || 'utente'}!`,
+        duration: 3000,
       });
       router.push('/');
     } catch (error: any) {
@@ -136,11 +137,13 @@ export default function LoginPage() {
         toast({
           title: 'Account creato!',
           description: `Benvenuto, ${user.displayName || 'utente'}!`,
+          duration: 3000,
         });
       } else {
          toast({
           title: 'Accesso effettuato!',
           description: `Bentornato, ${user.displayName || 'utente'}!`,
+          duration: 3000,
         });
       }
       router.push('/');
@@ -257,3 +260,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}
