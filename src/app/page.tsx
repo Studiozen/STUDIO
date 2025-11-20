@@ -6,7 +6,6 @@ import { useUser } from '@/firebase';
 import Header from '@/components/dashboard/header';
 import FocusTimer from '@/components/dashboard/focus-timer';
 import Summarizer from '@/components/dashboard/summarizer';
-import WebsiteBlocker from '@/components/dashboard/website-blocker';
 import FlashcardGenerator from '@/components/dashboard/flashcard-generator';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -23,7 +22,6 @@ const AmbientSounds = dynamic(
 export default function Home() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
-  const [isBlocking, setIsBlocking] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -49,9 +47,8 @@ export default function Home() {
             <FlashcardGenerator />
           </div>
           <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-            <FocusTimer isBlocking={isBlocking} setIsBlocking={setIsBlocking} />
+            <FocusTimer />
             <AmbientSounds />
-            <WebsiteBlocker isBlocking={isBlocking} setIsBlocking={setIsBlocking} />
           </div>
         </div>
       </main>

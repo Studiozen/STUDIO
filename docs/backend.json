@@ -45,41 +45,6 @@
         "name"
       ]
     },
-    "WebsiteBlock": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "WebsiteBlock",
-      "type": "object",
-      "description": "Represents a website or application that is blocked for a user.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the WebsiteBlock entity."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to User. (Relationship: User 1:N WebsiteBlock)"
-        },
-        "url": {
-          "type": "string",
-          "description": "The URL of the website to block."
-        },
-        "startTime": {
-          "type": "string",
-          "description": "Start time for blocking the URL, if applicable. (date-time format)",
-          "format": "date-time"
-        },
-        "endTime": {
-          "type": "string",
-          "description": "End time for blocking the URL, if applicable. (date-time format)",
-          "format": "date-time"
-        }
-      },
-      "required": [
-        "id",
-        "userId",
-        "url"
-      ]
-    },
     "FocusSession": {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "FocusSession",
@@ -148,26 +113,6 @@
         }
       },
       {
-        "path": "/users/{userId}/websiteBlocks/{websiteBlockId}",
-        "definition": {
-          "entityName": "WebsiteBlock",
-          "schema": {
-            "$ref": "#/backend/entities/WebsiteBlock"
-          },
-          "description": "Stores website blocking configurations for each user.  Path-based ownership ensures only the user can access their website block configurations.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            },
-            {
-              "name": "websiteBlockId",
-              "description": "The unique identifier of the website block configuration."
-            }
-          ]
-        }
-      },
-      {
         "path": "/users/{userId}/focusSessions/{focusSessionId}",
         "definition": {
           "entityName": "FocusSession",
@@ -188,6 +133,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore structure is designed to ensure secure and scalable data management for the StudioZen application, focusing on authorization independence and clear data ownership. User-specific data (WebsiteBlocks, FocusSessions) is stored under path-based ownership (`/users/{userId}/...`), ensuring only the owning user can access their data. This structure avoids the need for complex security rules that require reading parent documents, thus enabling atomic operations. WebsiteBlock and FocusSession entities will exist as subcollections of user documents to ensure that the authenticated user has access to this information. This approach achieves authorization independence by leveraging the inherent path-based ownership in Firestore, which simplifies security rules and enhances performance. The use of dedicated subcollections ensures that each collection maintains a homogeneous security posture, streamlining rule definitions and improving debuggability. This approach facilitates secure `list` operations, as each subcollection inherently belongs to a specific user, preventing unauthorized access."
+    "reasoning": "The Firestore structure is designed to ensure secure and scalable data management for the StudioZen application, focusing on authorization independence and clear data ownership. User-specific data (FocusSessions) is stored under path-based ownership (`/users/{userId}/...`), ensuring only the owning user can access their data. This structure avoids the need for complex security rules that require reading parent documents, thus enabling atomic operations. FocusSession entities will exist as a subcollection of user documents to ensure that the authenticated user has access to this information. This approach achieves authorization independence by leveraging the inherent path-based ownership in Firestore, which simplifies security rules and enhances performance. The use of a dedicated subcollection ensures that the collection maintains a homogeneous security posture, streamlining rule definitions and improving debuggability. This approach facilitates secure `list` operations, as the subcollection inherently belongs to a specific user, preventing unauthorized access."
   }
 }

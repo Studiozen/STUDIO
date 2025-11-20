@@ -12,12 +12,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 const WORK_MINUTES = 25;
 const BREAK_MINUTES = 5;
 
-interface FocusTimerProps {
-  isBlocking: boolean;
-  setIsBlocking: (isBlocking: boolean) => void;
-}
-
-const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
+const FocusTimer: FC = () => {
   const [minutes, setMinutes] = useState(WORK_MINUTES);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
@@ -67,11 +62,8 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     if (startBreak) { // Completed a work session
       saveFocusSession();
       setIsActive(true); // Automatically start the break
-    } else {
-      // End of a full cycle (break ended)
-      setIsBlocking(false);
     }
-  }, [setIsBlocking, saveFocusSession]);
+  }, [saveFocusSession]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -94,13 +86,7 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
   }, [isActive, seconds, minutes, playSound, resetTimer, isBreak]);
   
   const toggleTimer = () => {
-    const newIsActive = !isActive;
-    setIsActive(newIsActive);
-    
-    // Manage blocking state only for work sessions
-    if (!isBreak) {
-        setIsBlocking(newIsActive);
-    }
+    setIsActive(!isActive);
   };
   
   const handleReset = () => {
@@ -108,10 +94,8 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     setIsBreak(false);
     setMinutes(WORK_MINUTES);
     setSeconds(0);
-    setIsBlocking(false);
   }
   
-  // Timer is considered "in progress" if it's active or paused during a work session.
   const isTimerRunningOrPaused = isActive || (!isActive && (minutes !== WORK_MINUTES || seconds !== 0) && !isBreak);
 
   const totalSeconds = (isBreak ? BREAK_MINUTES : WORK_MINUTES) * 60;
