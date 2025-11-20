@@ -40,7 +40,7 @@ const prompt = ai.definePrompt({
   input: {schema: GenerateSummarizationStylesInputSchema},
   output: {schema: GenerateSummarizationStylesOutputSchema},
   prompt: `Sei un esperto riassuntore. Riassumi il seguente testo nello stile di {{{style}}}.
-{{#if learningStyle == 'simplified'}}
+{{#if (eq learningStyle 'simplified')}}
 Adatta la complessità del testo per un utente con bisogni specifici di apprendimento (come la dislessia). Usa frasi brevi, un linguaggio semplice e concetti chiari.
 {{/if}}
 
