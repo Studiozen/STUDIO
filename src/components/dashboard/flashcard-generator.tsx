@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useTransition, type FC } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Sparkles, HelpCircle, ArrowLeft, ArrowRight, RotateCcw, Volume2 } from 'lucide-react';
+import { Loader2, Sparkles, HelpCircle, ArrowLeft, ArrowRight, RotateCcw, Check, X } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
@@ -32,42 +32,52 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { generateFlashcards, type GenerateFlashcardsOutput } from '@/ai/flows/generate-flashcards';
-import { textToSpeech } from '@/ai/flows/text-to-speech';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
 import React from 'react';
 
-const formSchema = z.object({
+const generationFormSchema = z.object({
   text: z.string(),
 });
 
-type Flashcard = GenerateFlashcardsOutput['flashcards'][0];
-type FlashcardWithAudio = Flashcard & {
-    audioSrc?: string;
-};
+const answerFormSchema = z.object({
+    answers: z.array(z.object({
+        userAnswer: z.string(),
+    }))
+});
 
+type Flashcard = GenerateFlashcardsOutput['flashcards'][0];
 
 const FlashcardGenerator: FC = () => {
   const [isPending, startTransition] = useTransition();
-  const [flashcards, setFlashcards] = useState<FlashcardWithAudio[] | null>(null);
-  const [isFlipped, setIsFlipped] = useState(false);
+  const [flashcards, setFlashcards] = useState<Flashcard[] | null>(null);
+  const [checkedAnswers, setCheckedAnswers] = useState<boolean[]>([]);
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)
   const [count, setCount] = React.useState(0)
   const [generationStatus, setGenerationStatus] = useState('');
-  const audioRef = React.useRef<HTMLAudioElement | null>(null);
-
 
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const generationForm = useForm<z.infer<typeof generationFormSchema>>({
+    resolver: zodResolver(generationFormSchema),
     defaultValues: {
       text: '',
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const answerForm = useForm<z.infer<typeof answerFormSchema>>({
+      resolver: zodResolver(answerFormSchema),
+      defaultValues: {
+          answers: [],
+      }
+  });
+
+  const { fields, replace } = useFieldArray({
+      control: answerForm.control,
+      name: "answers"
+  });
+
+  function onGenerate(values: z.infer<typeof generationFormSchema>) {
     if (values.text.trim().length === 0) {
         toast({
             variant: 'destructive',
@@ -77,7 +87,8 @@ const FlashcardGenerator: FC = () => {
         return;
     }
     setFlashcards(null);
-    setIsFlipped(false);
+    setCheckedAnswers([]);
+
     startTransition(async () => {
       setGenerationStatus("Sto generando le flashcard...");
       const result = await generateFlashcards(values);
@@ -90,26 +101,10 @@ const FlashcardGenerator: FC = () => {
         setGenerationStatus('');
         return;
       }
-      if (result.flashcards.length === 0) {
-        setFlashcards([]);
-        setGenerationStatus('');
-        return;
-      }
-
-      setGenerationStatus("Sto generando l'audio per le domande...");
-      const flashcardsWithAudio = await Promise.all(
-          result.flashcards.map(async (card) => {
-              try {
-                  const audioResult = await textToSpeech({ text: card.question });
-                  return { ...card, audioSrc: audioResult.audio };
-              } catch (e) {
-                  console.error("Errore nella generazione dell'audio:", e);
-                  return { ...card, audioSrc: undefined }; // Procedi senza audio in caso di errore
-              }
-          })
-      );
       
-      setFlashcards(flashcardsWithAudio);
+      setFlashcards(result.flashcards);
+      setCheckedAnswers(new Array(result.flashcards.length).fill(false));
+      replace(result.flashcards.map(() => ({ userAnswer: '' })));
       setGenerationStatus('');
     });
   }
@@ -124,34 +119,24 @@ const FlashcardGenerator: FC = () => {
 
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap() + 1)
-      setIsFlipped(false);
-      // Stoppa l'audio quando si cambia slide
-      if(audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current.currentTime = 0;
-      }
     })
   }, [api])
 
   const handleReset = () => {
-    form.reset();
+    generationForm.reset();
     setFlashcards(null);
-    setIsFlipped(false);
+    setCheckedAnswers([]);
     setCurrent(0);
     setCount(0);
     setGenerationStatus('');
   }
 
-  const playAudio = (audioSrc?: string) => {
-    if (audioSrc) {
-        if(audioRef.current) {
-            audioRef.current.pause();
-        }
-        const audio = new Audio(audioSrc);
-        audioRef.current = audio;
-        audio.play();
-    }
-  }
+  const checkAnswer = (index: number) => {
+    const newCheckedAnswers = [...checkedAnswers];
+    newCheckedAnswers[index] = true;
+    setCheckedAnswers(newCheckedAnswers);
+  };
+
 
   return (
     <Card>
@@ -161,15 +146,15 @@ const FlashcardGenerator: FC = () => {
           Generatore di Flashcard AI
         </CardTitle>
         <CardDescription>
-          Trasforma il tuo materiale di studio in flashcard per un ripasso efficace. L'IA leggerà le domande per te.
+          Trasforma il tuo materiale di studio in flashcard per un ripasso efficace.
         </CardDescription>
       </CardHeader>
       {!flashcards && (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+        <Form {...generationForm}>
+          <form onSubmit={generationForm.handleSubmit(onGenerate)}>
             <CardContent>
               <FormField
-                control={form.control}
+                control={generationForm.control}
                 name="text"
                 render={({ field }) => (
                   <FormItem>
@@ -215,38 +200,58 @@ const FlashcardGenerator: FC = () => {
                 <CarouselContent>
                     {flashcards.map((card, index) => (
                     <CarouselItem key={index}>
-                        <div className="p-1">
-                            <Card 
-                                className="h-64 cursor-pointer [perspective:1000px]"
-                                onClick={() => setIsFlipped(!isFlipped)}
-                            >
-                                <div className={cn("relative h-full w-full rounded-lg [transform-style:preserve-3d] transition-transform duration-500", isFlipped && "[transform:rotateY(180deg)]")}>
-                                    {/* Fronte */}
-                                    <div className="absolute flex flex-col justify-center items-center text-center p-6 [backface-visibility:hidden] h-full w-full bg-card rounded-lg">
-                                        <p className="text-sm text-muted-foreground mb-2">Domanda</p>
-                                        <p className="text-lg font-semibold">{card.question}</p>
-                                        {card.audioSrc && (
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="mt-4"
-                                                onClick={(e) => {
-                                                    e.stopPropagation(); // Evita di girare la card
-                                                    playAudio(card.audioSrc);
-                                                }}
-                                            >
-                                                <Volume2 />
-                                                <span className="sr-only">Ascolta la domanda</span>
-                                            </Button>
-                                        )}
-                                    </div>
-                                    {/* Retro */}
-                                    <div className="absolute flex flex-col justify-center items-center text-center p-6 [backface-visibility:hidden] [transform:rotateY(180deg)] h-full w-full bg-secondary rounded-lg">
-                                        <p className="text-sm text-muted-foreground mb-2">Risposta</p>
-                                        <p className="text-md">{card.answer}</p>
-                                    </div>
-                                </div>
+                        <div className="p-1 space-y-4">
+                            <Card className="min-h-32">
+                                <CardHeader>
+                                    <CardTitle className='text-lg'>Domanda</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p>{card.question}</p>
+                                </CardContent>
                             </Card>
+
+                            {checkedAnswers[index] ? (
+                                <div className='space-y-4'>
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className='text-lg flex items-center gap-2'><X className='text-destructive'/>La tua risposta</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className='text-muted-foreground'>{answerForm.getValues(`answers.${index}.userAnswer`) || "Non hai fornito una risposta."}</p>
+                                        </CardContent>
+                                    </Card>
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle className='text-lg flex items-center gap-2'><Check className='text-primary'/>Risposta corretta</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p>{card.answer}</p>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            ) : (
+                                <Form {...answerForm}>
+                                    <form>
+                                        <FormField
+                                            control={answerForm.control}
+                                            name={`answers.${index}.userAnswer`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                <FormLabel>La tua Risposta</FormLabel>
+                                                <FormControl>
+                                                    <Textarea
+                                                        placeholder="Scrivi qui la tua risposta..."
+                                                        {...field}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <Button onClick={() => checkAnswer(index)} className='mt-4'>Verifica Risposta</Button>
+                                    </form>
+                                </Form>
+                            )}
                         </div>
                     </CarouselItem>
                     ))}
