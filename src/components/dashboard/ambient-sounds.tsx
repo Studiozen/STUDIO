@@ -10,6 +10,12 @@ import { cn } from '@/lib/utils';
 
 type SoundType = 'piano' | 'night' | 'nature';
 
+interface PlayerRef {
+    synth: any;
+    loop: Tone.Loop;
+    dispose: () => void;
+}
+
 const soundOptions: {
   type: SoundType;
   label: string;
@@ -22,10 +28,11 @@ const soundOptions: {
 
 const AmbientSounds: FC = () => {
   const [playingSound, setPlayingSound] = useState<SoundType | null>(null);
-  const playersRef = useRef<Record<string, { synth: any, loop: Tone.Loop }>>({});
+  const playerRef = useRef<PlayerRef | null>(null);
 
+  // Effect to handle cleanup when the component unmounts
   useEffect(() => {
-    // Cleanup on unmount
+    // This is the cleanup function that will be called when the component is unmounted.
     return () => {
       stopAllSounds();
     };
@@ -36,20 +43,17 @@ const AmbientSounds: FC = () => {
       Tone.Transport.stop();
       Tone.Transport.cancel();
     }
-    Object.values(playersRef.current).forEach(player => {
-        player.loop?.dispose();
-        player.synth?.dispose();
-    });
-    playersRef.current = {};
+    playerRef.current?.dispose();
+    playerRef.current = null;
     setPlayingSound(null);
   }
 
   const playSound = (soundType: SoundType) => {
-    // Stop any currently playing sounds before starting a new one
     stopAllSounds();
 
     let synth: any;
     let loop: Tone.Loop;
+    let nodes: Tone.ToneAudioNode[] = [];
 
     if (soundType === 'piano') {
         synth = new Tone.FMSynth({
@@ -72,6 +76,7 @@ const AmbientSounds: FC = () => {
             envelope: { attack: 0.8, decay: 1.5, sustain: 0.2, release: 2 },
         }).connect(chorus);
         synth.volume.value = -12;
+        nodes.push(reverb, chorus);
         const notes = ['A3', 'C4', 'E4', 'G4', 'B4', 'D4'];
         loop = new Tone.Loop(time => {
             const note = notes[Math.floor(Math.random() * notes.length)];
@@ -85,6 +90,7 @@ const AmbientSounds: FC = () => {
             envelope: { attack: 0.1, decay: 1, sustain: 0.3, release: 1.5 },
             modulationEnvelope: { attack: 0.5, decay: 0, sustain: 1, release: 0.5 }
         }).connect(vibrato);
+        nodes.push(vibrato);
         const notes = ['F#4', 'G#4', 'B4', 'C#5', 'D#5'];
         loop = new Tone.Loop(time => {
             const note = notes[Math.floor(Math.random() * notes.length)];
@@ -92,7 +98,15 @@ const AmbientSounds: FC = () => {
         }, '3n').start(0);
     }
     
-    playersRef.current[soundType] = { synth, loop };
+    playerRef.current = {
+        synth,
+        loop,
+        dispose: () => {
+            synth?.dispose();
+            loop?.dispose();
+            nodes.forEach(node => node.dispose());
+        }
+    };
     
     if (Tone.Transport.state !== 'started') {
         Tone.Transport.start();
@@ -101,6 +115,7 @@ const AmbientSounds: FC = () => {
   };
 
   const toggleSound = async (soundType: SoundType) => {
+    // Tone.start() must be called in response to a user interaction
     if (Tone.context.state !== 'running') {
       await Tone.start();
     }
