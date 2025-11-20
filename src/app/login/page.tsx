@@ -29,15 +29,16 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   getAdditionalUserInfo,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { BrainCircuit } from 'lucide-react';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Inserisci un indirizzo email valido.' }),
   password: z
     .string()
-    .min(6, { message: 'La password deve contenere almeno 6 caratteri.' }),
+    .min(1, { message: 'Per favore, inserisci la tua password.' }), // Min 1 to allow form submission check, real validation is on Firebase
 });
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -83,6 +84,33 @@ export default function LoginPage() {
         title: 'Ops! Qualcosa è andato storto.',
         description:
           error.message || 'Impossibile accedere. Controlla le tue credenziali.',
+      });
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    const email = form.getValues('email');
+    if (!email) {
+      toast({
+        variant: 'destructive',
+        title: 'Email richiesta',
+        description: 'Per favore, inserisci la tua email per reimpostare la password.',
+      });
+      form.setFocus('email');
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      toast({
+        title: 'Email inviata!',
+        description: 'Controlla la tua casella di posta per le istruzioni su come reimpostare la password.',
+      });
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        variant: 'destructive',
+        title: 'Ops! Qualcosa è andato storto.',
+        description: error.message || 'Impossibile inviare l\'email di reimpostazione. Controlla che l\'email sia corretta.',
       });
     }
   };
@@ -177,7 +205,17 @@ export default function LoginPage() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Password</FormLabel>
+                        <Button
+                          type="button"
+                          variant="link"
+                          className="h-auto p-0 text-sm"
+                          onClick={handlePasswordReset}
+                        >
+                          Password dimenticata?
+                        </Button>
+                      </div>
                       <FormControl>
                         <Input
                           placeholder="********"
