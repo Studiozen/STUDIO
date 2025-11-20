@@ -40,7 +40,7 @@ const helpSections = [
     {
         icon: ShieldBan,
         title: "Blocco Siti Web",
-        content: "Aggiungi gli URL dei siti che ti distraggono (es. social media) alla lista. Quando il 'Timer Concentrazione' è attivo, questa funzione (attualmente in simulazione) ti aiuterebbe a non visitarli."
+        content: "Durante le sessioni di concentrazione, l'app blocca automaticamente una lista predefinita di siti che distraggono (es. social media). La funzione si attiva insieme al 'Timer Concentrazione'."
     }
 ]
 
