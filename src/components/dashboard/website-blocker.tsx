@@ -23,7 +23,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 
 const formSchema = z.object({
-  site: z.string().url({ message: "Please enter a valid URL." }),
+  site: z.string().url({ message: "Inserisci un URL valido." }),
 });
 
 const WebsiteBlocker: FC = () => {
@@ -40,7 +40,7 @@ const WebsiteBlocker: FC = () => {
         setSites(JSON.parse(storedSites));
       }
     } catch (error) {
-      console.error("Failed to parse blocked sites from localStorage", error)
+      console.error("Impossibile analizzare i siti bloccati da localStorage", error)
     }
   }, []);
   
@@ -77,37 +77,37 @@ const WebsiteBlocker: FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ShieldBan className="h-5 w-5" />
-          Website Blocker
+          Blocco Siti Web
         </CardTitle>
         <CardDescription>
-          Create a list of distracting websites to block during focus sessions.
+          Crea un elenco di siti web che distraggono da bloccare durante le sessioni di concentrazione.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <Alert>
             <AlertTriangle className="h-4 w-4 text-accent" />
-            <AlertTitle className="text-accent">Feature Simulation</AlertTitle>
+            <AlertTitle className="text-accent">Simulazione Funzionalità</AlertTitle>
             <AlertDescription>
-                Actual website blocking requires a browser extension. This is a UI demonstration.
+                Il blocco effettivo dei siti web richiede un'estensione del browser. Questa è una dimostrazione dell'interfaccia utente.
             </AlertDescription>
         </Alert>
 
         <div className="flex items-center space-x-2">
-            <Switch id="blocking-mode" checked={isBlocking} onCheckedChange={setIsBlocking} aria-label={`Turn blocking ${isBlocking ? 'off' : 'on'}`} />
-            <Label htmlFor="blocking-mode">Blocking mode is {isBlocking ? 'ON' : 'OFF'}</Label>
+            <Switch id="blocking-mode" checked={isBlocking} onCheckedChange={setIsBlocking} aria-label={`Attiva il blocco ${isBlocking ? 'off' : 'on'}`} />
+            <Label htmlFor="blocking-mode">La modalità di blocco è {isBlocking ? 'ATTIVA' : 'DISATTIVATA'}</Label>
         </div>
 
         <form onSubmit={form.handleSubmit(addSite)} className="flex items-start gap-2">
             <div className="grid gap-2 flex-1">
-                <Label htmlFor="site-url" className="sr-only">Website URL</Label>
-                <Input id="site-url" placeholder="e.g., https://youtube.com" {...form.register('site')} />
+                <Label htmlFor="site-url" className="sr-only">URL del sito web</Label>
+                <Input id="site-url" placeholder="es., https://youtube.com" {...form.register('site')} />
                 {form.formState.errors.site && <p className="text-sm text-destructive">{form.formState.errors.site.message}</p>}
             </div>
-            <Button type="submit"><Plus className="h-4 w-4 mr-2" />Add Site</Button>
+            <Button type="submit"><Plus className="h-4 w-4 mr-2" />Aggiungi Sito</Button>
         </form>
 
         <div className="space-y-2">
-            <Label>Blocked Websites</Label>
+            <Label>Siti Web Bloccati</Label>
             <div className="min-h-[40px] rounded-md border border-dashed p-2 flex flex-wrap gap-2 items-center">
             {sites.length > 0 ? (
                 sites.map((site, index) => (
@@ -115,12 +115,12 @@ const WebsiteBlocker: FC = () => {
                         {new URL(site).hostname}
                         <Button variant="ghost" size="icon" className="h-5 w-5 ml-1 hover:bg-transparent" onClick={() => removeSite(site)}>
                             <X className="h-3 w-3" />
-                            <span className="sr-only">Remove {site}</span>
+                            <span className="sr-only">Rimuovi {site}</span>
                         </Button>
                     </Badge>
                 ))
             ) : (
-                <p className="text-sm text-muted-foreground px-2">No sites in block list.</p>
+                <p className="text-sm text-muted-foreground px-2">Nessun sito nell'elenco di blocco.</p>
             )}
             </div>
         </div>
@@ -128,7 +128,7 @@ const WebsiteBlocker: FC = () => {
       </CardContent>
        <CardFooter>
         <div className="flex items-center gap-2">
-            <Label htmlFor="timer">Block for (minutes)</Label>
+            <Label htmlFor="timer">Blocca per (minuti)</Label>
             <Input 
                 id="timer" 
                 type="number" 

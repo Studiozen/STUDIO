@@ -2,6 +2,7 @@ import Header from '@/components/dashboard/header';
 import FocusTimer from '@/components/dashboard/focus-timer';
 import AmbientSounds from '@/components/dashboard/ambient-sounds';
 import Summarizer from '@/components/dashboard/summarizer';
+import WebsiteBlocker from '@/components/dashboard/website-blocker';
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
           <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
             <FocusTimer />
             <AmbientSounds />
+            <WebsiteBlocker />
           </div>
         </div>
       </main>
