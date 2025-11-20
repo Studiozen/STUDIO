@@ -32,7 +32,12 @@ import {
   getAdditionalUserInfo,
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { Flower2 } from 'lucide-react';
+import { CalendarIcon, Flower2 } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
+import { it } from 'date-fns/locale';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Il nome deve contenere almeno 2 caratteri.' }),
@@ -40,6 +45,10 @@ const formSchema = z.object({
   password: z
     .string()
     .min(6, { message: 'La password deve contenere almeno 6 caratteri.' }),
+  birthDate: z.date({
+    required_error: "È richiesta una data di nascita.",
+  }),
+  country: z.string().min(2, { message: "Il paese deve contenere almeno 2 caratteri."}),
 });
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -68,6 +77,7 @@ export default function SignupPage() {
       name: '',
       email: '',
       password: '',
+      country: '',
     },
   });
 
@@ -86,6 +96,8 @@ export default function SignupPage() {
         id: user.uid,
         name: values.name,
         email: values.email,
+        birthDate: values.birthDate.toISOString(),
+        country: values.country,
       });
 
       toast({
@@ -114,6 +126,8 @@ export default function SignupPage() {
       const additionalUserInfo = getAdditionalUserInfo(result);
 
       if (additionalUserInfo?.isNewUser) {
+        // For Google Sign-in, we don't have birthDate and country
+        // We could prompt the user for it in a next step, but for now we'll leave them empty.
         await setDoc(doc(firestore, 'users', user.uid), {
           id: user.uid,
           name: user.displayName,
@@ -213,6 +227,60 @@ export default function SignupPage() {
                           {...field}
                           type="password"
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="birthDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Data di nascita</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP", { locale: it })
+                              ) : (
+                                <span>Scegli una data</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="country"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Paese</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Es. Italia" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

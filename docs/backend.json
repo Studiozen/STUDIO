@@ -18,6 +18,15 @@
         "name": {
           "type": "string",
           "description": "The display name of the user."
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The user's date of birth.",
+          "format": "date"
+        },
+        "country": {
+          "type": "string",
+          "description": "The user's country of origin."
         }
       },
       "required": [
