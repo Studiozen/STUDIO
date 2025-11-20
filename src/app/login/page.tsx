@@ -243,9 +243,9 @@ export default function LoginPage() {
         </div>
       <div className="hidden bg-muted lg:block">
         <Image
-          src="https://picsum.photos/seed/1/1200/1800"
-          alt="Persona che studia a una scrivania con una lampada"
-          data-ai-hint="study desk"
+          src="https://picsum.photos/seed/studiovibes/1200/1800"
+          alt="Ambiente di studio sereno con una pianta e luce naturale"
+          data-ai-hint="serene study"
           width="1200"
           height="1800"
           className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
