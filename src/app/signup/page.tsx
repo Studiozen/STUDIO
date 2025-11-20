@@ -32,7 +32,7 @@ import {
   getAdditionalUserInfo,
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { BrainCircuit } from 'lucide-react';
+import { Flower2 } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Il nome deve contenere almeno 2 caratteri.' }),
@@ -144,7 +144,7 @@ export default function SignupPage() {
               href="/"
               className="flex items-center gap-2 text-2xl font-semibold"
             >
-              <BrainCircuit className="h-8 w-8 text-primary" />
+              <Flower2 className="h-8 w-8 text-primary" />
               <span className="font-headline">StudioZen</span>
             </Link>
         </div>

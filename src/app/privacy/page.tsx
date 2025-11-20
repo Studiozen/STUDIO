@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, BrainCircuit } from 'lucide-react';
+import { ArrowLeft, Flower2 } from 'lucide-react';
 
 export default function PrivacyPolicyPage() {
   return (
@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage() {
               href="/"
               className="flex items-center gap-2 text-lg font-semibold md:text-base"
             >
-              <BrainCircuit className="h-6 w-6 text-primary" />
+              <Flower2 className="h-6 w-6 text-primary" />
               <span className="font-headline">StudioZen</span>
             </Link>
         </div>

@@ -32,7 +32,7 @@ import {
   sendPasswordResetEmail,
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import { BrainCircuit } from 'lucide-react';
+import { Flower2 } from 'lucide-react';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Inserisci un indirizzo email valido.' }),
@@ -110,7 +110,7 @@ export default function LoginPage() {
       toast({
         variant: 'destructive',
         title: 'Ops! Qualcosa è andato storto.',
-        description: error.message || 'Impossibile inviare l\'email di reimpostazione. Controlla che l\'email sia corretta.',
+        description: error.message || 'Impossibile inviare l\\'email di reimpostazione. Controlla che l\\'email sia corretta.',
       });
     }
   };
@@ -158,7 +158,7 @@ export default function LoginPage() {
             href="/"
             className="flex items-center gap-2 text-2xl font-semibold"
           >
-            <BrainCircuit className="h-8 w-8 text-primary" />
+            <Flower2 className="h-8 w-8 text-primary" />
             <span className="font-headline">StudioZen</span>
           </Link>
         </div>

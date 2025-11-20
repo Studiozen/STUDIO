@@ -1,6 +1,6 @@
 'use client';
 
-import { BrainCircuit, LogOut, User as UserIcon } from 'lucide-react';
+import { Flower2, LogOut, User as UserIcon } from 'lucide-react';
 import type { FC } from 'react';
 import Link from 'next/link';
 import { useAuth, useUser } from '@/firebase';
@@ -41,7 +41,7 @@ const Header: FC = () => {
           href="/"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
-          <BrainCircuit className="h-6 w-6 text-primary" />
+          <Flower2 className="h-6 w-6 text-primary" />
           <span className="font-headline">StudioZen</span>
         </Link>
       </nav>
