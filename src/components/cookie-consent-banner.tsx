@@ -39,7 +39,11 @@ export default function CookieConsentBanner() {
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-secondary text-secondary-foreground p-4 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
       <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="text-sm text-center sm:text-left">
-          Utilizziamo i cookie per garantire la migliore esperienza sul nostro sito. Continuando a navigare, accetti il nostro utilizzo dei cookie.
+          Utilizziamo i cookie per garantire la migliore esperienza. Per saperne di più, leggi la nostra{' '}
+          <Link href="/privacy" className="underline hover:text-primary">
+            Informativa sulla Privacy
+          </Link>
+          .
         </p>
         <Button onClick={handleAccept} size="sm">Accetta</Button>
       </div>
