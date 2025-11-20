@@ -48,6 +48,7 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     if (startBreak) {
       setIsActive(true); // Automatically start the break
     } else {
+      // End of a full cycle
       setIsBlocking(false);
       setIsTimerRunningOrPaused(false);
     }
@@ -123,7 +124,7 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
           {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
           {isActive ? 'Pausa' : isTimerRunningOrPaused ? 'Riprendi' : 'Avvia'}
         </Button>
-        <Button onClick={handleReset} variant="outline" size="lg" disabled={isActive}>
+        <Button onClick={handleReset} variant="outline" size="lg" disabled={isTimerRunningOrPaused}>
           <RefreshCw />
         </Button>
       </CardFooter>
