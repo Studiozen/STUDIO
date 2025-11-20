@@ -97,8 +97,8 @@ const WebsiteBlocker: FC<WebsiteBlockerProps> = ({ isBlocking, setIsBlocking }) 
         </Alert>
 
         <div className="flex items-center space-x-2">
-            <Switch id="blocking-mode" checked={isBlocking} onCheckedChange={setIsBlocking} aria-label={`Attiva il blocco ${isBlocking ? 'off' : 'on'}`} />
-            <Label htmlFor="blocking-mode">La modalità di blocco è {isBlocking ? 'ATTIVA' : 'DISATTIVATA'}</Label>
+            <Switch id="blocking-mode" checked={isBlocking} onCheckedChange={setIsBlocking} aria-label={`Attiva il blocco ${isBlocking ? 'off' : 'on'}`} disabled={true} />
+            <Label htmlFor="blocking-mode" className={isBlocking ? 'font-bold text-destructive' : ''}>La modalità di blocco è {isBlocking ? 'ATTIVA' : 'DISATTIVATA'}</Label>
         </div>
 
         <form onSubmit={form.handleSubmit(addSite)} className="flex items-start gap-2">
@@ -130,19 +130,6 @@ const WebsiteBlocker: FC<WebsiteBlockerProps> = ({ isBlocking, setIsBlocking }) 
         </div>
 
       </CardContent>
-       <CardFooter>
-        <div className="flex items-center gap-2">
-            <Label htmlFor="timer">Blocca per (minuti)</Label>
-            <Input 
-                id="timer" 
-                type="number" 
-                value={timer} 
-                onChange={(e) => setTimer(Math.max(1, Number(e.target.value)))}
-                className="w-20"
-                min="1"
-            />
-        </div>
-      </CardFooter>
     </Card>
   );
 };

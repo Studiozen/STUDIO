@@ -15,7 +15,7 @@ interface FocusTimerProps {
   setIsBlocking: (isBlocking: boolean) => void;
 }
 
-const FocusTimer: FC<FocusTimerProps> = ({ setIsBlocking }) => {
+const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
   const [minutes, setMinutes] = useState(WORK_MINUTES);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
@@ -38,14 +38,13 @@ const FocusTimer: FC<FocusTimerProps> = ({ setIsBlocking }) => {
     });
   }, [isBreak]);
 
-  const resetTimer = useCallback(() => {
+  const resetTimer = useCallback((startBreak: boolean) => {
     setIsActive(false);
-    const newIsBreak = !isBreak;
-    setIsBreak(newIsBreak);
-    setMinutes(newIsBreak ? BREAK_MINUTES : WORK_MINUTES);
+    setIsBreak(startBreak);
+    setMinutes(startBreak ? BREAK_MINUTES : WORK_MINUTES);
     setSeconds(0);
     setIsBlocking(false);
-  }, [isBreak, setIsBlocking]);
+  }, [setIsBlocking]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -58,18 +57,19 @@ const FocusTimer: FC<FocusTimerProps> = ({ setIsBlocking }) => {
           setSeconds(59);
         } else {
           playSound();
-          resetTimer();
+          resetTimer(!isBreak);
         }
       }, 1000);
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, seconds, minutes, playSound, resetTimer]);
+  }, [isActive, seconds, minutes, playSound, resetTimer, isBreak]);
   
   const toggleTimer = () => {
     const newIsActive = !isActive;
     setIsActive(newIsActive);
+    
     if (newIsActive && !isBreak) {
       setIsBlocking(true);
     } else {
