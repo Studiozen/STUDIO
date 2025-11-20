@@ -31,9 +31,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    // allowedDevOrigins era qui, ma va spostato a livello superiore
-  },
   // Allow requests from the development environment
   allowedDevOrigins: [
       'https://6000-firebase-studio-1763653384760.cluster-cbeiita7rbe7iuwhvjs5zww2i4.cloudworkstations.dev',
