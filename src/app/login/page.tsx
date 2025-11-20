@@ -239,6 +239,9 @@ export default function LoginPage() {
                         Registrati
                     </Link>
                 </div>
+                 <div className="mt-2 text-center text-xs text-muted-foreground">
+                    Creato dal Team StudioZen
+                </div>
             </div>
         </div>
       <div className="hidden bg-muted lg:block">
