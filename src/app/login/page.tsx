@@ -110,7 +110,7 @@ export default function LoginPage() {
       toast({
         variant: 'destructive',
         title: 'Ops! Qualcosa è andato storto.',
-        description: error.message || 'Impossibile inviare l\\'email di reimpostazione. Controlla che l\\'email sia corretta.',
+        description: error.message || "Impossibile inviare l'email di reimpostazione. Controlla che l'email sia corretta.",
       });
     }
   };
