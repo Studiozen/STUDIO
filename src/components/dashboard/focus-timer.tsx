@@ -44,8 +44,11 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     setIsBreak(startBreak);
     setMinutes(startBreak ? BREAK_MINUTES : WORK_MINUTES);
     setSeconds(0);
-    setIsBlocking(false); // Disattiva il blocco solo al reset o fine sessione
-    setIsTimerRunningOrPaused(false);
+    // Disattiva il blocco solo quando una sessione di lavoro è completata o resettata
+    if (!startBreak) {
+      setIsBlocking(false);
+      setIsTimerRunningOrPaused(false);
+    }
   }, [setIsBlocking]);
 
   useEffect(() => {
@@ -72,15 +75,14 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     const newIsActive = !isActive;
     setIsActive(newIsActive);
     
-    // Attiva il blocco all'avvio di una sessione di lavoro e tienilo attivo
+    // Il blocco si attiva all'avvio di una sessione di lavoro
+    // e rimane attivo anche durante le pause.
     if (newIsActive && !isBreak) {
       setIsBlocking(true);
-      setIsTimerRunningOrPaused(true);
-    } else if (!newIsActive) {
-      // Se metti in pausa, non fare nulla riguardo al blocco
-    } else {
-      // Se avvii una pausa, non modificare il blocco
-      setIsTimerRunningOrPaused(true);
+    }
+
+    if (!isTimerRunningOrPaused) {
+        setIsTimerRunningOrPaused(true);
     }
   };
   
@@ -115,7 +117,12 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-center gap-4">
-        <Button onClick={toggleTimer} size="lg" className="w-28 bg-primary hover:bg-primary/90" disabled={!isTimerRunningOrPaused && isActive}>
+        <Button 
+            onClick={toggleTimer} 
+            size="lg" 
+            className="w-28 bg-primary hover:bg-primary/90" 
+            disabled={isTimerRunningOrPaused && !isActive && isBreak}
+        >
           {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
           {isActive ? 'Pausa' : isTimerRunningOrPaused ? 'Riprendi' : 'Avvia'}
         </Button>
