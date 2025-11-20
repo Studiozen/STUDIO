@@ -38,7 +38,7 @@ const formSchema = z.object({
   text: z.string().min(50, {
     message: 'Inserisci almeno 50 caratteri per riassumere.',
   }),
-  style: z.enum(['concise', 'detailed', 'keywords']),
+  style: z.enum(['concise', 'detailed', 'keywords', 'bullet-points']),
 });
 
 const Summarizer: FC = () => {
@@ -120,6 +120,7 @@ const Summarizer: FC = () => {
                       <SelectItem value="concise">Conciso</SelectItem>
                       <SelectItem value="detailed">Dettagliato</SelectItem>
                       <SelectItem value="keywords">Parole Chiave</SelectItem>
+                      <SelectItem value="bullet-points">Schema a punti</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

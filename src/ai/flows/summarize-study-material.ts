@@ -13,7 +13,7 @@ import {z} from 'genkit';
 const SummarizeStudyMaterialInputSchema = z.object({
   text: z.string().describe('Il testo del materiale di studio da riassumere.'),
   style: z
-    .enum(['concise', 'detailed', 'keywords'])
+    .enum(['concise', 'detailed', 'keywords', 'bullet-points'])
     .default('concise')
     .describe('Lo stile di riassunto.'),
 });
