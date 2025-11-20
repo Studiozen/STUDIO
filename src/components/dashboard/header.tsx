@@ -1,6 +1,6 @@
 'use client';
 
-import { Flower2, LogOut, User as UserIcon } from 'lucide-react';
+import { Flower2, LogOut, User as UserIcon, HelpCircle } from 'lucide-react';
 import type { FC } from 'react';
 import Link from 'next/link';
 import { useAuth, useUser } from '@/firebase';
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useRouter } from 'next/navigation';
+import { HelpGuide } from './help-guide';
 
 const Header: FC = () => {
   const { user, isUserLoading } = useUser();
@@ -48,6 +49,8 @@ const Header: FC = () => {
       <div className="flex w-full items-center justify-end gap-4 md:ml-auto md:gap-2 lg:gap-4">
         {!isUserLoading &&
           (user ? (
+            <div className='flex items-center gap-4'>
+            <HelpGuide />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -86,8 +89,10 @@ const Header: FC = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            </div>
           ) : (
             <div className="flex gap-2">
+              <HelpGuide />
               <Button asChild variant="ghost">
                 <Link href="/login">Accedi</Link>
               </Button>
