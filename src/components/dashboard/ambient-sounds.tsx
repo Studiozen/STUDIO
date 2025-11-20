@@ -22,73 +22,93 @@ const soundOptions: {
 
 const AmbientSounds: FC = () => {
   const [playingSound, setPlayingSound] = useState<SoundType | null>(null);
-  const synthRef = useRef<Tone.PolySynth | null>(null);
-  const loopRef = useRef<Tone.Loop | null>(null);
+  const playersRef = useRef<Record<string, any>>({});
 
   useEffect(() => {
+    // Cleanup on unmount
     return () => {
-      if (loopRef.current) {
-        loopRef.current.stop();
-        loopRef.current.dispose();
-      }
-      if (synthRef.current) {
-        synthRef.current.dispose();
-      }
+      Object.values(playersRef.current).forEach((player: any) => {
+        if (player.loop) player.loop.stop(0);
+        player.synth.dispose();
+      });
       if (Tone.Transport.state === 'started') {
         Tone.Transport.stop();
+        Tone.Transport.cancel();
       }
     };
   }, []);
 
+  const stopAllSounds = () => {
+     if (Tone.Transport.state === 'started') {
+        Tone.Transport.stop();
+        Tone.Transport.cancel();
+    }
+    Object.values(playersRef.current).forEach((player: any) => {
+        if (player.loop) player.loop.stop(0).dispose();
+        player.synth.dispose();
+    });
+    playersRef.current = {};
+    setPlayingSound(null);
+  }
+
   const playSound = (soundType: SoundType) => {
-    if (loopRef.current) {
-      loopRef.current.stop();
-      loopRef.current.dispose();
-    }
-    if (synthRef.current) {
-      synthRef.current.dispose();
-    }
+    stopAllSounds();
 
-    const synth = new Tone.PolySynth(Tone.Synth, {
-      oscillator: { type: 'sine' },
-      envelope: { attack: 0.1, decay: 0.5, sustain: 0.3, release: 1 },
-    }).toDestination();
-    synth.volume.value = -12;
-    synthRef.current = synth;
-
-    let notes: string[] = [];
-    let interval = '';
+    let synth: any;
+    let loop: Tone.Loop;
 
     if (soundType === 'piano') {
-      notes = ['C4', 'E4', 'G4', 'B4', 'D5', 'G5'];
-      interval = '2n';
+        synth = new Tone.FMSynth({
+            harmonicity: 3.01,
+            modulationIndex: 14,
+            envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 1.2 },
+            modulationEnvelope: { attack: 0.01, decay: 0.5, sustain: 0, release: 0.1 }
+        }).toDestination();
+        const notes = ['C4', 'E4', 'G4', 'B4', 'D5', 'A4', 'F4'];
+        loop = new Tone.Loop(time => {
+            const note = notes[Math.floor(Math.random() * notes.length)];
+            synth.triggerAttackRelease(note, '8n', time);
+        }, '4n').start(0);
+
     } else if (soundType === 'night') {
-      notes = ['A3', 'C4', 'E4', 'G4', 'B4'];
-      interval = '3n';
+        const reverb = new Tone.Reverb(2).toDestination();
+        const chorus = new Tone.Chorus(2, 2.5, 0.7).connect(reverb);
+        synth = new Tone.PolySynth(Tone.Synth, {
+            oscillator: { type: 'sine' },
+            envelope: { attack: 0.8, decay: 1.5, sustain: 0.2, release: 2 },
+        }).connect(chorus);
+        synth.volume.value = -12;
+        const notes = ['A3', 'C4', 'E4', 'G4', 'B4', 'D4'];
+        loop = new Tone.Loop(time => {
+            const note = notes[Math.floor(Math.random() * notes.length)];
+            synth.triggerAttackRelease(note, '1n', time);
+        }, '2n').start(0);
+
     } else if (soundType === 'nature') {
-      notes = ['F3', 'A3', 'C4', 'E4', 'G4'];
-      interval = '4n';
+        const vibrato = new Tone.Vibrato(5, 0.2).toDestination();
+        synth = new Tone.AMSynth({
+            harmonicity: 1.5,
+            envelope: { attack: 0.1, decay: 1, sustain: 0.3, release: 1.5 },
+            modulationEnvelope: { attack: 0.5, decay: 0, sustain: 1, release: 0.5 }
+        }).connect(vibrato);
+        const notes = ['F#4', 'G#4', 'B4', 'C#5', 'D#5'];
+        loop = new Tone.Loop(time => {
+            const note = notes[Math.floor(Math.random() * notes.length)];
+            synth.triggerAttackRelease(note, '4n', time);
+        }, '3n').start(0);
     }
+    
+    playersRef.current[soundType] = { synth, loop };
 
-    const loop = new Tone.Loop(time => {
-      const note = notes[Math.floor(Math.random() * notes.length)];
-      synth.triggerAttackRelease(note, '8n', time);
-    }, interval).start(0);
-
-    loopRef.current = loop;
-    Tone.Transport.start();
+    if (Tone.Transport.state !== 'started') {
+        Tone.Transport.start();
+    }
   };
 
   const toggleSound = async (soundType: SoundType) => {
     await Tone.start();
     if (playingSound === soundType) {
-      if (loopRef.current) {
-        loopRef.current.stop();
-      }
-      if (Tone.Transport.state === 'started') {
-        Tone.Transport.stop();
-      }
-      setPlayingSound(null);
+      stopAllSounds();
     } else {
       playSound(soundType);
       setPlayingSound(soundType);
