@@ -3,6 +3,7 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase';
+import CookieConsentBanner from '@/components/cookie-consent-banner';
 
 export const metadata: Metadata = {
   title: 'StudioZen',
@@ -32,6 +33,7 @@ export default function RootLayout({
         <FirebaseClientProvider>
           {children}
           <Toaster />
+          <CookieConsentBanner />
         </FirebaseClientProvider>
       </body>
     </html>
