@@ -4,7 +4,7 @@ import { useState, useTransition, type FC } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Sparkles, HelpCircle, ArrowLeft, ArrowRight, RotateCcw, Check, X, BookOpen } from 'lucide-react';
+import { Loader2, Sparkles, HelpCircle, BookOpen, Check, X } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
@@ -230,7 +230,10 @@ const FlashcardGenerator: FC = () => {
                                     </Card>
                                     <Card>
                                         <CardHeader>
-                                            <CardTitle className='text-lg flex items-center gap-2'><BookOpen className='text-accent'/>Spiegazione</CardTitle>
+                                            <CardTitle className="flex items-center gap-2 text-lg">
+                                                <BookOpen className="h-5 w-5 text-accent" />
+                                                Spiegazione
+                                            </CardTitle>
                                         </CardHeader>
                                         <CardContent>
                                             <p>{card.explanation}</p>
@@ -272,7 +275,6 @@ const FlashcardGenerator: FC = () => {
             </div>
             <div className='flex justify-center'>
                  <Button onClick={handleReset} variant="outline">
-                    <RotateCcw className="mr-2 h-4 w-4" />
                     Crea nuove flashcard
                 </Button>
             </div>
