@@ -77,7 +77,7 @@ const WebsiteBlocker: FC<WebsiteBlockerProps> = ({ isBlocking, setIsBlocking }) 
   }
 
   return (
-    <Card>
+    <Card className="transition-all duration-300 hover:shadow-md hover:scale-[1.01]">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ShieldBan className="h-5 w-5" />

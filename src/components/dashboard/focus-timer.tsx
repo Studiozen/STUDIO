@@ -98,7 +98,7 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
   const progress = 100 - (elapsedSeconds / totalSeconds) * 100;
 
   return (
-    <Card>
+    <Card className="transition-all duration-300 hover:shadow-md hover:scale-[1.01]">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Timer className="h-5 w-5 text-accent" />
