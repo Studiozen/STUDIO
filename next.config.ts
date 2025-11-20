@@ -2,9 +2,6 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  allowedDevOrigins: [
-    'https://6000-firebase-studio-1763653384760.cluster-cbeiita7rbe7iuwhvjs5zww2i4.cloudworkstations.dev',
-  ],
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -32,6 +29,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+    ],
+  },
+  // Allow requests from the development environment
+  experimental: {
+    allowedDevOrigins: [
+        'https://6000-firebase-studio-1763653384760.cluster-cbeiita7rbe7iuwhvjs5zww2i4.cloudworkstations.dev',
     ],
   },
 };
