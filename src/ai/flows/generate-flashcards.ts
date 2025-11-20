@@ -19,6 +19,7 @@ export type GenerateFlashcardsInput = z.infer<typeof GenerateFlashcardsInputSche
 const FlashcardSchema = z.object({
     question: z.string().describe('La domanda per la flashcard.'),
     answer: z.string().describe('La risposta alla domanda della flashcard.'),
+    explanation: z.string().describe('Una breve spiegazione della risposta corretta.'),
 });
 
 const GenerateFlashcardsOutputSchema = z.object({
@@ -36,7 +37,7 @@ const prompt = ai.definePrompt({
   name: 'generateFlashcardsPrompt',
   input: { schema: GenerateFlashcardsInputSchema },
   output: { schema: GenerateFlashcardsOutputSchema },
-  prompt: `Sei un tutor esperto. Crea una serie di domande e risposte (flashcard) basate sul testo fornito per aiutare uno studente a ripassare. Le domande dovrebbero coprire i concetti chiave e le informazioni importanti.
+  prompt: `Sei un tutor esperto. Crea una serie di domande e risposte (flashcard) basate sul testo fornito per aiutare uno studente a ripassare. Le domande dovrebbero coprire i concetti chiave e le informazioni importanti. Per ogni risposta, fornisci anche una breve spiegazione.
 
 Testo:
 {{{text}}}`,
