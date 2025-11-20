@@ -31,24 +31,24 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { summarizeStudyMaterial, type SummarizeStudyMaterialOutput } from '@/ai/flows/summarize-study-material';
+import { generateSummarizationStyles, type GenerateSummarizationStylesOutput } from '@/ai/flows/generate-summarization-styles';
 import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   text: z.string(),
-  style: z.enum(['concise', 'detailed', 'keywords', 'bullet-points']),
+  style: z.enum(['bullet points', 'concise paragraph', 'key concepts']),
 });
 
 const Summarizer: FC = () => {
   const [isPending, startTransition] = useTransition();
-  const [summary, setSummary] = useState<SummarizeStudyMaterialOutput | null>(null);
+  const [summary, setSummary] = useState<GenerateSummarizationStylesOutput | null>(null);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       text: '',
-      style: 'concise',
+      style: 'concise paragraph',
     },
   });
 
@@ -63,7 +63,7 @@ const Summarizer: FC = () => {
     }
     setSummary(null);
     startTransition(async () => {
-      const result = await summarizeStudyMaterial(values);
+      const result = await generateSummarizationStyles(values);
       if ('error' in result) {
         toast({
           variant: 'destructive',
@@ -81,10 +81,10 @@ const Summarizer: FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TextQuote className="h-5 w-5" />
-          Riassunto AI
+          Spiegazione AI
         </CardTitle>
         <CardDescription>
-          Incolla il tuo materiale di studio qui sotto per ottenere un riassunto veloce.
+          Incolla il tuo materiale di studio e scegli uno stile di spiegazione.
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -112,7 +112,7 @@ const Summarizer: FC = () => {
               name="style"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Stile di Riassunto</FormLabel>
+                  <FormLabel>Stile di Spiegazione</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -123,10 +123,9 @@ const Summarizer: FC = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="concise">Conciso</SelectItem>
-                      <SelectItem value="detailed">Dettagliato</SelectItem>
-                      <SelectItem value="keywords">Parole Chiave</SelectItem>
-                      <SelectItem value="bullet-points">Schema a punti</SelectItem>
+                      <SelectItem value="concise paragraph">Paragrafo Conciso</SelectItem>
+                      <SelectItem value="bullet points">Punti Elenco</SelectItem>
+                      <SelectItem value="key concepts">Concetti Chiave</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -141,7 +140,7 @@ const Summarizer: FC = () => {
               ) : (
                 <Sparkles className="mr-2 h-4 w-4" />
               )}
-              Riassumi
+              Spiega
             </Button>
           </CardFooter>
         </form>
@@ -150,13 +149,13 @@ const Summarizer: FC = () => {
         <CardContent>
           <div className="flex flex-col items-center justify-center rounded-md border border-dashed p-8">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-            <p className="mt-2 text-sm text-muted-foreground">L'IA sta elaborando il tuo riassunto...</p>
+            <p className="mt-2 text-sm text-muted-foreground">L'IA sta elaborando la tua spiegazione...</p>
           </div>
         </CardContent>
       )}
       {summary && (
         <CardContent>
-          <h3 className="mb-2 text-lg font-semibold font-headline">Riassunto</h3>
+          <h3 className="mb-2 text-lg font-semibold font-headline">Spiegazione</h3>
           <div className="prose prose-sm max-w-none rounded-md border bg-muted/50 p-4 whitespace-pre-wrap">
             {summary.summary}
           </div>
