@@ -81,10 +81,10 @@ const Summarizer: FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TextQuote className="h-5 w-5" />
-          Spiegazione AI
+          Riassunto AI
         </CardTitle>
         <CardDescription>
-          Incolla il tuo materiale di studio e scegli uno stile di spiegazione.
+          Incolla il tuo materiale di studio e scegli uno stile di riassunto.
         </CardDescription>
       </CardHeader>
       <Form {...form}>
@@ -112,7 +112,7 @@ const Summarizer: FC = () => {
               name="style"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Stile di Spiegazione</FormLabel>
+                  <FormLabel>Stile di Riassunto</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
@@ -140,7 +140,7 @@ const Summarizer: FC = () => {
               ) : (
                 <Sparkles className="mr-2 h-4 w-4" />
               )}
-              Spiega
+              Riassumi
             </Button>
           </CardFooter>
         </form>
@@ -149,13 +149,13 @@ const Summarizer: FC = () => {
         <CardContent>
           <div className="flex flex-col items-center justify-center rounded-md border border-dashed p-8">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-            <p className="mt-2 text-sm text-muted-foreground">L'IA sta elaborando la tua spiegazione...</p>
+            <p className="mt-2 text-sm text-muted-foreground">L'IA sta elaborando il tuo riassunto...</p>
           </div>
         </CardContent>
       )}
       {summary && (
         <CardContent>
-          <h3 className="mb-2 text-lg font-semibold font-headline">Spiegazione</h3>
+          <h3 className="mb-2 text-lg font-semibold font-headline">Riassunto</h3>
           <div className="prose prose-sm max-w-none rounded-md border bg-muted/50 p-4 whitespace-pre-wrap">
             {summary.summary}
           </div>
