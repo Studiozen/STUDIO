@@ -2,9 +2,6 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
-  experimental: {
-    // allowedDevOrigins has been moved to the top level
-  },
   allowedDevOrigins: [
     'https://6000-firebase-studio-1763653384760.cluster-cbeiita7rbe7iuwhvjs5zww2i4.cloudworkstations.dev',
   ],
