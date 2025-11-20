@@ -2,22 +2,22 @@
 
 import { useState, useRef, useEffect, type FC } from 'react';
 import * as Tone from 'tone';
-import { Waves, Wind, Leaf } from 'lucide-react';
+import { Music, MoonStar, Bird } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
-type SoundType = 'ocean' | 'wind' | 'forest';
+type SoundType = 'piano' | 'night' | 'nature';
 
 const soundOptions: {
   type: SoundType;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
 }[] = [
-  { type: 'ocean', label: 'Onde Rilassanti', icon: Waves },
-  { type: 'wind', label: 'Vento Leggero', icon: Wind },
-  { type: 'forest', label: 'Suoni della Foresta', icon: Leaf },
+  { type: 'piano', label: 'Piano Classico', icon: Music },
+  { type: 'night', label: 'Notte Stellata', icon: MoonStar },
+  { type: 'nature', label: 'Canto della Natura', icon: Bird },
 ];
 
 const AmbientSounds: FC = () => {
@@ -59,15 +59,15 @@ const AmbientSounds: FC = () => {
     let notes: string[] = [];
     let interval = '';
 
-    if (soundType === 'ocean') {
-      notes = ['C4', 'E4', 'G4', 'B4'];
-      interval = '2m';
-    } else if (soundType === 'wind') {
-      notes = ['A3', 'C4', 'E4', 'G4'];
+    if (soundType === 'piano') {
+      notes = ['C4', 'E4', 'G4', 'B4', 'D5', 'G5'];
+      interval = '2n';
+    } else if (soundType === 'night') {
+      notes = ['A3', 'C4', 'E4', 'G4', 'B4'];
+      interval = '3n';
+    } else if (soundType === 'nature') {
+      notes = ['F3', 'A3', 'C4', 'E4', 'G4'];
       interval = '4n';
-    } else if (soundType === 'forest') {
-      notes = ['F3', 'A3', 'C4', 'E4'];
-      interval = '3m';
     }
 
     const loop = new Tone.Loop(time => {
@@ -99,8 +99,8 @@ const AmbientSounds: FC = () => {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Waves className="h-5 w-5" />
-          Suoni Rilassanti
+          <Music className="h-5 w-5" />
+          Musica Rilassante
         </CardTitle>
         <CardDescription>
           Scegli una musica di sottofondo per aiutarti a concentrarti.
