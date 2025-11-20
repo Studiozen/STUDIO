@@ -1,15 +1,24 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase';
 import Header from '@/components/dashboard/header';
 import FocusTimer from '@/components/dashboard/focus-timer';
-import AmbientSounds from '@/components/dashboard/ambient-sounds';
 import Summarizer from '@/components/dashboard/summarizer';
 import WebsiteBlocker from '@/components/dashboard/website-blocker';
-import { useState } from 'react';
 import FlashcardGenerator from '@/components/dashboard/flashcard-generator';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const AmbientSounds = dynamic(
+  () => import('@/components/dashboard/ambient-sounds'),
+  { 
+    ssr: false,
+    loading: () => <Skeleton className="h-[200px] w-full" /> 
+  }
+);
+
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
