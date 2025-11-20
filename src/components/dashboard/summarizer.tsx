@@ -40,6 +40,17 @@ const formSchema = z.object({
   style: z.enum(['bullet points', 'concise paragraph', 'key concepts']),
 });
 
+const SoundWaveAnimation = () => (
+    <div className="flex items-center justify-center gap-1">
+        <div className="w-1 h-5 bg-primary animate-pulse [animation-delay:-0.3s]"></div>
+        <div className="w-1 h-3 bg-primary animate-pulse [animation-delay:-0.15s]"></div>
+        <div className="w-1 h-6 bg-primary animate-pulse"></div>
+        <div className="w-1 h-4 bg-primary animate-pulse [animation-delay:-0.15s]"></div>
+        <div className="w-1 h-5 bg-primary animate-pulse [animation-delay:-0.3s]"></div>
+    </div>
+)
+
+
 const Summarizer: FC = () => {
   const [isSummarizing, startSummarizeTransition] = useTransition();
   const [isFetchingAudio, startAudioTransition] = useTransition();
@@ -192,8 +203,8 @@ const Summarizer: FC = () => {
             {summary.summary}
           </div>
           {isFetchingAudio && !audio && (
-             <div className="flex items-center justify-center p-4">
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+             <div className="flex flex-col items-center justify-center gap-2 p-4">
+                <SoundWaveAnimation />
                 <p className="text-sm text-muted-foreground">Creazione audio in corso...</p>
             </div>
           )}
