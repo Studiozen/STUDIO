@@ -78,12 +78,15 @@ export default function LoginPage() {
       });
       router.push('/');
     } catch (error: any) {
-      console.error(error);
+      console.error('Login Error:', error);
+      let description = 'Impossibile accedere. Controlla le tue credenziali e riprova.';
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+        description = 'Credenziali non valide. Controlla email e password.';
+      }
       toast({
         variant: 'destructive',
-        title: 'Ops! Qualcosa è andato storto.',
-        description:
-          error.message || 'Impossibile accedere. Controlla le tue credenziali.',
+        title: 'Errore di Accesso',
+        description,
       });
     }
   };
