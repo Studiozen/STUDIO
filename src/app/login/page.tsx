@@ -33,6 +33,7 @@ import {
 } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { Flower2 } from 'lucide-react';
+import Image from 'next/image';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Inserisci un indirizzo email valido.' }),
@@ -154,95 +155,101 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md">
-        <div className="mb-4 flex justify-center">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-2xl font-semibold"
-          >
-            <Flower2 className="h-8 w-8 text-primary" />
-            <span className="font-headline">StudioZen</span>
-          </Link>
-        </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Accedi</CardTitle>
-            <CardDescription>
-              Accedi al tuo account per continuare.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
-              <GoogleIcon className="mr-2 h-4 w-4" />
-              Accedi con Google
-            </Button>
-            <div className="my-4 flex items-center">
-              <div className="flex-grow border-t border-muted" />
-              <span className="mx-4 flex-shrink text-xs uppercase text-muted-foreground">
-                Oppure continua con
-              </span>
-              <div className="flex-grow border-t border-muted" />
-            </div>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="tu@email.com"
-                          {...field}
-                          type="email"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center justify-between">
-                        <FormLabel>Password</FormLabel>
-                        <Button
-                          type="button"
-                          variant="link"
-                          className="h-auto p-0 text-sm"
-                          onClick={handlePasswordReset}
-                        >
-                          Password dimenticata?
-                        </Button>
-                      </div>
-                      <FormControl>
-                        <Input
-                          placeholder="********"
-                          {...field}
-                          type="password"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? 'Accesso in corso...' : 'Accedi'}
+    <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
+        <div className="flex items-center justify-center py-12">
+            <div className="mx-auto grid w-[350px] gap-6">
+                <div className="grid gap-2 text-center">
+                    <Link
+                        href="/"
+                        className="flex items-center justify-center gap-2 text-2xl font-semibold mb-4"
+                    >
+                        <Flower2 className="h-8 w-8 text-primary" />
+                        <span className="font-headline">StudioZen</span>
+                    </Link>
+                    <h1 className="text-3xl font-bold">Accedi</h1>
+                    <p className="text-balance text-muted-foreground">
+                        Inserisci la tua email per accedere al tuo account
+                    </p>
+                </div>
+                 <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
+                    <GoogleIcon className="mr-2 h-4 w-4" />
+                    Accedi con Google
                 </Button>
-              </form>
-            </Form>
-            <div className="mt-4 text-center text-sm">
-              Non hai un account?{' '}
-              <Link href="/signup" className="underline">
-                Registrati
-              </Link>
+                <div className="my-2 flex items-center">
+                    <div className="flex-grow border-t border-muted" />
+                    <span className="mx-4 flex-shrink text-xs uppercase text-muted-foreground">
+                        Oppure continua con
+                    </span>
+                    <div className="flex-grow border-t border-muted" />
+                </div>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                        placeholder="tu@email.com"
+                                        {...field}
+                                        type="email"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <div className="flex items-center">
+                                        <FormLabel>Password</FormLabel>
+                                        <Button
+                                            type="button"
+                                            variant="link"
+                                            className="ml-auto inline-block h-auto p-0 text-sm"
+                                            onClick={handlePasswordReset}
+                                            >
+                                            Password dimenticata?
+                                        </Button>
+                                    </div>
+                                    <FormControl>
+                                        <Input
+                                        placeholder="********"
+                                        {...field}
+                                        type="password"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                            {form.formState.isSubmitting ? 'Accesso in corso...' : 'Accedi'}
+                        </Button>
+                    </form>
+                </Form>
+                <div className="mt-4 text-center text-sm">
+                    Non hai un account?{' '}
+                    <Link href="/signup" className="underline">
+                        Registrati
+                    </Link>
+                </div>
             </div>
-          </CardContent>
-        </Card>
+        </div>
+      <div className="hidden bg-muted lg:block">
+        <Image
+          src="https://picsum.photos/seed/1/1200/1800"
+          alt="Persona che studia a una scrivania con una lampada"
+          data-ai-hint="study desk"
+          width="1200"
+          height="1800"
+          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
       </div>
     </div>
   );
