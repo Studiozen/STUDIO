@@ -9,6 +9,7 @@ import AmbientSounds from '@/components/dashboard/ambient-sounds';
 import Summarizer from '@/components/dashboard/summarizer';
 import WebsiteBlocker from '@/components/dashboard/website-blocker';
 import { useState } from 'react';
+import FlashcardGenerator from '@/components/dashboard/flashcard-generator';
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
@@ -34,8 +35,9 @@ export default function Home() {
       <Header />
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 grid gap-4">
             <Summarizer />
+            <FlashcardGenerator />
           </div>
           <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
             <FocusTimer isBlocking={isBlocking} setIsBlocking={setIsBlocking} />

@@ -93,7 +93,7 @@ const Summarizer: FC = () => {
                   <FormControl>
                     <Textarea
                       placeholder="Incolla il tuo testo qui..."
-                      className="min-h-48 resize-y"
+                      className="min-h-40 resize-y"
                       {...field}
                     />
                   </FormControl>
