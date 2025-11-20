@@ -46,10 +46,8 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     setSeconds(0);
     
     if (startBreak) {
-      // Quando inizia una pausa, il timer deve partire automaticamente.
       setIsActive(true);
     } else {
-      // Disattiva il blocco solo quando una sessione di lavoro è completata o resettata
       setIsBlocking(false);
       setIsTimerRunningOrPaused(false);
     }
@@ -66,8 +64,6 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
           setSeconds(59);
         } else {
           playSound();
-          // Se finisce la pausa, si torna al lavoro (e il timer si ferma)
-          // Se finisce il lavoro, inizia la pausa (che parte in automatico)
           resetTimer(!isBreak);
         }
       }, 1000);
@@ -81,12 +77,11 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     const newIsActive = !isActive;
     setIsActive(newIsActive);
     
-    if (newIsActive && !isBreak) {
-      setIsBlocking(true);
-    }
-
     if (!isTimerRunningOrPaused) {
-        setIsTimerRunningOrPaused(true);
+      setIsTimerRunningOrPaused(true);
+      if (!isBreak) { // Activate blocking only when starting a work session
+        setIsBlocking(true);
+      }
     }
   };
   
@@ -125,7 +120,7 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
             onClick={toggleTimer} 
             size="lg" 
             className="w-28 bg-primary hover:bg-primary/90" 
-            disabled={isBreak}
+            disabled={isBreak && isActive}
         >
           {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
           {isActive ? 'Pausa' : isTimerRunningOrPaused ? 'Riprendi' : 'Avvia'}
