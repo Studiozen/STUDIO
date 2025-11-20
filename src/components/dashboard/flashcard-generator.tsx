@@ -4,7 +4,7 @@ import { useState, useTransition, type FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Sparkles, HelpCircle, ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
+import { Loader2, Sparkles, HelpCircle, ArrowLeft, ArrowRight, RotateCcw, Volume2 } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { generateFlashcards, type GenerateFlashcardsOutput } from '@/ai/flows/generate-flashcards';
+import { textToSpeech } from '@/ai/flows/text-to-speech';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import React from 'react';
@@ -40,13 +41,20 @@ const formSchema = z.object({
   text: z.string(),
 });
 
+interface FlashcardWithAudio extends GenerateFlashcardsOutput['flashcards'][0] {
+    audioSrc?: string;
+}
+
 const FlashcardGenerator: FC = () => {
   const [isPending, startTransition] = useTransition();
-  const [flashcards, setFlashcards] = useState<GenerateFlashcardsOutput['flashcards'] | null>(null);
+  const [flashcards, setFlashcards] = useState<FlashcardWithAudio[] | null>(null);
   const [isFlipped, setIsFlipped] = useState(false);
   const [api, setApi] = React.useState<CarouselApi>()
   const [current, setCurrent] = React.useState(0)
   const [count, setCount] = React.useState(0)
+  const [generationStatus, setGenerationStatus] = useState('');
+  const audioRef = React.useRef<HTMLAudioElement | null>(null);
+
 
   const { toast } = useToast();
 
@@ -69,16 +77,38 @@ const FlashcardGenerator: FC = () => {
     setFlashcards(null);
     setIsFlipped(false);
     startTransition(async () => {
+      setGenerationStatus("Sto generando le flashcard...");
       const result = await generateFlashcards(values);
       if ('error' in result) {
         toast({
           variant: 'destructive',
-          title: 'Errore',
+          title: 'Errore nella generazione delle flashcard',
           description: result.error,
         });
+        setGenerationStatus('');
         return;
       }
-      setFlashcards(result.flashcards);
+      if (result.flashcards.length === 0) {
+        setFlashcards([]);
+        setGenerationStatus('');
+        return;
+      }
+
+      setGenerationStatus("Sto generando l'audio per le domande...");
+      const flashcardsWithAudio = await Promise.all(
+          result.flashcards.map(async (card) => {
+              try {
+                  const audioResult = await textToSpeech({ text: card.question });
+                  return { ...card, audioSrc: audioResult.audio };
+              } catch (e) {
+                  console.error("Errore nella generazione dell'audio:", e);
+                  return { ...card, audioSrc: undefined }; // Procedi senza audio in caso di errore
+              }
+          })
+      );
+      
+      setFlashcards(flashcardsWithAudio);
+      setGenerationStatus('');
     });
   }
 
@@ -93,6 +123,11 @@ const FlashcardGenerator: FC = () => {
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap() + 1)
       setIsFlipped(false);
+      // Stoppa l'audio quando si cambia slide
+      if(audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+      }
     })
   }, [api])
 
@@ -102,6 +137,18 @@ const FlashcardGenerator: FC = () => {
     setIsFlipped(false);
     setCurrent(0);
     setCount(0);
+    setGenerationStatus('');
+  }
+
+  const playAudio = (audioSrc?: string) => {
+    if (audioSrc) {
+        if(audioRef.current) {
+            audioRef.current.pause();
+        }
+        const audio = new Audio(audioSrc);
+        audioRef.current = audio;
+        audio.play();
+    }
   }
 
   return (
@@ -112,7 +159,7 @@ const FlashcardGenerator: FC = () => {
           Generatore di Flashcard AI
         </CardTitle>
         <CardDescription>
-          Trasforma il tuo materiale di studio in flashcard per un ripasso efficace.
+          Trasforma il tuo materiale di studio in flashcard per un ripasso efficace. L'IA leggerà le domande per te.
         </CardDescription>
       </CardHeader>
       {!flashcards && (
@@ -155,7 +202,7 @@ const FlashcardGenerator: FC = () => {
         <CardContent>
           <div className="flex flex-col items-center justify-center rounded-md border border-dashed p-8">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-            <p className="mt-2 text-sm text-muted-foreground">L'IA sta creando le tue flashcard...</p>
+            <p className="mt-2 text-sm text-muted-foreground">{generationStatus || "L'IA sta creando le tue flashcard..."}</p>
           </div>
         </CardContent>
       )}
@@ -176,6 +223,20 @@ const FlashcardGenerator: FC = () => {
                                     <div className="absolute flex flex-col justify-center items-center text-center p-6 [backface-visibility:hidden] h-full w-full bg-card rounded-lg">
                                         <p className="text-sm text-muted-foreground mb-2">Domanda</p>
                                         <p className="text-lg font-semibold">{card.question}</p>
+                                        {card.audioSrc && (
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="mt-4"
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // Evita di girare la card
+                                                    playAudio(card.audioSrc);
+                                                }}
+                                            >
+                                                <Volume2 />
+                                                <span className="sr-only">Ascolta la domanda</span>
+                                            </Button>
+                                        )}
                                     </div>
                                     {/* Retro */}
                                     <div className="absolute flex flex-col justify-center items-center text-center p-6 [backface-visibility:hidden] [transform:rotateY(180deg)] h-full w-full bg-secondary rounded-lg">
