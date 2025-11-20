@@ -20,6 +20,7 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
+  const [isTimerRunningOrPaused, setIsTimerRunningOrPaused] = useState(false);
   
   const synthRef = useRef<Tone.Synth | null>(null);
 
@@ -43,7 +44,8 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     setIsBreak(startBreak);
     setMinutes(startBreak ? BREAK_MINUTES : WORK_MINUTES);
     setSeconds(0);
-    setIsBlocking(false);
+    setIsBlocking(false); // Disattiva il blocco solo al reset o fine sessione
+    setIsTimerRunningOrPaused(false);
   }, [setIsBlocking]);
 
   useEffect(() => {
@@ -70,12 +72,15 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     const newIsActive = !isActive;
     setIsActive(newIsActive);
     
-    // Only set blocking if starting a work session
+    // Attiva il blocco all'avvio di una sessione di lavoro e tienilo attivo
     if (newIsActive && !isBreak) {
       setIsBlocking(true);
+      setIsTimerRunningOrPaused(true);
+    } else if (!newIsActive) {
+      // Se metti in pausa, non fare nulla riguardo al blocco
     } else {
-       // Unset blocking if pausing or if it's a break
-      setIsBlocking(false);
+      // Se avvii una pausa, non modificare il blocco
+      setIsTimerRunningOrPaused(true);
     }
   };
   
@@ -85,6 +90,7 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
     setMinutes(WORK_MINUTES);
     setSeconds(0);
     setIsBlocking(false);
+    setIsTimerRunningOrPaused(false);
   }
 
   const totalSeconds = (isBreak ? BREAK_MINUTES : WORK_MINUTES) * 60;
@@ -109,9 +115,9 @@ const FocusTimer: FC<FocusTimerProps> = ({ isBlocking, setIsBlocking }) => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-center gap-4">
-        <Button onClick={toggleTimer} size="lg" className="w-28 bg-primary hover:bg-primary/90">
+        <Button onClick={toggleTimer} size="lg" className="w-28 bg-primary hover:bg-primary/90" disabled={!isTimerRunningOrPaused && isActive}>
           {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
-          {isActive ? 'Pausa' : 'Avvia'}
+          {isActive ? 'Pausa' : isTimerRunningOrPaused ? 'Riprendi' : 'Avvia'}
         </Button>
         <Button onClick={handleReset} variant="outline" size="lg" disabled={isActive}>
           <RefreshCw />
