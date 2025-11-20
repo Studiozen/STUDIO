@@ -10,7 +10,12 @@ import { Progress } from '@/components/ui/progress';
 const WORK_MINUTES = 25;
 const BREAK_MINUTES = 5;
 
-const FocusTimer: FC = () => {
+interface FocusTimerProps {
+  isBlocking: boolean;
+  setIsBlocking: (isBlocking: boolean) => void;
+}
+
+const FocusTimer: FC<FocusTimerProps> = ({ setIsBlocking }) => {
   const [minutes, setMinutes] = useState(WORK_MINUTES);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
@@ -39,7 +44,8 @@ const FocusTimer: FC = () => {
     setIsBreak(newIsBreak);
     setMinutes(newIsBreak ? BREAK_MINUTES : WORK_MINUTES);
     setSeconds(0);
-  }, [isBreak]);
+    setIsBlocking(false);
+  }, [isBreak, setIsBlocking]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -62,7 +68,13 @@ const FocusTimer: FC = () => {
   }, [isActive, seconds, minutes, playSound, resetTimer]);
   
   const toggleTimer = () => {
-    setIsActive(!isActive);
+    const newIsActive = !isActive;
+    setIsActive(newIsActive);
+    if (newIsActive && !isBreak) {
+      setIsBlocking(true);
+    } else {
+      setIsBlocking(false);
+    }
   };
   
   const handleReset = () => {
@@ -70,6 +82,7 @@ const FocusTimer: FC = () => {
     setIsBreak(false);
     setMinutes(WORK_MINUTES);
     setSeconds(0);
+    setIsBlocking(false);
   }
 
   const totalSeconds = (isBreak ? BREAK_MINUTES : WORK_MINUTES) * 60;

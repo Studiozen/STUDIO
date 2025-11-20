@@ -26,9 +26,13 @@ const formSchema = z.object({
   site: z.string().url({ message: "Inserisci un URL valido." }),
 });
 
-const WebsiteBlocker: FC = () => {
+interface WebsiteBlockerProps {
+    isBlocking: boolean;
+    setIsBlocking: (isBlocking: boolean) => void;
+}
+
+const WebsiteBlocker: FC<WebsiteBlockerProps> = ({ isBlocking, setIsBlocking }) => {
   const [sites, setSites] = useState<string[]>([]);
-  const [isBlocking, setIsBlocking] = useState(false);
   const [timer, setTimer] = useState(60);
   const [isMounted, setIsMounted] = useState(false);
 

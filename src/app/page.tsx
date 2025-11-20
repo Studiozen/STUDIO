@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import Header from '@/components/dashboard/header';
 import FocusTimer from '@/components/dashboard/focus-timer';
 import AmbientSounds from '@/components/dashboard/ambient-sounds';
@@ -5,6 +8,8 @@ import Summarizer from '@/components/dashboard/summarizer';
 import WebsiteBlocker from '@/components/dashboard/website-blocker';
 
 export default function Home() {
+  const [isBlocking, setIsBlocking] = useState(false);
+
   return (
     <div className="flex min-h-screen w-full flex-col">
       <Header />
@@ -14,9 +19,9 @@ export default function Home() {
             <Summarizer />
           </div>
           <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-            <FocusTimer />
+            <FocusTimer isBlocking={isBlocking} setIsBlocking={setIsBlocking} />
             <AmbientSounds />
-            <WebsiteBlocker />
+            <WebsiteBlocker isBlocking={isBlocking} setIsBlocking={setIsBlocking} />
           </div>
         </div>
       </main>
