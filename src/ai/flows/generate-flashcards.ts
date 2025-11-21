@@ -38,7 +38,7 @@ const prompt = ai.definePrompt({
   name: 'generateFlashcardsPrompt',
   input: { schema: GenerateFlashcardsInputSchema },
   output: { schema: GenerateFlashcardsOutputSchema },
-  prompt: `Sei un tutor esperto. Crea una serie di domande e risposte (flashcard) basate sul testo fornito per aiutare uno studente a ripassare. Le domande dovrebbero coprire i concetti chiave e le informazioni importanti. Per ogni risposta, fornisci anche una breve spiegazione.
+  prompt: `Sei un tutor esperto. Crea una serie di domande e risposte (flashcard) basate sul testo fornito per aiutare uno studente a ripassare. Le domande dovrebbero coprire i concetti chiave e le informazioni importanti. Assicurati che ogni domanda sia unica e copra un aspetto diverso del testo. Per ogni risposta, fornisci anche una breve spiegazione.
 
 {{#if learningStyle}}
 Se il learningStyle è 'simplified', adatta la complessità delle domande, risposte e spiegazioni per un utente con bisogni specifici di apprendimento (come la dislessia). Usa frasi brevi, un linguaggio semplice e concetti chiari.
