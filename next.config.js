@@ -9,7 +9,7 @@ const nextConfig = {
     ],
   },
   devIndicators: {
-    buildActivityPosition: 'bottom-right',
+    position: 'bottom-right',
   },
 };
 
