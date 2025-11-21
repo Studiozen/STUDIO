@@ -8,7 +8,9 @@ const nextConfig = {
       },
     ],
   },
-  allowedDevOrigins: ["https://*.cloudworkstations.dev"],
+  devIndicators: {
+    allowedDevOrigins: ["https://*.cloudworkstations.dev"],
+  },
 };
 
 module.exports = nextConfig;
