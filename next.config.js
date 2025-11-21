@@ -8,8 +8,8 @@ const nextConfig = {
       },
     ],
   },
-  devIndicators: {
-    position: 'bottom-right',
+  experimental: {
+    allowedDevOrigins: ['https://*.cloudworkstations.dev'],
   },
 };
 
