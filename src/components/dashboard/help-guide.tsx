@@ -25,7 +25,7 @@ const helpSections = [
     {
         icon: BookOpen,
         title: "Generatore di Flashcard AI",
-        content: "Trasforma i tuoi appunti in flashcard. Incolla il testo e clicca 'Genera Flashcard'. L'IA creerà una serie di domande e risposte per aiutarti a ripassare in modo interattivo."
+        content: "Trasforma i tuoi appunti in flashcard. Incolla il testo e clicca 'Genera Flashcard'. L'IA creerà una serie di domande. Clicca su una card per svelare la risposta e la spiegazione."
     },
     {
         icon: Timer,

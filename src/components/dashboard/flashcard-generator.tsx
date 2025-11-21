@@ -81,11 +81,11 @@ export default function FlashcardGenerator() {
                 onClick={handleFlip}
             >
                 {/* Front of card */}
-                <div className="absolute w-full h-full backface-hidden bg-card border rounded-lg p-6 flex flex-col justify-center items-center text-center">
+                <div className="absolute w-full h-full backface-hidden bg-card border rounded-lg p-6 flex flex-col justify-center items-center text-center cursor-pointer">
                     <p className="text-lg font-semibold">{question}</p>
                 </div>
                 {/* Back of card */}
-                <div className="absolute w-full h-full backface-hidden bg-card border rounded-lg p-6 flex flex-col justify-center items-center text-center rotate-y-180">
+                <div className="absolute w-full h-full backface-hidden bg-card border rounded-lg p-6 flex flex-col justify-center items-center text-center rotate-y-180 cursor-pointer">
                     <p className="text-lg font-bold text-primary">{answer}</p>
                     <p className="mt-4 text-sm text-muted-foreground italic">{explanation}</p>
                 </div>
@@ -167,7 +167,7 @@ export default function FlashcardGenerator() {
               <Lightbulb className="h-4 w-4" />
               <AlertTitle>Consiglio per lo studio</AlertTitle>
               <AlertDescription>
-                Clicca su una flashcard per girarla e vedere la risposta. Usa le frecce per navigare.
+                Clicca su una flashcard per girarla e vedere la risposta con la spiegazione. Usa le frecce per navigare.
               </AlertDescription>
             </Alert>
           </div>
