@@ -4,16 +4,20 @@ import { useState, useTransition, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookOpen, Loader2, Wand2, Lightbulb, Check, X, Send } from 'lucide-react';
+import { BookOpen, Loader2, Wand2, Lightbulb, Send } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { generateFlashcards, type GenerateFlashcardsOutput, type GenerateFlashcardsInput } from '@/ai/flows/generate-flashcards';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from '../ui/carousel';
 import React from 'react';
 import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useDoc } from '@/firebase/firestore/use-doc';
-import { cn } from '@/lib/utils';
 import { Input } from '../ui/input';
+
+interface FlashcardData {
+  question: string;
+  answer: string;
+  explanation: string;
+}
 
 export default function FlashcardGenerator() {
   const { user } = useUser();
@@ -29,28 +33,13 @@ export default function FlashcardGenerator() {
   const [text, setText] = useState('');
   const [result, setResult] = useState<GenerateFlashcardsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
-
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
-
-  React.useEffect(() => {
-    if (!api) {
-      return
-    }
-
-    setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap() + 1);
-
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap() + 1);
-    })
-  }, [api]);
+  const [selectedQuestion, setSelectedQuestion] = useState<FlashcardData | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setResult(null);
+    setSelectedQuestion(null);
 
     if (!text) {
       setError('Per favore, inserisci del testo da cui generare le flashcard.');
@@ -67,8 +56,12 @@ export default function FlashcardGenerator() {
       }
     });
   };
+  
+  const handleQuestionSelect = (flashcard: FlashcardData) => {
+      setSelectedQuestion(flashcard);
+  }
 
-  function Flashcard({ question, answer, explanation }: { question: string, answer: string, explanation: string }) {
+  function Flashcard({ question, answer, explanation }: FlashcardData) {
     const [userAnswer, setUserAnswer] = useState('');
     const [feedback, setFeedback] = useState<{ isCorrect: boolean; message: React.ReactNode } | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -105,7 +98,7 @@ export default function FlashcardGenerator() {
     }, [question]);
 
     return (
-        <div className="w-full h-96 bg-card border rounded-lg p-6 flex flex-col justify-between items-center text-center">
+        <div className="w-full min-h-72 bg-card border rounded-lg p-6 flex flex-col justify-between items-center text-center mt-4">
             <p className="text-lg font-semibold">{question}</p>
             
             {!feedback ? (
@@ -130,8 +123,8 @@ export default function FlashcardGenerator() {
             )}
 
 
-            <div className="text-xs text-muted-foreground self-end">
-                {feedback ? 'Usa le frecce per la prossima domanda.' : 'Scrivi la risposta e premi invio.'}
+            <div className="text-xs text-muted-foreground self-end mt-4">
+                {feedback ? 'Scegli un\'altra domanda dalla lista.' : 'Scrivi la risposta e premi invio.'}
             </div>
         </div>
     );
@@ -190,27 +183,27 @@ export default function FlashcardGenerator() {
 
         {result && (
           <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-2">Mettiti alla prova</h3>
-            <Carousel setApi={setApi} className="w-full">
-              <CarouselContent>
+            <h3 className="text-lg font-semibold mb-2">Scegli una domanda per metterti alla prova</h3>
+            <div className='flex flex-col gap-2'>
                 {result.flashcards.map((card, index) => (
-                  <CarouselItem key={index}>
-                     <Flashcard question={card.question} answer={card.answer} explanation={card.explanation} />
-                  </CarouselItem>
+                    <Button 
+                        key={index} 
+                        variant="outline" 
+                        className='justify-start text-left h-auto'
+                        onClick={() => handleQuestionSelect(card)}
+                    >
+                       {index + 1}. {card.question}
+                    </Button>
                 ))}
-              </CarouselContent>
-              <CarouselPrevious className='-left-4 sm:-left-12' />
-              <CarouselNext className='-right-4 sm:-right-12' />
-            </Carousel>
-             <div className="py-2 text-center text-sm text-muted-foreground">
-                Domanda {current} di {count}
             </div>
+            
+            {selectedQuestion && <Flashcard {...selectedQuestion} />}
 
             <Alert className="mt-4">
               <Lightbulb className="h-4 w-4" />
               <AlertTitle>Consiglio per lo studio</AlertTitle>
               <AlertDescription>
-                Rispondi alla domanda e clicca 'Invia'. Se sbagli, ti verrà mostrata la spiegazione. Usa le frecce per navigare tra le domande.
+                Clicca su una domanda per iniziare. Scrivi la tua risposta e premi 'Invia' per verificare.
               </AlertDescription>
             </Alert>
           </div>
