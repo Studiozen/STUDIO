@@ -186,16 +186,18 @@ export default function FlashcardGenerator() {
         {result && (
           <div className="mt-6">
             <h3 className="text-lg font-semibold mb-2">Scegli una domanda per metterti alla prova</h3>
-            <div className='flex flex-col gap-2'>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
                 {result.flashcards.map((card, index) => (
-                    <Button 
-                        key={index} 
-                        variant="outline" 
-                        className='justify-start text-left h-auto'
+                    <div
+                        key={index}
+                        className={cn(
+                            'p-3 border rounded-lg cursor-pointer transition-colors',
+                            selectedQuestion?.question === card.question ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'
+                        )}
                         onClick={() => handleQuestionSelect(card)}
                     >
-                       {index + 1}. {card.question}
-                    </Button>
+                       <p className='font-medium text-sm'>{index + 1}. {card.question}</p>
+                    </div>
                 ))}
             </div>
             
