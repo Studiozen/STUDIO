@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookOpen, Loader2, Wand2, Lightbulb, RefreshCcw } from 'lucide-react';
+import { BookOpen, Loader2, Wand2, Lightbulb, Check, X, Send } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { generateFlashcards, type GenerateFlashcardsOutput, type GenerateFlashcardsInput } from '@/ai/flows/generate-flashcards';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from '../ui/carousel';
@@ -13,6 +13,7 @@ import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { cn } from '@/lib/utils';
+import { Input } from '../ui/input';
 
 export default function FlashcardGenerator() {
   const { user } = useUser();
@@ -68,27 +69,69 @@ export default function FlashcardGenerator() {
   };
 
   function Flashcard({ question, answer, explanation }: { question: string, answer: string, explanation: string }) {
-    const [isFlipped, setIsFlipped] = useState(false);
+    const [userAnswer, setUserAnswer] = useState('');
+    const [feedback, setFeedback] = useState<{ isCorrect: boolean; message: React.ReactNode } | null>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
 
-    const handleFlip = () => {
-        setIsFlipped(!isFlipped);
+    const handleAnswerSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!userAnswer.trim()) return;
+
+        const isCorrect = userAnswer.trim().toLowerCase() === answer.trim().toLowerCase();
+
+        if (isCorrect) {
+            setFeedback({
+                isCorrect: true,
+                message: <p className="text-green-600 font-semibold">Corretto!</p>
+            });
+        } else {
+            setFeedback({
+                isCorrect: false,
+                message: (
+                    <div className="text-left space-y-2">
+                        <p className="font-semibold text-red-600">Sbagliato.</p>
+                        <p><strong>Risposta corretta:</strong> {answer}</p>
+                        <p><strong>Spiegazione:</strong> <em className="text-muted-foreground">{explanation}</em></p>
+                    </div>
+                )
+            });
+        }
     };
+    
+    useEffect(() => {
+        setFeedback(null);
+        setUserAnswer('');
+        inputRef.current?.focus();
+    }, [question]);
 
     return (
-        <div className="w-full h-80 perspective-1000">
-            <div
-                className={cn("relative w-full h-full transform-style-3d transition-transform duration-700", isFlipped ? 'rotate-y-180' : '')}
-                onClick={handleFlip}
-            >
-                {/* Front of card */}
-                <div className="absolute w-full h-full backface-hidden bg-card border rounded-lg p-6 flex flex-col justify-center items-center text-center cursor-pointer">
-                    <p className="text-lg font-semibold">{question}</p>
+        <div className="w-full h-96 bg-card border rounded-lg p-6 flex flex-col justify-between items-center text-center">
+            <p className="text-lg font-semibold">{question}</p>
+            
+            {!feedback ? (
+                 <form onSubmit={handleAnswerSubmit} className="w-full max-w-sm space-y-4">
+                     <Input
+                        ref={inputRef}
+                        type="text"
+                        value={userAnswer}
+                        onChange={(e) => setUserAnswer(e.target.value)}
+                        placeholder="Scrivi la tua risposta..."
+                        className="text-center"
+                     />
+                     <Button type="submit" disabled={!userAnswer.trim()}>
+                        <Send className="mr-2" />
+                        Invia Risposta
+                    </Button>
+                 </form>
+            ) : (
+                <div className="w-full bg-muted/50 p-4 rounded-md text-sm">
+                    {feedback.message}
                 </div>
-                {/* Back of card */}
-                <div className="absolute w-full h-full backface-hidden bg-card border rounded-lg p-6 flex flex-col justify-center items-center text-center rotate-y-180 cursor-pointer">
-                    <p className="text-lg font-bold text-primary">{answer}</p>
-                    <p className="mt-4 text-sm text-muted-foreground italic">{explanation}</p>
-                </div>
+            )}
+
+
+            <div className="text-xs text-muted-foreground self-end">
+                {feedback ? 'Usa le frecce per la prossima domanda.' : 'Scrivi la risposta e premi invio.'}
             </div>
         </div>
     );
@@ -102,7 +145,7 @@ export default function FlashcardGenerator() {
           Generatore di Flashcard AI
         </CardTitle>
         <CardDescription>
-          Trasforma i tuoi appunti in flashcard interattive per ripassare in modo efficace.
+          Trasforma i tuoi appunti in un quiz interattivo per testare la tua conoscenza.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -124,7 +167,7 @@ export default function FlashcardGenerator() {
             ) : (
               <>
                 <Wand2 className="mr-2 h-4 w-4" />
-                Genera Flashcard
+                Genera Domande
               </>
             )}
           </Button>
@@ -140,14 +183,14 @@ export default function FlashcardGenerator() {
         {isPending && (
             <div className='flex flex-col items-center justify-center gap-4 mt-8 text-center'>
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className='font-semibold'>L'IA sta creando le tue flashcard...</p>
+                <p className='font-semibold'>L'IA sta creando le tue domande...</p>
                 <p className='text-sm text-muted-foreground'>Potrebbe volerci qualche istante.</p>
             </div>
         )}
 
         {result && (
           <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-2">Le tue Flashcard</h3>
+            <h3 className="text-lg font-semibold mb-2">Mettiti alla prova</h3>
             <Carousel setApi={setApi} className="w-full">
               <CarouselContent>
                 {result.flashcards.map((card, index) => (
@@ -160,14 +203,14 @@ export default function FlashcardGenerator() {
               <CarouselNext className='-right-4 sm:-right-12' />
             </Carousel>
              <div className="py-2 text-center text-sm text-muted-foreground">
-                Flashcard {current} di {count}
+                Domanda {current} di {count}
             </div>
 
             <Alert className="mt-4">
               <Lightbulb className="h-4 w-4" />
               <AlertTitle>Consiglio per lo studio</AlertTitle>
               <AlertDescription>
-                Clicca su una flashcard per girarla e vedere la risposta con la spiegazione. Usa le frecce per navigare.
+                Rispondi alla domanda e clicca 'Invia'. Se sbagli, ti verrà mostrata la spiegazione. Usa le frecce per navigare tra le domande.
               </AlertDescription>
             </Alert>
           </div>
