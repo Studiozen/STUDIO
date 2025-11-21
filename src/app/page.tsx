@@ -4,9 +4,6 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase';
 import Header from '@/components/dashboard/header';
-import FocusTimer from '@/components/dashboard/focus-timer';
-import Summarizer from '@/components/dashboard/summarizer';
-import FlashcardGenerator from '@/components/dashboard/flashcard-generator';
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
@@ -30,13 +27,14 @@ export default function Home() {
     <div className="flex min-h-screen w-full flex-col">
       <Header />
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-          <div className="lg:col-span-2 grid gap-4">
-            <Summarizer />
-            <FlashcardGenerator />
-          </div>
-          <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-            <FocusTimer />
+        <div className="flex h-[400px] w-full items-center justify-center rounded-lg border border-dashed bg-card">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold tracking-tight">
+              Benvenuto in StudioZen
+            </h1>
+            <p className="text-muted-foreground">
+              La tua dashboard è pronta.
+            </p>
           </div>
         </div>
       </main>
