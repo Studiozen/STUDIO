@@ -14,33 +14,23 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Button } from '@/components/ui/button';
-import { HelpCircle, TextQuote, BookOpen, Timer, Music, ShieldBan } from 'lucide-react';
+import { HelpCircle, TextQuote, BookOpen, Timer } from 'lucide-react';
 
 const helpSections = [
     {
         icon: TextQuote,
         title: "Riassunto AI",
-        content: "Incolla qualsiasi testo nel riquadro 'Materiale di Studio', scegli uno stile (paragrafo, punti elenco, ecc.) e clicca 'Riassumi'. L'IA creerà un riassunto per te. Puoi anche cliccare 'Ascolta' per sentire il riassunto letto ad alta voce."
+        content: "Incolla qualsiasi testo nell'area dedicata, scegli uno stile di riepilogo (Paragrafo, Punti Elenco, Concetti Chiave) e clicca 'Riassumi'. L'IA creerà un riassunto personalizzato per te."
     },
     {
         icon: BookOpen,
         title: "Generatore di Flashcard AI",
-        content: "Trasforma i tuoi appunti in flashcard. Incolla il testo e clicca 'Genera Flashcard'. L'IA creerà una serie di domande. Clicca su una card per svelare la risposta e la spiegazione."
+        content: "Trasforma i tuoi appunti in un quiz interattivo. Incolla il testo e clicca 'Genera Domande'. Verrà visualizzato un elenco di domande. Clicca su una domanda per visualizzare le opzioni a risposta multipla. Seleziona una risposta per ricevere un feedback immediato."
     },
     {
         icon: Timer,
         title: "Timer Concentrazione (Pomodoro)",
         content: "Usa la tecnica del Pomodoro per massimizzare la tua produttività. Clicca 'Avvia' per iniziare una sessione di studio di 25 minuti. Al termine, il timer ti avviserà e partirà automaticamente una pausa di 5 minuti."
-    },
-    {
-        icon: Music,
-        title: "Musica Rilassante",
-        content: "Scegli un suono d'ambiente per creare l'atmosfera giusta e ridurre le distrazioni. Clicca su una delle opzioni (es. 'Piano Classico') per avviare o interrompere la musica."
-    },
-    {
-        icon: ShieldBan,
-        title: "Blocco Siti Web",
-        content: "Durante le sessioni di concentrazione, l'app blocca automaticamente una lista predefinita di siti che distraggono (es. social media). La funzione si attiva insieme al 'Timer Concentrazione'."
     }
 ]
 
