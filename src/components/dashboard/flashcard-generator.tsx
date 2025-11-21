@@ -11,10 +11,11 @@ import React from 'react';
 import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useDoc } from '@/firebase/firestore/use-doc';
-import { Input } from '../ui/input';
+import { cn } from '@/lib/utils';
 
 interface FlashcardData {
   question: string;
+  options: string[];
   answer: string;
   explanation: string;
 }
@@ -61,21 +62,21 @@ export default function FlashcardGenerator() {
       setSelectedQuestion(flashcard);
   }
 
-  function Flashcard({ question, answer, explanation }: FlashcardData) {
-    const [userAnswer, setUserAnswer] = useState('');
+  function Flashcard({ question, options, answer, explanation }: FlashcardData) {
+    const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [feedback, setFeedback] = useState<{ isCorrect: boolean; message: React.ReactNode } | null>(null);
-    const inputRef = useRef<HTMLInputElement>(null);
 
-    const handleAnswerSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!userAnswer.trim()) return;
+    const handleOptionSelect = (option: string) => {
+        if (feedback) return; // Don't allow changing answer after submission
 
-        const isCorrect = userAnswer.trim().toLowerCase() === answer.trim().toLowerCase();
+        setSelectedOption(option);
+
+        const isCorrect = option === answer;
 
         if (isCorrect) {
             setFeedback({
                 isCorrect: true,
-                message: <p className="text-green-600 font-semibold">Corretto!</p>
+                message: <p className="font-semibold text-green-600">Corretto!</p>
             });
         } else {
             setFeedback({
@@ -93,38 +94,39 @@ export default function FlashcardGenerator() {
     
     useEffect(() => {
         setFeedback(null);
-        setUserAnswer('');
-        inputRef.current?.focus();
+        setSelectedOption(null);
     }, [question]);
 
     return (
-        <div className="w-full min-h-72 bg-card border rounded-lg p-6 flex flex-col justify-between items-center text-center mt-4">
+        <div className="w-full min-h-72 bg-card border rounded-lg p-6 flex flex-col justify-between items-center text-center mt-4 space-y-4">
             <p className="text-lg font-semibold">{question}</p>
             
-            {!feedback ? (
-                 <form onSubmit={handleAnswerSubmit} className="w-full max-w-sm space-y-4">
-                     <Input
-                        ref={inputRef}
-                        type="text"
-                        value={userAnswer}
-                        onChange={(e) => setUserAnswer(e.target.value)}
-                        placeholder="Scrivi la tua risposta..."
-                        className="text-center"
-                     />
-                     <Button type="submit" disabled={!userAnswer.trim()}>
-                        <Send className="mr-2" />
-                        Invia Risposta
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+                {options.map((option, index) => (
+                    <Button
+                        key={index}
+                        variant="outline"
+                        className={cn(
+                            "h-auto py-3 whitespace-normal",
+                            selectedOption && option === answer && "bg-green-100 border-green-400 text-green-800 hover:bg-green-200",
+                            selectedOption === option && selectedOption !== answer && "bg-red-100 border-red-400 text-red-800 hover:bg-red-200"
+                        )}
+                        onClick={() => handleOptionSelect(option)}
+                        disabled={!!feedback}
+                    >
+                        {option}
                     </Button>
-                 </form>
-            ) : (
-                <div className="w-full bg-muted/50 p-4 rounded-md text-sm">
+                ))}
+            </div>
+
+            {feedback && (
+                <div className="w-full bg-muted/50 p-4 rounded-md text-sm mt-4">
                     {feedback.message}
                 </div>
             )}
 
-
             <div className="text-xs text-muted-foreground self-end mt-4">
-                {feedback ? 'Scegli un\'altra domanda dalla lista.' : 'Scrivi la risposta e premi invio.'}
+                {feedback ? 'Scegli un\'altra domanda dalla lista.' : 'Seleziona una risposta.'}
             </div>
         </div>
     );
@@ -203,7 +205,7 @@ export default function FlashcardGenerator() {
               <Lightbulb className="h-4 w-4" />
               <AlertTitle>Consiglio per lo studio</AlertTitle>
               <AlertDescription>
-                Clicca su una domanda per iniziare. Scrivi la tua risposta e premi 'Invia' per verificare.
+                Clicca su una domanda per iniziare. Scegli la risposta che ritieni corretta per ricevere un feedback immediato.
               </AlertDescription>
             </Alert>
           </div>

@@ -18,8 +18,9 @@ const GenerateFlashcardsInputSchema = z.object({
 export type GenerateFlashcardsInput = z.infer<typeof GenerateFlashcardsInputSchema>;
 
 const FlashcardSchema = z.object({
-    question: z.string().describe('La domanda per la flashcard.'),
-    answer: z.string().describe('La risposta alla domanda della flashcard.'),
+    question: z.string().describe('La domanda a scelta multipla.'),
+    options: z.array(z.string()).describe('Un array di 4 possibili risposte per la domanda.'),
+    answer: z.string().describe('La risposta corretta dall\'array di opzioni.'),
     explanation: z.string().describe('Una breve spiegazione della risposta corretta.'),
 });
 
@@ -38,10 +39,10 @@ const prompt = ai.definePrompt({
   name: 'generateFlashcardsPrompt',
   input: { schema: GenerateFlashcardsInputSchema },
   output: { schema: GenerateFlashcardsOutputSchema },
-  prompt: `Sei un tutor esperto. Crea una serie di 20 domande e risposte diverse (flashcard) basate sul testo fornito per aiutare uno studente a ripassare. Le domande dovrebbero coprire i concetti chiave e le informazioni importanti. Assicurati che ogni domanda sia unica e copra un aspetto diverso del testo. Per ogni risposta, fornisci anche una breve spiegazione.
+  prompt: `Sei un tutor esperto. Crea una serie di 20 domande a scelta multipla diverse basate sul testo fornito per aiutare uno studente a ripassare. Ogni domanda deve avere 4 opzioni di risposta: una corretta e tre verosimili ma errate. Assicurati che ogni domanda sia unica e copra un aspetto diverso del testo. Per ogni domanda, fornisci la risposta corretta e una breve spiegazione.
 
 {{#if learningStyle}}
-Se il learningStyle è 'simplified', adatta la complessità delle domande, risposte e spiegazioni per un utente con bisogni specifici di apprendimento (come la dislessia). Usa frasi brevi, un linguaggio semplice e concetti chiari.
+Se il learningStyle è 'simplified', adatta la complessità delle domande, opzioni, risposte e spiegazioni per un utente con bisogni specifici di apprendimento (come la dislessia). Usa frasi brevi, un linguaggio semplice e concetti chiari.
 {{/if}}
 
 Testo:
