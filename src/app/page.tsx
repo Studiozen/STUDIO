@@ -1,9 +1,29 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, Suspense, lazy } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase';
 import Header from '@/components/dashboard/header';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const Summarizer = lazy(() => import('@/components/dashboard/summarizer'));
+const FlashcardGenerator = lazy(() => import('@/components/dashboard/flashcard-generator'));
+const FocusTimer = lazy(() => import('@/components/dashboard/focus-timer'));
+
+
+function DashboardFallback() {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="lg:col-span-2 space-y-8">
+        <Skeleton className="h-[400px] w-full" />
+        <Skeleton className="h-[400px] w-full" />
+      </div>
+      <div className="space-y-8">
+        <Skeleton className="h-[250px] w-full" />
+      </div>
+    </div>
+  )
+}
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
@@ -26,17 +46,18 @@ export default function Home() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <Header />
-      <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-        <div className="flex h-[400px] w-full items-center justify-center rounded-lg border border-dashed bg-card">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold tracking-tight">
-              Benvenuto in StudioZen
-            </h1>
-            <p className="text-muted-foreground">
-              La tua dashboard è pronta.
-            </p>
-          </div>
-        </div>
+      <main className="flex-1 p-4 md:p-8">
+          <Suspense fallback={<DashboardFallback />}>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                <div className="lg:col-span-2 space-y-8">
+                    <Summarizer />
+                    <FlashcardGenerator />
+                </div>
+                <div className="space-y-8">
+                    <FocusTimer />
+                </div>
+            </div>
+          </Suspense>
       </main>
     </div>
   );
