@@ -1,12 +1,6 @@
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     remotePatterns: [
       {
@@ -15,8 +9,12 @@ const config = {
         port: '',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      }
     ],
   },
 };
 
-module.exports = config;
+export default config;
