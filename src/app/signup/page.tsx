@@ -39,6 +39,7 @@ import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { it } from 'date-fns/locale';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Il nome deve contenere almeno 2 caratteri.' }),
@@ -52,6 +53,9 @@ const formSchema = z.object({
   country: z.string().min(2, { message: "Il paese deve contenere almeno 2 caratteri."}),
   schoolType: z.string({ required_error: 'Per favore, seleziona il tuo tipo di scuola.' }),
   learningStyle: z.string({ required_error: 'Per favore, seleziona uno stile di apprendimento.' }),
+  privacy: z.boolean().refine(val => val === true, {
+    message: "Devi accettare l'Informativa sulla Privacy per continuare.",
+  }),
 });
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -82,6 +86,7 @@ export default function SignupPage() {
       password: '',
       country: '',
       learningStyle: 'standard',
+      privacy: false,
     },
   });
 
@@ -343,6 +348,34 @@ export default function SignupPage() {
                   )}
                 />
 
+                <FormField
+                  control={form.control}
+                  name="privacy"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>
+                           Accetta i termini e le condizioni
+                        </FormLabel>
+                        <p className="text-sm text-muted-foreground">
+                          Dichiaro di aver letto e accettato l'{' '}
+                          <Link href="/privacy" className="underline hover:text-primary">
+                            Informativa sulla Privacy
+                          </Link>
+                          .
+                        </p>
+                         <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
                 <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                   {form.formState.isSubmitting ? 'Creazione in corso...' : 'Crea Account'}
                 </Button>
@@ -363,3 +396,5 @@ export default function SignupPage() {
     </div>
   );
 }
+
+    
