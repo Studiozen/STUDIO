@@ -356,6 +356,9 @@ export default function SignupPage() {
             </div>
           </CardContent>
         </Card>
+        <div className="mt-4 text-center text-xs text-muted-foreground">
+          Creato dal Team StudioZen
+        </div>
       </div>
     </div>
   );
