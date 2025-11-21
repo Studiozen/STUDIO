@@ -59,7 +59,11 @@ export default function FlashcardGenerator() {
   };
   
   const handleQuestionSelect = (flashcard: FlashcardData) => {
-      setSelectedQuestion(flashcard);
+      if (selectedQuestion?.question === flashcard.question) {
+          setSelectedQuestion(null); // Deselect if the same question is clicked
+      } else {
+          setSelectedQuestion(flashcard); // Select the new question
+      }
   }
 
   function Flashcard({ question, options, answer, explanation }: FlashcardData) {
@@ -105,7 +109,7 @@ export default function FlashcardGenerator() {
     }, [feedback]);
 
     return (
-        <div className="w-full min-h-72 bg-card border rounded-lg p-6 flex flex-col justify-between items-center text-center mt-4 space-y-4">
+        <div className="w-full min-h-72 bg-card border rounded-lg p-6 flex flex-col justify-between items-center text-center mt-4 space-y-4 animate-in fade-in-50">
             <p className="text-lg font-semibold">{question}</p>
             
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
@@ -133,7 +137,7 @@ export default function FlashcardGenerator() {
             )}
 
             <div className="text-xs text-muted-foreground self-end mt-4">
-                {feedback ? 'Scegli un\'altra domanda dalla lista.' : 'Seleziona una risposta.'}
+                {feedback ? 'Puoi chiudere questa domanda o sceglierne un\'altra.' : 'Seleziona una risposta.'}
             </div>
         </div>
     );
@@ -195,20 +199,24 @@ export default function FlashcardGenerator() {
             <h3 className="text-lg font-semibold mb-2">Scegli una domanda per metterti alla prova</h3>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
                 {result.flashcards.map((card, index) => (
-                    <div
-                        key={index}
-                        className={cn(
-                            'p-3 border rounded-lg cursor-pointer transition-colors',
-                            selectedQuestion?.question === card.question ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'
+                    <div key={index}>
+                        <div
+                            className={cn(
+                                'p-3 border rounded-lg cursor-pointer transition-colors',
+                                selectedQuestion?.question === card.question ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'
+                            )}
+                            onClick={() => handleQuestionSelect(card)}
+                        >
+                           <p className='font-medium text-sm'>{index + 1}. {card.question}</p>
+                        </div>
+                        {selectedQuestion?.question === card.question && (
+                             <div className="md:col-span-2">
+                                <Flashcard {...selectedQuestion} />
+                             </div>
                         )}
-                        onClick={() => handleQuestionSelect(card)}
-                    >
-                       <p className='font-medium text-sm'>{index + 1}. {card.question}</p>
                     </div>
                 ))}
             </div>
-            
-            {selectedQuestion && <Flashcard {...selectedQuestion} />}
 
             <Alert className="mt-4">
               <Lightbulb className="h-4 w-4" />
