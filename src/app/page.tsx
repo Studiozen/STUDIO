@@ -7,17 +7,6 @@ import Header from '@/components/dashboard/header';
 import FocusTimer from '@/components/dashboard/focus-timer';
 import Summarizer from '@/components/dashboard/summarizer';
 import FlashcardGenerator from '@/components/dashboard/flashcard-generator';
-import dynamic from 'next/dynamic';
-import { Skeleton } from '@/components/ui/skeleton';
-
-const AmbientSounds = dynamic(
-  () => import('@/components/dashboard/ambient-sounds'),
-  { 
-    ssr: false,
-    loading: () => <Skeleton className="h-[200px] w-full" /> 
-  }
-);
-
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
@@ -48,7 +37,6 @@ export default function Home() {
           </div>
           <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
             <FocusTimer />
-            <AmbientSounds />
           </div>
         </div>
       </main>
