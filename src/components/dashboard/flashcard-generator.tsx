@@ -22,7 +22,7 @@ export default function FlashcardGenerator() {
     () => (user ? doc(firestore, `users/${user.uid}`) : null),
     [firestore, user]
   );
-  const { data: userProfile } = useDoc(userProfile);
+  const { data: userProfile } = useDoc(userDocRef);
 
   const [isPending, startTransition] = useTransition();
   const [text, setText] = useState('');

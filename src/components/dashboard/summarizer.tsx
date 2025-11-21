@@ -32,7 +32,7 @@ export default function Summarizer() {
     () => (user ? doc(firestore, `users/${user.uid}`) : null),
     [firestore, user]
   );
-  const { data: userProfile } = useDoc(userProfile);
+  const { data: userProfile } = useDoc(userDocRef);
 
 
   const handleSummarize = async () => {
