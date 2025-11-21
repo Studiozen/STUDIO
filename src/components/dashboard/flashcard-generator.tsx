@@ -100,9 +100,7 @@ export default function FlashcardGenerator() {
 
     useEffect(() => {
         if (feedback && feedbackRef.current) {
-            setTimeout(() => {
-                feedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
+            feedbackRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }, [feedback]);
 
