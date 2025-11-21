@@ -12,7 +12,7 @@ import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useDoc } from '@/firebase/firestore/use-doc';
 
-type SummaryStyle = 'bullet points' | 'concise paragraph' | 'key concepts';
+type SummaryStyle = 'concise paragraph' | 'bullet points' | 'key concepts';
 
 export default function Summarizer() {
   const { user } = useUser();
@@ -20,10 +20,10 @@ export default function Summarizer() {
   const [isPending, startTransition] = useTransition();
   const [text, setText] = useState('');
   const [activeStyle, setActiveStyle] = useState<SummaryStyle>('concise paragraph');
-  const [summaries, setSummaries] = useState<Record<SummaryStyle, string | null>>({
-    'concise paragraph': null,
-    'bullet points': null,
-    'key concepts': null,
+  const [summaries, setSummaries] = useState({
+    'concise paragraph': '',
+    'bullet points': '',
+    'key concepts': '',
   });
   const [error, setError] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
@@ -43,19 +43,31 @@ export default function Summarizer() {
     }
     
     setIsCopied(false);
+    setSummaries({
+        'concise paragraph': '',
+        'bullet points': '',
+        'key concepts': '',
+    });
 
     startTransition(async () => {
         try {
             const input: GenerateSummarizationStylesInput = {
                 text,
-                style: activeStyle,
                 learningStyle: userProfile?.learningStyle,
             };
             const result = await generateSummarizationStyles(input);
-            setSummaries(prev => ({ ...prev, [activeStyle]: result.summary }));
+            setSummaries({
+                'concise paragraph': result.conciseParagraph,
+                'bullet points': result.bulletPoints,
+                'key concepts': result.keyConcepts,
+            });
         } catch (e) {
             console.error(e);
-            setError("Si è verificato un errore durante la generazione del riassunto. Riprova.");
+            let errorMessage = "Si è verificato un errore durante la generazione del riassunto. Riprova.";
+            if (e instanceof Error && e.message.includes('429')) {
+                errorMessage = "Hai effettuato troppe richieste in un breve periodo. Attendi qualche istante e riprova.";
+            }
+            setError(errorMessage);
         }
     });
   };
@@ -75,6 +87,7 @@ export default function Summarizer() {
   }
 
   const currentSummary = summaries[activeStyle];
+  const hasGenerated = Object.values(summaries).some(s => s);
 
   return (
     <Card>
@@ -104,7 +117,7 @@ export default function Summarizer() {
                     <p className='font-semibold'>L'IA sta elaborando...</p>
                 </div>
             )}
-            {currentSummary ? (
+            {hasGenerated && currentSummary ? (
               <div className='prose prose-sm dark:prose-invert max-w-none flex-1'>
                 {activeStyle === 'bullet points' ? (
                      <ul className="list-disc pl-5 space-y-1">
@@ -156,7 +169,7 @@ export default function Summarizer() {
             ) : (
               <>
                 <Wand2 className="mr-2 h-4 w-4" />
-                {summaries[activeStyle] ? 'Rigenera' : 'Riassumi'}
+                {hasGenerated ? 'Rigenera' : 'Riassumi'}
               </>
             )}
           </Button>

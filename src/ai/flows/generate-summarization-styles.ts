@@ -9,13 +9,10 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
 
 const GenerateSummarizationStylesInputSchema = z.object({
   text: z.string().describe('Il testo da riassumere.'),
-  style: z
-    .enum(['bullet points', 'concise paragraph', 'key concepts'])
-    .describe('Lo stile di riassunto.'),
   learningStyle: z.string().optional().describe('Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'),
 });
 export type GenerateSummarizationStylesInput = z.infer<
@@ -23,7 +20,9 @@ export type GenerateSummarizationStylesInput = z.infer<
 >;
 
 const GenerateSummarizationStylesOutputSchema = z.object({
-  summary: z.string().describe('Il testo riassunto.'),
+  conciseParagraph: z.string().describe('Un riassunto in un unico paragrafo conciso.'),
+  bulletPoints: z.string().describe('Un riassunto formattato come elenco puntato.'),
+  keyConcepts: z.string().describe('Un riassunto che elenca i concetti chiave principali.'),
 });
 export type GenerateSummarizationStylesOutput = z.infer<
   typeof GenerateSummarizationStylesOutputSchema
@@ -39,12 +38,18 @@ const prompt = ai.definePrompt({
   name: 'generateSummarizationStylesPrompt',
   input: {schema: GenerateSummarizationStylesInputSchema},
   output: {schema: GenerateSummarizationStylesOutputSchema},
-  prompt: `Sei un esperto riassuntore. Riassumi il seguente testo nello stile di {{{style}}}.
+  prompt: `Sei un esperto riassuntore. Analizza il testo fornito e genera tre riassunti separati, uno per ogni stile richiesto nel formato di output.
+
+1.  **Paragrafo Conciso**: Un singolo paragrafo che cattura l'essenza del testo.
+2.  **Punti Elenco**: I punti più importanti formattati come un elenco.
+3.  **Concetti Chiave**: Una lista dei termini o delle idee fondamentali.
+
 {{#if learningStyle}}
-Se il learningStyle è 'simplified', adatta la complessità del testo per un utente con bisogni specifici di apprendimento (come la dislessia). Usa frasi brevi, un linguaggio semplice e concetti chiari.
+Se il learningStyle è 'simplified', adatta la complessità di tutti e tre i riassunti per un utente con bisogni specifici di apprendimento (come la dislessia). Usa frasi brevi, un linguaggio semplice e concetti chiari.
 {{/if}}
 
-Testo: {{{text}}}`,
+Testo da analizzare:
+{{{text}}}`,
 });
 
 const generateSummarizationStylesFlow = ai.defineFlow(
