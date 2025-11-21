@@ -65,6 +65,7 @@ export default function FlashcardGenerator() {
   function Flashcard({ question, options, answer, explanation }: FlashcardData) {
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [feedback, setFeedback] = useState<{ isCorrect: boolean; message: React.ReactNode } | null>(null);
+    const feedbackRef = useRef<HTMLDivElement>(null);
 
     const handleOptionSelect = (option: string) => {
         if (feedback) return; // Don't allow changing answer after submission
@@ -97,6 +98,14 @@ export default function FlashcardGenerator() {
         setSelectedOption(null);
     }, [question]);
 
+    useEffect(() => {
+        if (feedback && feedbackRef.current) {
+            setTimeout(() => {
+                feedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+    }, [feedback]);
+
     return (
         <div className="w-full min-h-72 bg-card border rounded-lg p-6 flex flex-col justify-between items-center text-center mt-4 space-y-4">
             <p className="text-lg font-semibold">{question}</p>
@@ -120,7 +129,7 @@ export default function FlashcardGenerator() {
             </div>
 
             {feedback && (
-                <div className="w-full bg-muted/50 p-4 rounded-md text-sm mt-4">
+                <div ref={feedbackRef} className="w-full bg-muted/50 p-4 rounded-md text-sm mt-4">
                     {feedback.message}
                 </div>
             )}
