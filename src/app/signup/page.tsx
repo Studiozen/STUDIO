@@ -34,6 +34,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { useTranslation } from '@/hooks/use-translation';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { Calendar } from '@/components/ui/calendar';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
