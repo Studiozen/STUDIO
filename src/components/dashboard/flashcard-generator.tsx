@@ -148,7 +148,7 @@ export default function FlashcardGenerator() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <BookOpen className="h-6 w-6" />
-          Generatore di Flashcard AI
+          Generatore di Quiz
         </CardTitle>
         <CardDescription>
           Trasforma i tuoi appunti in un quiz interattivo per testare la tua conoscenza.

@@ -24,7 +24,7 @@ const helpSections = [
     },
     {
         icon: BookOpen,
-        title: "Generatore di Flashcard AI",
+        title: "Generatore di Quiz",
         content: "Trasforma i tuoi appunti in un quiz interattivo. Incolla il testo e clicca 'Genera Domande'. Verrà visualizzato un elenco di domande. Clicca su una domanda per visualizzare le opzioni a risposta multipla. Seleziona una risposta per ricevere un feedback immediato."
     },
     {
