@@ -162,9 +162,6 @@ export default function SignupPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4 relative">
-        <div className='absolute top-4 right-4 z-10'>
-          <LanguageSwitcher />
-        </div>
        <div className="w-full max-w-md">
         <div className="mb-4 flex justify-center">
             <Link
@@ -346,6 +343,11 @@ export default function SignupPage() {
                     </FormItem>
                   )}
                 />
+                
+                <div className="space-y-2">
+                    <FormLabel>{t('languageSwitcher.label')}</FormLabel>
+                    <LanguageSwitcher />
+                </div>
 
                 <FormField
                   control={form.control}

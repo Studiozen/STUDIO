@@ -261,6 +261,9 @@
         },
         "acceptButton": "Accetta"
     },
+    "languageSwitcher": {
+        "label": "Lingua"
+    },
     "summarizer": {
         "title": "Riassunto AI",
         "description": "Incolla un testo, carica un'immagine o fai domande specifiche all'IA.",

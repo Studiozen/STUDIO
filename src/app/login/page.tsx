@@ -159,9 +159,6 @@ export default function LoginPage() {
 
   return (
     <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
-       <div className='absolute top-4 right-4 z-10'>
-          <LanguageSwitcher />
-        </div>
         <div className="flex items-center justify-center py-12 animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
             <div className="mx-auto grid w-[350px] gap-6">
                 <div className="grid gap-2 text-center">
@@ -224,6 +221,10 @@ export default function LoginPage() {
                                 </FormItem>
                             )}
                         />
+                         <div className="space-y-2">
+                            <FormLabel>{t('languageSwitcher.label')}</FormLabel>
+                            <LanguageSwitcher />
+                        </div>
                         <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                             {form.formState.isSubmitting ? t('login.form.submitButton.loading') : t('login.form.submitButton.default')}
                         </Button>

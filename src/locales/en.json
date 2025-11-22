@@ -261,6 +261,9 @@
         },
         "acceptButton": "Accept"
     },
+    "languageSwitcher": {
+        "label": "Language"
+    },
     "summarizer": {
         "title": "AI Summarizer",
         "description": "Paste text, upload an image, or ask the AI specific questions.",
