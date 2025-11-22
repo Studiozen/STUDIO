@@ -1,25 +1,25 @@
 'use server';
 
 /**
- * @fileOverview AI agent that answers questions based on a given context.
+ * @fileOverview Agente IA che risponde a domande basate su un dato contesto.
  *
- * - askQuestion - A function that answers a question based on a provided text context.
- * - AskQuestionInput - The input type for the askQuestion function.
- * - AskQuestionOutput - The return type for the askQuestion function.
+ * - askQuestion - Una funzione che risponde a una domanda basata su un contesto di testo fornito.
+ * - AskQuestionInput - Il tipo di input per la funzione askQuestion.
+ * - AskQuestionOutput - Il tipo di ritorno per la funzione askQuestion.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 const AskQuestionInputSchema = z.object({
-  context: z.string().describe('The text from the study material. If no study material is provided, this will be the same as the question.'),
-  question: z.string().describe('The specific question to ask about the context.'),
-  learningStyle: z.string().optional().describe('The user\'s preferred learning style (e.g., "simplified" for simplified text).'),
+  context: z.string().describe('Il testo dal materiale di studio. Se non viene fornito alcun materiale di studio, questo sarà uguale alla domanda.'),
+  question: z.string().describe('La domanda specifica da porre riguardo al contesto.'),
+  learningStyle: z.string().optional().describe('Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'),
 });
 export type AskQuestionInput = z.infer<typeof AskQuestionInputSchema>;
 
 const AskQuestionOutputSchema = z.object({
-  answer: z.string().describe('The answer to the question based on the provided context.'),
+  answer: z.string().describe('La risposta alla domanda basata sul contesto fornito.'),
 });
 export type AskQuestionOutput = z.infer<typeof AskQuestionOutputSchema>;
 
@@ -33,19 +33,19 @@ const prompt = ai.definePrompt({
   name: 'askQuestionPrompt',
   input: { schema: AskQuestionInputSchema },
   output: { schema: AskQuestionOutputSchema },
-  prompt: `You are an expert study assistant. Your task is to answer the user's question. If a "Reference Text" is provided and relevant, base your answer EXCLUSIVELY on it. If the reference text is the same as the question or not relevant, use your general knowledge. Provide a clear and concise answer.
+  prompt: `Sei un assistente allo studio esperto. Il tuo compito è rispondere alla domanda dell'utente. Se viene fornito un "Testo di Riferimento" ed è pertinente, basa la tua risposta ESCLUSIVAMENTE su di esso. Se il testo di riferimento è uguale alla domanda o non è pertinente, usa la tua conoscenza generale. Fornisci una risposta chiara e concisa.
 
-Reference Text:
+Testo di Riferimento:
 {{{context}}}
 
-Question:
+Domanda:
 {{{question}}}
 
 {{#if learningStyle}}
-If the learningStyle is 'simplified', formulate the answer in a particularly simple way, using short sentences and clear language, suitable for someone with specific learning needs.
+Se il learningStyle è 'simplified', formula la risposta in un modo particolarmente semplice, usando frasi brevi e un linguaggio chiaro, adatto a qualcuno con bisogni di apprendimento specifici.
 {{/if}}
 
-Answer:`,
+Risposta:`,
 });
 
 const askQuestionFlow = ai.defineFlow(
