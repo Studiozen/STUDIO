@@ -14,7 +14,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Button } from '@/components/ui/button';
-import { HelpCircle, TextQuote, BookOpen, Timer } from 'lucide-react';
+import { HelpCircle, TextQuote, BookOpen, Timer, Image as ImageIcon } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 
 export function HelpGuide() {
@@ -24,17 +24,20 @@ export function HelpGuide() {
     {
         icon: TextQuote,
         title: t('helpGuide.sections.summarizer.title'),
-        content: t('helpGuide.sections.summarizer.content')
+        content: [
+            t('helpGuide.sections.summarizer.content.text'),
+            t('helpGuide.sections.summarizer.content.image')
+        ]
     },
     {
         icon: BookOpen,
         title: t('helpGuide.sections.quizGenerator.title'),
-        content: t('helpGuide.sections.quizGenerator.content')
+        content: [t('helpGuide.sections.quizGenerator.content')]
     },
     {
         icon: Timer,
         title: t('helpGuide.sections.focusTimer.title'),
-        content: t('helpGuide.sections.focusTimer.content')
+        content: [t('helpGuide.sections.focusTimer.content')]
     }
   ];
 
@@ -67,8 +70,14 @@ export function HelpGuide() {
                             <span className='font-semibold'>{section.title}</span>
                         </div>
                     </AccordionTrigger>
-                    <AccordionContent className='text-muted-foreground'>
-                        {section.content}
+                    <AccordionContent className='text-muted-foreground space-y-4'>
+                        {section.content.map((paragraph, pIndex) => (
+                             <p key={pIndex} className="flex items-start gap-3">
+                                {section.title === t('helpGuide.sections.summarizer.title') && pIndex === 0 && <TextQuote className="h-5 w-5 mt-1 flex-shrink-0" />}
+                                {section.title === t('helpGuide.sections.summarizer.title') && pIndex === 1 && <ImageIcon className="h-5 w-5 mt-1 flex-shrink-0" />}
+                                <span>{paragraph}</span>
+                            </p>
+                        ))}
                     </AccordionContent>
                 </AccordionItem>
             ))}

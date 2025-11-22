@@ -369,7 +369,10 @@
         "sections": {
             "summarizer": {
                 "title": "AI Summarizer",
-                "content": "Paste any text into the dedicated area, choose a summary style (Paragraph, Bullet Points, Key Concepts), and click 'Summarize'. The AI will create a custom summary for you."
+                "content": {
+                    "text": "To summarize text, select the 'Text' tab, paste your material into the text area, choose a summary style (Paragraph, Bullet Points, or Key Concepts), and click 'Summarize'.",
+                    "image": "To summarize an image, select the 'Image' tab, upload a picture of your document, and click 'Summarize'. The AI will extract the text and provide a concise summary."
+                }
             },
             "quizGenerator": {
                 "title": "Quiz Generator",

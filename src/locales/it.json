@@ -369,7 +369,10 @@
         "sections": {
             "summarizer": {
                 "title": "Riassunto AI",
-                "content": "Incolla qualsiasi testo nell'area dedicata, scegli uno stile di riepilogo (Paragrafo, Punti Elenco, Concetti Chiave) e clicca 'Riassumi'. L'IA creerà un riassunto personalizzato per te."
+                "content": {
+                    "text": "Per riassumere un testo, seleziona la scheda 'Testo', incolla il tuo materiale nell'area di testo, scegli uno stile di riepilogo (Paragrafo, Punti Elenco o Concetti Chiave) e clicca 'Riassumi'.",
+                    "image": "Per riassumere un'immagine, seleziona la scheda 'Immagine', carica una foto del tuo documento e clicca 'Riassumi'. L'IA estrarrà il testo e fornirà un riassunto conciso."
+                }
             },
             "quizGenerator": {
                 "title": "Generatore di Quiz",
