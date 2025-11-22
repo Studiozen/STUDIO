@@ -16,6 +16,7 @@ import { Input } from '../ui/input';
 import { Separator } from '../ui/separator';
 import { generateImageSummary, type GenerateImageSummaryInput } from '@/ai/flows/summarize-image-flow';
 import Image from 'next/image';
+import { useTranslation } from '@/hooks/use-translation';
 
 type SummaryStyle = 'concise paragraph' | 'bullet points' | 'key concepts';
 type InputMode = 'text' | 'image';
@@ -23,6 +24,7 @@ type InputMode = 'text' | 'image';
 export default function Summarizer() {
   const { user } = useUser();
   const firestore = useFirestore();
+  const { t } = useTranslation();
   const [isPending, startTransition] = useTransition();
   const [isQAPending, startQATransition] = useTransition();
   
@@ -64,7 +66,7 @@ export default function Summarizer() {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 4 * 1024 * 1024) { // 4MB limit
-        setError("Il file è troppo grande. La dimensione massima è 4MB.");
+        setError(t('summarizer.errors.fileTooLarge'));
         return;
       }
       setError(null);
@@ -84,11 +86,11 @@ export default function Summarizer() {
     resetSummaries();
 
     if (inputMode === 'text' && !text) {
-      setError('Per favore, inserisci del testo da riassumere.');
+      setError(t('summarizer.errors.noText'));
       return;
     }
     if (inputMode === 'image' && !imageData) {
-        setError("Per favore, carica un'immagine da riassumere.");
+        setError(t('summarizer.errors.noImage'));
         return;
     }
     
@@ -122,9 +124,9 @@ export default function Summarizer() {
             }
         } catch (e) {
             console.error(e);
-            let errorMessage = "Si è verificato un errore durante la generazione del riassunto. Riprova.";
+            let errorMessage = t('errors.generic.default');
             if (e instanceof Error && e.message.includes('429')) {
-                errorMessage = "Hai effettuato troppe richieste in un breve periodo. Attendi qualche istante e riprova.";
+                errorMessage = t('errors.rateLimit');
             } else if (e instanceof Error) {
                 errorMessage = e.message;
             }
@@ -139,22 +141,21 @@ export default function Summarizer() {
     setAnswer('');
     
     if (!question) {
-      setQAError('Per favore, inserisci una domanda.');
+      setQAError(t('summarizer.errors.noQuestion'));
       return;
     }
 
     startQATransition(async () => {
       try {
-        // If there's no main text, use the question itself as the context.
-        const context = text || "Nessun contesto testuale fornito.";
+        const context = text || t('summarizer.qa.noContext');
         const input: AskQuestionInput = { context, question, learningStyle: userProfile?.learningStyle };
         const result = await askQuestion(input);
         setAnswer(result.answer);
       } catch (e) {
         console.error(e);
-        let errorMessage = "Si è verificato un errore during la richiesta. Riprova.";
+        let errorMessage = t('errors.generic.default');
         if (e instanceof Error && e.message.includes('429')) {
-            errorMessage = "Hai effettuato troppe richieste in un breve periodo. Attendi qualche istante e riprova.";
+            errorMessage = t('errors.rateLimit');
         }
         setQAError(errorMessage);
       }
@@ -196,22 +197,22 @@ export default function Summarizer() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TextQuote className="h-6 w-6" />
-          Riassunto AI
+          {t('summarizer.title')}
         </CardTitle>
         <CardDescription>
-          Incolla un testo, carica un'immagine o fai domande specifiche all'IA.
+          {t('summarizer.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <Tabs value={inputMode} onValueChange={handleTabChange}>
             <TabsList className='grid w-full grid-cols-2'>
-                <TabsTrigger value="text"><TextQuote className='mr-2'/>Testo</TabsTrigger>
-                <TabsTrigger value="image"><ImageIcon className='mr-2'/>Immagine</TabsTrigger>
+                <TabsTrigger value="text"><TextQuote className='mr-2'/>{t('summarizer.tabs.text')}</TabsTrigger>
+                <TabsTrigger value="image"><ImageIcon className='mr-2'/>{t('summarizer.tabs.image')}</TabsTrigger>
             </TabsList>
             <TabsContent value="text" className='mt-4'>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Textarea
-                        placeholder="Incolla qui il tuo materiale di studio..."
+                        placeholder={t('summarizer.text.placeholder')}
                         value={text}
                         onChange={(e) => setText(e.target.value)}
                         rows={15}
@@ -222,7 +223,7 @@ export default function Summarizer() {
                         {isPending && (
                             <div className='absolute inset-0 bg-background/80 flex flex-col items-center justify-center gap-2 z-10'>
                                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                                <p className='font-semibold'>L'IA sta elaborando...</p>
+                                <p className='font-semibold'>{t('summarizer.loading')}</p>
                             </div>
                         )}
                         {hasGenerated && currentSummary ? (
@@ -239,14 +240,14 @@ export default function Summarizer() {
                         </div>
                         ) : (
                         <div className="flex-1 flex items-center justify-center text-center text-muted-foreground">
-                            <p>Il tuo riassunto apparirà qui.</p>
+                            <p>{t('summarizer.outputPlaceholder')}</p>
                         </div>
                         )}
                         {currentSummary && !isPending && (
                             <div className="flex justify-end pt-4">
                                 <Button variant="ghost" size="sm" onClick={handleCopy}>
                                 {isCopied ? <ClipboardCheck className="mr-2" /> : <Clipboard className="mr-2" />}
-                                {isCopied ? 'Copiato!' : 'Copia'}
+                                {isCopied ? t('summarizer.buttons.copied') : t('summarizer.buttons.copy')}
                                 </Button>
                             </div>
                         )}
@@ -266,7 +267,7 @@ export default function Summarizer() {
                         />
                         {imagePreview ? (
                             <div className='relative w-full h-full'>
-                                <Image src={imagePreview} alt="Anteprima immagine caricata" layout='fill' objectFit='contain' className='rounded-md'/>
+                                <Image src={imagePreview} alt={t('summarizer.image.alt')} layout='fill' objectFit='contain' className='rounded-md'/>
                                 <Button
                                     variant="destructive"
                                     size="sm"
@@ -278,16 +279,16 @@ export default function Summarizer() {
                                     className="absolute top-2 right-2"
                                     disabled={isPending}
                                 >
-                                    Rimuovi
+                                    {t('summarizer.buttons.remove')}
                                 </Button>
                             </div>
                         ) : (
                             <div className='text-center'>
                                 <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
-                                <h3 className="mt-4 text-lg font-semibold">Carica un'immagine</h3>
-                                <p className="mt-2 text-sm text-muted-foreground">Trascina e rilascia un file o clicca per caricare.</p>
+                                <h3 className="mt-4 text-lg font-semibold">{t('summarizer.image.uploadTitle')}</h3>
+                                <p className="mt-2 text-sm text-muted-foreground">{t('summarizer.image.uploadDescription')}</p>
                                 <Button type="button" onClick={() => fileInputRef.current?.click()} className="mt-4" disabled={isPending}>
-                                    Scegli File
+                                    {t('summarizer.buttons.chooseFile')}
                                 </Button>
                             </div>
                         )}
@@ -297,7 +298,7 @@ export default function Summarizer() {
                         {isPending && (
                             <div className='absolute inset-0 bg-background/80 flex flex-col items-center justify-center gap-2 z-10'>
                                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                                <p className='font-semibold'>L'IA sta analizzando l'immagine...</p>
+                                <p className='font-semibold'>{t('summarizer.image.loading')}</p>
                             </div>
                         )}
                         {hasGenerated && currentSummary ? (
@@ -306,14 +307,14 @@ export default function Summarizer() {
                             </div>
                         ) : (
                             <div className="flex-1 flex items-center justify-center text-center text-muted-foreground">
-                                <p>Il riassunto della tua immagine apparirà qui.</p>
+                                <p>{t('summarizer.image.outputPlaceholder')}</p>
                             </div>
                         )}
                         {currentSummary && !isPending && (
                             <div className="flex justify-end pt-4">
                                 <Button variant="ghost" size="sm" onClick={handleCopy}>
                                     {isCopied ? <ClipboardCheck className="mr-2" /> : <Clipboard className="mr-2" />}
-                                    {isCopied ? 'Copiato!' : 'Copia'}
+                                    {isCopied ? t('summarizer.buttons.copied') : t('summarizer.buttons.copy')}
                                 </Button>
                             </div>
                         )}
@@ -325,7 +326,7 @@ export default function Summarizer() {
 
         {error && (
           <Alert variant="destructive">
-            <AlertTitle>Errore</AlertTitle>
+            <AlertTitle>{t('errors.generic.title')}</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
@@ -334,9 +335,9 @@ export default function Summarizer() {
           {inputMode === 'text' && (
             <Tabs value={activeStyle} onValueChange={handleStyleChange} className="w-full sm:w-auto">
                 <TabsList>
-                <TabsTrigger value="concise paragraph">Paragrafo</TabsTrigger>
-                <TabsTrigger value="bullet points">Punti Elenco</TabsTrigger>
-                <TabsTrigger value="key concepts">Concetti Chiave</TabsTrigger>
+                <TabsTrigger value="concise paragraph">{t('summarizer.styles.paragraph')}</TabsTrigger>
+                <TabsTrigger value="bullet points">{t('summarizer.styles.bulletPoints')}</TabsTrigger>
+                <TabsTrigger value="key concepts">{t('summarizer.styles.keyConcepts')}</TabsTrigger>
                 </TabsList>
             </Tabs>
           )}
@@ -344,12 +345,12 @@ export default function Summarizer() {
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Elaborazione...
+                {t('summarizer.buttons.loading')}
               </>
             ) : (
               <>
                 <Wand2 className="mr-2 h-4 w-4" />
-                {hasGenerated ? 'Rigenera Riassunto' : 'Riassumi'}
+                {hasGenerated ? t('summarizer.buttons.regenerate') : t('summarizer.buttons.summarize')}
               </>
             )}
           </Button>
@@ -359,14 +360,14 @@ export default function Summarizer() {
         
         <div className='space-y-4'>
             <div className='space-y-1'>
-                <h3 className='font-semibold flex items-center gap-2'><Sparkles className='text-primary'/>Chiedi all'IA</h3>
+                <h3 className='font-semibold flex items-center gap-2'><Sparkles className='text-primary'/>{t('summarizer.qa.title')}</h3>
                 <p className='text-sm text-muted-foreground'>
-                    Fai una domanda specifica sul testo che hai incollato sopra. Funziona solo con l'input di testo.
+                    {t('summarizer.qa.description')}
                 </p>
             </div>
             <form onSubmit={handleAskQuestion} className="flex items-start gap-4">
               <Input
-                placeholder="Scrivi qui la tua domanda..."
+                placeholder={t('summarizer.qa.placeholder')}
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 className="w-full"
@@ -378,13 +379,13 @@ export default function Summarizer() {
                 ) : (
                   <Send className="h-4 w-4" />
                 )}
-                 <span className="sr-only">Invia</span>
+                 <span className="sr-only">{t('summarizer.buttons.send')}</span>
               </Button>
             </form>
 
             {qaError && (
               <Alert variant="destructive">
-                <AlertTitle>Errore Domanda</AlertTitle>
+                <AlertTitle>{t('errors.qaErrorTitle')}</AlertTitle>
                 <AlertDescription>{qaError}</AlertDescription>
               </Alert>
             )}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Flower2, LogOut, User as UserIcon, HelpCircle } from 'lucide-react';
+import { Flower2, LogOut, User as UserIcon } from 'lucide-react';
 import type { FC } from 'react';
 import Link from 'next/link';
 import { useAuth, useUser } from '@/firebase';
@@ -16,11 +16,14 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useRouter } from 'next/navigation';
 import { HelpGuide } from './help-guide';
+import { useTranslation } from '@/hooks/use-translation';
+import { LanguageSwitcher } from '../language-switcher';
 
 const Header: FC = () => {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const handleLogout = async () => {
     await auth.signOut();
@@ -51,6 +54,7 @@ const Header: FC = () => {
           (user ? (
             <div className='flex items-center gap-4'>
             <HelpGuide />
+            <LanguageSwitcher />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -80,12 +84,12 @@ const Header: FC = () => {
                 <DropdownMenuItem asChild>
                   <Link href="/profile">
                     <UserIcon className="mr-2 h-4 w-4" />
-                    <span>Profilo</span>
+                    <span>{t('header.dropdown.profile')}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Esci</span>
+                  <span>{t('header.dropdown.logout')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -93,11 +97,12 @@ const Header: FC = () => {
           ) : (
             <div className="flex gap-2">
               <HelpGuide />
+              <LanguageSwitcher />
               <Button asChild variant="ghost">
-                <Link href="/login">Accedi</Link>
+                <Link href="/login">{t('header.login')}</Link>
               </Button>
               <Button asChild>
-                <Link href="/signup">Registrati</Link>
+                <Link href="/signup">{t('header.signup')}</Link>
               </Button>
             </div>
           ))}

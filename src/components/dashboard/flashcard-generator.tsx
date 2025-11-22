@@ -4,7 +4,7 @@ import { useState, useTransition, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { BookOpen, Loader2, Wand2, Lightbulb, Send } from 'lucide-react';
+import { BookOpen, Loader2, Wand2, Lightbulb } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { generateFlashcards, type GenerateFlashcardsOutput, type GenerateFlashcardsInput } from '@/ai/flows/generate-flashcards';
 import React from 'react';
@@ -12,6 +12,7 @@ import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface FlashcardData {
   question: string;
@@ -23,6 +24,7 @@ interface FlashcardData {
 export default function FlashcardGenerator() {
   const { user } = useUser();
   const firestore = useFirestore();
+  const { t } = useTranslation();
 
   const userDocRef = useMemoFirebase(
     () => (user ? doc(firestore, `users/${user.uid}`) : null),
@@ -43,7 +45,7 @@ export default function FlashcardGenerator() {
     setSelectedQuestion(null);
 
     if (!text) {
-      setError('Per favore, inserisci del testo da cui generare le flashcard.');
+      setError(t('flashcards.errors.noText'));
       return;
     }
 
@@ -53,7 +55,7 @@ export default function FlashcardGenerator() {
       if (res.flashcards && res.flashcards.length > 0) {
         setResult(res);
       } else {
-        setError("L'IA non è riuscita a generare flashcard dal testo fornito. Prova con un testo diverso o più dettagliato.");
+        setError(t('flashcards.errors.generationFailed'));
       }
     });
   };
@@ -81,16 +83,16 @@ export default function FlashcardGenerator() {
         if (isCorrect) {
             setFeedback({
                 isCorrect: true,
-                message: <p className="font-semibold text-green-600">Corretto!</p>
+                message: <p className="font-semibold text-green-600">{t('flashcards.card.correct')}</p>
             });
         } else {
             setFeedback({
                 isCorrect: false,
                 message: (
                     <div className="text-left space-y-2">
-                        <p className="font-semibold text-red-600">Sbagliato.</p>
-                        <p><strong>Risposta corretta:</strong> {answer}</p>
-                        <p><strong>Spiegazione:</strong> <em className="text-muted-foreground">{explanation}</em></p>
+                        <p className="font-semibold text-red-600">{t('flashcards.card.incorrect')}</p>
+                        <p><strong>{t('flashcards.card.correctAnswer')}:</strong> {answer}</p>
+                        <p><strong>{t('flashcards.card.explanation')}:</strong> <em className="text-muted-foreground">{explanation}</em></p>
                     </div>
                 )
             });
@@ -137,7 +139,7 @@ export default function FlashcardGenerator() {
             )}
 
             <div className="text-xs text-muted-foreground self-end mt-4">
-                {feedback ? 'Puoi chiudere questa domanda o sceglierne un\'altra.' : 'Seleziona una risposta.'}
+                {feedback ? t('flashcards.card.footer.answered') : t('flashcards.card.footer.selectAnswer')}
             </div>
         </div>
     );
@@ -148,16 +150,16 @@ export default function FlashcardGenerator() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <BookOpen className="h-6 w-6" />
-          Generatore di Quiz
+          {t('flashcards.title')}
         </CardTitle>
         <CardDescription>
-          Trasforma i tuoi appunti in un quiz interattivo per testare la tua conoscenza.
+          {t('flashcards.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Textarea
-            placeholder="Incolla qui il tuo materiale di studio (appunti, paragrafi di un libro, ecc.)..."
+            placeholder={t('flashcards.textareaPlaceholder')}
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={8}
@@ -168,12 +170,12 @@ export default function FlashcardGenerator() {
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generazione...
+                {t('flashcards.generateButton.loading')}
               </>
             ) : (
               <>
                 <Wand2 className="mr-2 h-4 w-4" />
-                Genera Domande
+                {t('flashcards.generateButton.default')}
               </>
             )}
           </Button>
@@ -181,7 +183,7 @@ export default function FlashcardGenerator() {
 
         {error && (
           <Alert variant="destructive" className="mt-4">
-            <AlertTitle>Errore</AlertTitle>
+            <AlertTitle>{t('errors.generic.title')}</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
@@ -189,14 +191,14 @@ export default function FlashcardGenerator() {
         {isPending && (
             <div className='flex flex-col items-center justify-center gap-4 mt-8 text-center'>
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className='font-semibold'>L'IA sta creando le tue domande...</p>
-                <p className='text-sm text-muted-foreground'>Potrebbe volerci qualche istante.</p>
+                <p className='font-semibold'>{t('flashcards.loading.title')}</p>
+                <p className='text-sm text-muted-foreground'>{t('flashcards.loading.description')}</p>
             </div>
         )}
 
         {result && (
           <div className="mt-6">
-            <h3 className="text-lg font-semibold mb-2">Scegli una domanda per metterti alla prova</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('flashcards.results.title')}</h3>
             <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
                 {result.flashcards.map((card, index) => (
                     <div key={index}>
@@ -220,9 +222,9 @@ export default function FlashcardGenerator() {
 
             <Alert className="mt-4">
               <Lightbulb className="h-4 w-4" />
-              <AlertTitle>Consiglio per lo studio</AlertTitle>
+              <AlertTitle>{t('flashcards.studyTip.title')}</AlertTitle>
               <AlertDescription>
-                Clicca su una domanda per iniziare. Scegli la risposta che ritieni corretta per ricevere un feedback immediato.
+                {t('flashcards.studyTip.description')}
               </AlertDescription>
             </Alert>
           </div>

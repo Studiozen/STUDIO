@@ -4,13 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
   Form,
   FormControl,
   FormField,
@@ -35,13 +28,8 @@ import { doc, setDoc } from 'firebase/firestore';
 import { Flower2 } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-
-const formSchema = z.object({
-  email: z.string().email({ message: 'Inserisci un indirizzo email valido.' }),
-  password: z
-    .string()
-    .min(1, { message: 'Per favore, inserisci la tua password.' }), // Min 1 to allow form submission check, real validation is on Firebase
-});
+import { useTranslation } from '@/hooks/use-translation';
+import { LanguageSwitcher } from '@/components/language-switcher';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -58,11 +46,20 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export default function LoginPage() {
+  const { t } = useTranslation();
+  const loginImage = PlaceHolderImages.find(p => p.id === 'login-background');
+  
+  const formSchema = z.object({
+    email: z.string().email({ message: t('login.form.email.invalid') }),
+    password: z
+      .string()
+      .min(1, { message: t('login.form.password.required') }),
+  });
+
   const { toast } = useToast();
   const router = useRouter();
   const auth = useAuth();
   const firestore = useFirestore();
-  const loginImage = PlaceHolderImages.find(p => p.id === 'login-background');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -77,20 +74,20 @@ export default function LoginPage() {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
       toast({
-        title: 'Accesso effettuato!',
-        description: `Bentornato, ${user.displayName || 'utente'}!`,
+        title: t('login.toast.success.title'),
+        description: t('login.toast.success.description', { name: user.displayName || 'user' }),
         duration: 3000,
       });
       router.push('/');
     } catch (error: any) {
       console.error('Login Error:', error);
-      let description = 'Impossibile accedere. Controlla le tue credenziali e riprova.';
+      let description = t('login.toast.error.default');
       if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-        description = 'Credenziali non valide. Controlla email e password.';
+        description = t('login.toast.error.invalidCredentials');
       }
       toast({
         variant: 'destructive',
-        title: 'Errore di Accesso',
+        title: t('login.toast.error.title'),
         description,
       });
     }
@@ -101,8 +98,8 @@ export default function LoginPage() {
     if (!email) {
       toast({
         variant: 'destructive',
-        title: 'Email richiesta',
-        description: 'Per favore, inserisci la tua email per reimpostare la password.',
+        title: t('login.forgotPassword.toast.emailRequired.title'),
+        description: t('login.forgotPassword.toast.emailRequired.description'),
       });
       form.setFocus('email');
       return;
@@ -110,15 +107,15 @@ export default function LoginPage() {
     try {
       await sendPasswordResetEmail(auth, email);
       toast({
-        title: 'Email inviata!',
-        description: 'Controlla la tua casella di posta per le istruzioni su come reimpostare la password.',
+        title: t('login.forgotPassword.toast.success.title'),
+        description: t('login.forgotPassword.toast.success.description'),
       });
     } catch (error: any) {
       console.error(error);
       toast({
         variant: 'destructive',
-        title: 'Ops! Qualcosa è andato storto.',
-        description: error.message || "Impossibile inviare l'email di reimpostazione. Controlla che l'email sia corretta.",
+        title: t('errors.generic.title'),
+        description: error.message || t('login.forgotPassword.toast.error.description'),
       });
     }
   };
@@ -137,14 +134,14 @@ export default function LoginPage() {
           email: user.email,
         });
         toast({
-          title: 'Account creato!',
-          description: `Benvenuto, ${user.displayName || 'utente'}!`,
+          title: t('signup.toast.success.title'),
+          description: t('signup.toast.success.description', { name: user.displayName || 'user' }),
           duration: 3000,
         });
       } else {
          toast({
-          title: 'Accesso effettuato!',
-          description: `Bentornato, ${user.displayName || 'utente'}!`,
+          title: t('login.toast.success.title'),
+          description: t('login.toast.success.description', { name: user.displayName || 'user' }),
           duration: 3000,
         });
       }
@@ -153,15 +150,18 @@ export default function LoginPage() {
       console.error(error);
       toast({
         variant: 'destructive',
-        title: 'Ops! Qualcosa è andato storto.',
+        title: t('errors.generic.title'),
         description:
-          error.message || 'Impossibile accedere con Google.',
+          error.message || t('login.googleSignInError'),
       });
     }
   };
 
   return (
     <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
+       <div className='absolute top-4 right-4 z-10'>
+          <LanguageSwitcher />
+        </div>
         <div className="flex items-center justify-center py-12 animate-in fade-in-0 slide-in-from-bottom-4 duration-1000">
             <div className="mx-auto grid w-[350px] gap-6">
                 <div className="grid gap-2 text-center">
@@ -172,19 +172,19 @@ export default function LoginPage() {
                         <Flower2 className="h-8 w-8 text-primary" />
                         <span className="font-headline">StudioZen</span>
                     </Link>
-                    <h1 className="text-3xl font-bold">Accedi</h1>
+                    <h1 className="text-3xl font-bold">{t('login.title')}</h1>
                     <p className="text-balance text-muted-foreground">
-                        Inserisci la tua email per accedere al tuo account
+                        {t('login.subtitle')}
                     </p>
                 </div>
                  <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
                     <GoogleIcon className="mr-2 h-4 w-4" />
-                    Accedi con Google
+                    {t('login.googleButton')}
                 </Button>
                 <div className="my-2 flex items-center">
                     <div className="flex-grow border-t border-muted" />
                     <span className="mx-4 flex-shrink text-xs uppercase text-muted-foreground">
-                        Oppure continua con
+                        {t('login.separator')}
                     </span>
                     <div className="flex-grow border-t border-muted" />
                 </div>
@@ -195,10 +195,10 @@ export default function LoginPage() {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel>{t('login.form.email.label')}</FormLabel>
                                     <FormControl>
                                         <Input
-                                        placeholder="tu@email.com"
+                                        placeholder="you@email.com"
                                         {...field}
                                         type="email"
                                         />
@@ -212,7 +212,7 @@ export default function LoginPage() {
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel>{t('login.form.password.label')}</FormLabel>
                                     <FormControl>
                                         <Input
                                         placeholder="********"
@@ -225,7 +225,7 @@ export default function LoginPage() {
                             )}
                         />
                         <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                            {form.formState.isSubmitting ? 'Accesso in corso...' : 'Accedi'}
+                            {form.formState.isSubmitting ? t('login.form.submitButton.loading') : t('login.form.submitButton.default')}
                         </Button>
                     </form>
                 </Form>
@@ -236,17 +236,17 @@ export default function LoginPage() {
                         className="h-auto p-0 text-sm"
                         onClick={handlePasswordReset}
                         >
-                        Password dimenticata?
+                        {t('login.forgotPassword.link')}
                     </Button>
                  </div>
                 <div className="mt-4 text-center text-sm">
-                    Non hai un account?{' '}
+                    {t('login.noAccount.text')}{' '}
                     <Link href="/signup" className="underline">
-                        Registrati
+                        {t('login.noAccount.link')}
                     </Link>
                 </div>
                  <div className="mt-2 text-center text-xs text-muted-foreground">
-                    Creato dal Team StudioZen
+                    {t('login.footer')}
                 </div>
             </div>
         </div>

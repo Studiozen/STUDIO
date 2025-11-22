@@ -13,11 +13,13 @@ import { collection, doc } from 'firebase/firestore';
 import type { FocusSession } from '@/types/focus-session';
 import { cn } from '@/lib/utils';
 import { useDoc } from '@/firebase/firestore/use-doc';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const firestore = useFirestore();
+  const { t } = useTranslation();
 
   const userDocRef = useMemoFirebase(
     () => (user ? doc(firestore, `users/${user.uid}`) : null),
@@ -63,67 +65,59 @@ export default function ProfilePage() {
   const achievements = useMemo(() => [
     {
       icon: Star,
-      title: 'Primi Passi',
-      description: 'Completa la tua prima sessione di concentrazione.',
+      title: t('profile.achievements.firstSteps.title'),
+      description: t('profile.achievements.firstSteps.description'),
       isUnlocked: studyStats.totalSessions >= 1,
     },
     {
       icon: Medal,
-      title: 'Studente Costante',
-      description: 'Completa 10 sessioni di concentrazione.',
+      title: t('profile.achievements.consistentStudent.title'),
+      description: t('profile.achievements.consistentStudent.description'),
       isUnlocked: studyStats.totalSessions >= 10,
     },
     {
       icon: Clock,
-      title: 'Maratoneta Principiante',
-      description: 'Raggiungi 120 minuti totali di studio.',
+      title: t('profile.achievements.beginnerMarathoner.title'),
+      description: t('profile.achievements.beginnerMarathoner.description'),
       isUnlocked: studyStats.totalMinutes >= 120,
     },
     {
       icon: Trophy,
-      title: 'Guru della Concentrazione',
-      description: 'Raggiungi 600 minuti totali di studio.',
+      title: t('profile.achievements.focusGuru.title'),
+      description: t('profile.achievements.focusGuru.description'),
       isUnlocked: studyStats.totalMinutes >= 600,
     },
-  ], [studyStats]);
+  ], [studyStats, t]);
 
 
   const formatCreationTime = (creationTime?: string) => {
-    if (!creationTime) return 'N/D';
+    if (!creationTime) return 'N/A';
     try {
         const date = new Date(creationTime);
-        return date.toLocaleDateString('it-IT', {
+        return date.toLocaleDateString(t('locale'), {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
         });
     } catch {
-        return 'N/D'
+        return 'N/A'
     }
   }
 
   const getSchoolTypeLabel = (schoolType?: string) => {
-      switch(schoolType) {
-          case 'middle-school': return 'Scuola Media';
-          case 'high-school': return 'Scuola Superiore';
-          case 'university': return 'Università';
-          case 'other': return 'Altro';
-          default: return 'Non specificato';
-      }
+      if (!schoolType) return t('profile.form.unspecified');
+      return t(`profile.form.schoolType.options.${schoolType}`);
   }
 
   const getLearningStyleLabel = (learningStyle?: string) => {
-      switch(learningStyle) {
-          case 'standard': return 'Standard';
-          case 'simplified': return 'Testo Semplificato';
-          default: return 'Non specificato';
-      }
+      if (!learningStyle) return t('profile.form.unspecified');
+      return t(`profile.form.learningStyle.options.${learningStyle}`);
   }
 
   if (isUserLoading || !user || isLoadingSessions || isProfileLoading) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center">
-        <p>Caricamento in corso...</p>
+        <p>{t('profile.loading')}</p>
       </div>
     );
   }
@@ -135,8 +129,8 @@ export default function ProfilePage() {
         <div className="w-full max-w-4xl space-y-8">
           <Card>
             <CardHeader>
-              <CardTitle>Profilo Utente</CardTitle>
-              <CardDescription>Visualizza e gestisci le informazioni del tuo account.</CardDescription>
+              <CardTitle>{t('profile.userProfile.title')}</CardTitle>
+              <CardDescription>{t('profile.userProfile.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center gap-4">
@@ -153,23 +147,23 @@ export default function ProfilePage() {
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                  <div className="space-y-2">
-                    <Label htmlFor="name">Nome</Label>
+                    <Label htmlFor="name">{t('profile.form.name.label')}</Label>
                     <Input id="name" value={user.displayName || ''} readOnly />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('profile.form.email.label')}</Label>
                     <Input id="email" value={user.email || ''} readOnly />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="creationDate">Membro dal</Label>
+                    <Label htmlFor="creationDate">{t('profile.form.memberSince.label')}</Label>
                     <Input id="creationDate" value={formatCreationTime(user.metadata.creationTime)} readOnly />
                 </div>
                  <div className="space-y-2">
-                    <Label htmlFor="schoolType" className='flex items-center gap-2'><GraduationCap className='w-4 h-4'/>Tipo di Scuola</Label>
+                    <Label htmlFor="schoolType" className='flex items-center gap-2'><GraduationCap className='w-4 h-4'/>{t('profile.form.schoolType.label')}</Label>
                     <Input id="schoolType" value={getSchoolTypeLabel(userProfile?.schoolType)} readOnly />
                 </div>
                  <div className="space-y-2">
-                    <Label htmlFor="learningStyle" className='flex items-center gap-2'><Accessibility className='w-4 h-4'/>Stile di Apprendimento</Label>
+                    <Label htmlFor="learningStyle" className='flex items-center gap-2'><Accessibility className='w-4 h-4'/>{t('profile.form.learningStyle.label')}</Label>
                     <Input id="learningStyle" value={getLearningStyleLabel(userProfile?.learningStyle)} readOnly />
                 </div>
               </div>
@@ -178,8 +172,8 @@ export default function ProfilePage() {
 
            <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><BarChart3/>Statistiche di Studio</CardTitle>
-              <CardDescription>I tuoi progressi e le tue abitudini di studio.</CardDescription>
+              <CardTitle className="flex items-center gap-2"><BarChart3/>{t('profile.studyStats.title')}</CardTitle>
+              <CardDescription>{t('profile.studyStats.description')}</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-2">
                 <div className="flex items-center gap-4 rounded-lg border p-4">
@@ -187,7 +181,7 @@ export default function ProfilePage() {
                         <Brain className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                        <p className="text-sm text-muted-foreground">Sessioni Completate</p>
+                        <p className="text-sm text-muted-foreground">{t('profile.studyStats.sessionsCompleted')}</p>
                         <p className="text-2xl font-bold">{studyStats.totalSessions}</p>
                     </div>
                 </div>
@@ -196,7 +190,7 @@ export default function ProfilePage() {
                         <Clock className="h-6 w-6 text-accent" />
                     </div>
                     <div>
-                        <p className="text-sm text-muted-foreground">Minuti di Studio Totali</p>
+                        <p className="text-sm text-muted-foreground">{t('profile.studyStats.totalMinutes')}</p>
                         <p className="text-2xl font-bold">{studyStats.totalMinutes}</p>
                     </div>
                 </div>
@@ -205,8 +199,8 @@ export default function ProfilePage() {
 
            <Card>
              <CardHeader>
-                <CardTitle>I Miei Riconoscimenti</CardTitle>
-                <CardDescription>Sblocca obiettivi e celebra i tuoi successi nello studio.</CardDescription>
+                <CardTitle>{t('profile.achievements.title')}</CardTitle>
+                <CardDescription>{t('profile.achievements.description')}</CardDescription>
              </CardHeader>
              <CardContent className='grid gap-4 sm:grid-cols-2'>
                 {achievements.map((achievement, index) => (

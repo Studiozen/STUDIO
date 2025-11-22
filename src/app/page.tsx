@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase';
 import Header from '@/components/dashboard/header';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useTranslation } from '@/hooks/use-translation';
 
 const Summarizer = lazy(() => import('@/components/dashboard/summarizer'));
 const FlashcardGenerator = lazy(() => import('@/components/dashboard/flashcard-generator'));
@@ -28,6 +29,7 @@ function DashboardFallback() {
 export default function Home() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -38,7 +40,7 @@ export default function Home() {
   if (isUserLoading || !user) {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center">
-        <p>Caricamento in corso...</p>
+        <p>{t('home.loading')}</p>
       </div>
     );
   }

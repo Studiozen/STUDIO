@@ -4,13 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
   Form,
   FormControl,
   FormField,
@@ -36,27 +29,11 @@ import { CalendarIcon, Flower2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { Calendar } from '@/components/ui/calendar';
-import { it } from 'date-fns/locale';
+import { it, enUS } from 'date-fns/locale';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-
-const formSchema = z.object({
-  name: z.string().min(2, { message: 'Il nome deve contenere almeno 2 caratteri.' }),
-  email: z.string().email({ message: 'Inserisci un indirizzo email valido.' }),
-  password: z
-    .string()
-    .min(6, { message: 'La password deve contenere almeno 6 caratteri.' }),
-  birthDate: z.date({
-    required_error: "È richiesta una data di nascita.",
-  }),
-  country: z.string().min(2, { message: "Il paese deve contenere almeno 2 caratteri."}),
-  schoolType: z.string({ required_error: 'Per favore, seleziona il tuo tipo di scuola.' }),
-  learningStyle: z.string({ required_error: 'Per favore, seleziona uno stile di apprendimento.' }),
-  privacy: z.boolean().refine(val => val === true, {
-    message: "Devi accettare l'Informativa sulla Privacy per continuare.",
-  }),
-});
+import { useTranslation } from '@/hooks/use-translation';
+import { LanguageSwitcher } from '@/components/language-switcher';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg
@@ -73,6 +50,25 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
   );
 
 export default function SignupPage() {
+  const { t, language } = useTranslation();
+
+  const formSchema = z.object({
+    name: z.string().min(2, { message: t('signup.form.name.invalid') }),
+    email: z.string().email({ message: t('signup.form.email.invalid') }),
+    password: z
+      .string()
+      .min(6, { message: t('signup.form.password.invalid') }),
+    birthDate: z.date({
+      required_error: t('signup.form.birthDate.required'),
+    }),
+    country: z.string().min(2, { message: t('signup.form.country.invalid')}),
+    schoolType: z.string({ required_error: t('signup.form.schoolType.required') }),
+    learningStyle: z.string({ required_error: t('signup.form.learningStyle.required') }),
+    privacy: z.boolean().refine(val => val === true, {
+      message: t('signup.form.privacy.required'),
+    }),
+  });
+
   const { toast } = useToast();
   const router = useRouter();
   const auth = useAuth();
@@ -112,8 +108,8 @@ export default function SignupPage() {
       });
 
       toast({
-        title: 'Account creato!',
-        description: `Benvenuto, ${values.name}!`,
+        title: t('signup.toast.success.title'),
+        description: t('signup.toast.success.description', { name: values.name }),
         duration: 3000,
       });
       router.push('/');
@@ -121,10 +117,9 @@ export default function SignupPage() {
       console.error(error);
       toast({
         variant: 'destructive',
-        title: 'Ops! Qualcosa è andato storto.',
+        title: t('errors.generic.title'),
         description:
-          error.message ||
-          'Impossibile creare un account. Riprova più tardi.',
+          error.message || t('errors.generic.default'),
       });
     }
   };
@@ -137,8 +132,6 @@ export default function SignupPage() {
       const additionalUserInfo = getAdditionalUserInfo(result);
 
       if (additionalUserInfo?.isNewUser) {
-        // For Google Sign-in, we prompt the user for the extra info on their profile page later
-        // or use default values for now.
         await setDoc(doc(firestore, 'users', user.uid), {
           id: user.uid,
           name: user.displayName,
@@ -148,8 +141,8 @@ export default function SignupPage() {
       }
       
       toast({
-        title: 'Accesso effettuato!',
-        description: `Benvenuto, ${user.displayName || 'utente'}!`,
+        title: t('login.toast.success.title'),
+        description: t('login.toast.success.description', { name: user.displayName || 'user' }),
         duration: 3000,
       });
       router.push('/');
@@ -157,15 +150,20 @@ export default function SignupPage() {
       console.error(error);
       toast({
         variant: 'destructive',
-        title: 'Ops! Qualcosa è andato storto.',
+        title: t('errors.generic.title'),
         description:
-          error.message || 'Impossibile accedere con Google.',
+          error.message || t('login.googleSignInError'),
       });
     }
   };
 
+  const datePickerLocale = language === 'it' ? it : enUS;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4 relative">
+        <div className='absolute top-4 right-4 z-10'>
+          <LanguageSwitcher />
+        </div>
        <div className="w-full max-w-md">
         <div className="mb-4 flex justify-center">
             <Link
@@ -176,22 +174,22 @@ export default function SignupPage() {
               <span className="font-headline">StudioZen</span>
             </Link>
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Registrati</CardTitle>
-            <CardDescription>
-              Crea un nuovo account per iniziare a usare StudioZen.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        <div className='p-4 sm:p-8 border rounded-lg bg-card'>
+            <div className="text-center mb-6">
+                <h1 className="text-3xl font-bold">{t('signup.title')}</h1>
+                <p className="text-balance text-muted-foreground mt-2">
+                    {t('signup.subtitle')}
+                </p>
+            </div>
+            
             <Button variant="outline" className="w-full" onClick={handleGoogleSignIn}>
                 <GoogleIcon className="mr-2 h-4 w-4" />
-                Registrati con Google
+                {t('signup.googleButton')}
             </Button>
             <div className="my-4 flex items-center">
                 <div className="flex-grow border-t border-muted" />
                 <span className="mx-4 flex-shrink text-xs uppercase text-muted-foreground">
-                    Oppure registrati con l'email
+                    {t('signup.separator')}
                 </span>
                 <div className="flex-grow border-t border-muted" />
             </div>
@@ -202,9 +200,9 @@ export default function SignupPage() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nome</FormLabel>
+                      <FormLabel>{t('signup.form.name.label')}</FormLabel>
                       <FormControl>
-                        <Input placeholder="Il tuo nome" {...field} />
+                        <Input placeholder={t('signup.form.name.placeholder')} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -215,10 +213,10 @@ export default function SignupPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>{t('signup.form.email.label')}</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="tu@email.com"
+                          placeholder="you@email.com"
                           {...field}
                           type="email"
                         />
@@ -232,7 +230,7 @@ export default function SignupPage() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>{t('signup.form.password.label')}</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="********"
@@ -250,7 +248,7 @@ export default function SignupPage() {
                     name="birthDate"
                     render={({ field }) => (
                         <FormItem className="flex flex-col">
-                        <FormLabel>Data di nascita</FormLabel>
+                        <FormLabel>{t('signup.form.birthDate.label')}</FormLabel>
                         <Popover>
                             <PopoverTrigger asChild>
                             <FormControl>
@@ -262,9 +260,9 @@ export default function SignupPage() {
                                 )}
                                 >
                                 {field.value ? (
-                                    format(field.value, "PPP", { locale: it })
+                                    format(field.value, "PPP", { locale: datePickerLocale })
                                 ) : (
-                                    <span>Scegli una data</span>
+                                    <span>{t('signup.form.birthDate.placeholder')}</span>
                                 )}
                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
@@ -294,9 +292,9 @@ export default function SignupPage() {
                     name="country"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>Paese</FormLabel>
+                        <FormLabel>{t('signup.form.country.label')}</FormLabel>
                         <FormControl>
-                            <Input placeholder="Es. Italia" {...field} />
+                            <Input placeholder={t('signup.form.country.placeholder')} {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -308,18 +306,18 @@ export default function SignupPage() {
                   name="schoolType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Tipo di Scuola</FormLabel>
+                      <FormLabel>{t('signup.form.schoolType.label')}</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Seleziona il tuo livello di studi" />
+                            <SelectValue placeholder={t('signup.form.schoolType.placeholder')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="middle-school">Scuola Media</SelectItem>
-                          <SelectItem value="high-school">Scuola Superiore</SelectItem>
-                          <SelectItem value="university">Università</SelectItem>
-                          <SelectItem value="other">Altro</SelectItem>
+                          <SelectItem value="middle-school">{t('signup.form.schoolType.options.middle-school')}</SelectItem>
+                          <SelectItem value="high-school">{t('signup.form.schoolType.options.high-school')}</SelectItem>
+                          <SelectItem value="university">{t('signup.form.schoolType.options.university')}</SelectItem>
+                          <SelectItem value="other">{t('signup.form.schoolType.options.other')}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -331,16 +329,16 @@ export default function SignupPage() {
                   name="learningStyle"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Stile di Apprendimento</FormLabel>
+                      <FormLabel>{t('signup.form.learningStyle.label')}</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Seleziona una preferenza" />
+                            <SelectValue placeholder={t('signup.form.learningStyle.placeholder')} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="standard">Standard</SelectItem>
-                          <SelectItem value="simplified">Testo Semplificato (per DSA, ecc.)</SelectItem>
+                          <SelectItem value="standard">{t('signup.form.learningStyle.options.standard')}</SelectItem>
+                          <SelectItem value="simplified">{t('signup.form.learningStyle.options.simplified')}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -361,12 +359,12 @@ export default function SignupPage() {
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel>
-                           Accetta i termini e le condizioni
+                          {t('signup.form.privacy.label')}
                         </FormLabel>
                         <p className="text-sm text-muted-foreground">
-                          Dichiaro di aver letto e accettato l'{' '}
+                            {t('signup.form.privacy.description.part1')}{' '}
                           <Link href="/privacy" className="underline hover:text-primary">
-                            Informativa sulla Privacy
+                            {t('signup.form.privacy.description.link')}
                           </Link>
                           .
                         </p>
@@ -377,24 +375,21 @@ export default function SignupPage() {
                 />
 
                 <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? 'Creazione in corso...' : 'Crea Account'}
+                  {form.formState.isSubmitting ? t('signup.form.submitButton.loading') : t('signup.form.submitButton.default')}
                 </Button>
               </form>
             </Form>
-            <div className="mt-4 text-center text-sm">
-              Hai già un account?{' '}
+            <div className="mt-6 text-center text-sm">
+              {t('signup.haveAccount.text')}{' '}
               <Link href="/login" className="underline">
-                Accedi
+                {t('signup.haveAccount.link')}
               </Link>
             </div>
-          </CardContent>
-        </Card>
+          </div>
         <div className="mt-4 text-center text-xs text-muted-foreground">
-          Creato dal Team StudioZen
+            {t('login.footer')}
         </div>
       </div>
     </div>
   );
 }
-
-    

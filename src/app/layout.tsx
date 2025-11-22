@@ -4,10 +4,11 @@ import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase';
 import CookieConsentBanner from '@/components/cookie-consent-banner';
+import { LanguageProvider } from '@/context/language-context';
 
 export const metadata: Metadata = {
   title: 'StudioZen',
-  description: "Un'app per aiutare gli studenti a studiare senza distrazioni.",
+  description: 'An app to help students study without distractions.',
 };
 
 export default function RootLayout({
@@ -16,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -30,11 +31,13 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased')}>
-        <FirebaseClientProvider>
-          {children}
-          <Toaster />
-          <CookieConsentBanner />
-        </FirebaseClientProvider>
+        <LanguageProvider>
+          <FirebaseClientProvider>
+            {children}
+            <Toaster />
+            <CookieConsentBanner />
+          </FirebaseClientProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

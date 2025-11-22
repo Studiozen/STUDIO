@@ -15,44 +15,47 @@ import {
 } from "@/components/ui/accordion"
 import { Button } from '@/components/ui/button';
 import { HelpCircle, TextQuote, BookOpen, Timer } from 'lucide-react';
+import { useTranslation } from '@/hooks/use-translation';
 
-const helpSections = [
+export function HelpGuide() {
+  const { t } = useTranslation();
+
+  const helpSections = [
     {
         icon: TextQuote,
-        title: "Riassunto AI",
-        content: "Incolla qualsiasi testo nell'area dedicata, scegli uno stile di riepilogo (Paragrafo, Punti Elenco, Concetti Chiave) e clicca 'Riassumi'. L'IA creerà un riassunto personalizzato per te."
+        title: t('helpGuide.sections.summarizer.title'),
+        content: t('helpGuide.sections.summarizer.content')
     },
     {
         icon: BookOpen,
-        title: "Generatore di Quiz",
-        content: "Trasforma i tuoi appunti in un quiz interattivo. Incolla il testo e clicca 'Genera Domande'. Verrà visualizzato un elenco di domande. Clicca su una domanda per visualizzare le opzioni a risposta multipla. Seleziona una risposta per ricevere un feedback immediato."
+        title: t('helpGuide.sections.quizGenerator.title'),
+        content: t('helpGuide.sections.quizGenerator.content')
     },
     {
         icon: Timer,
-        title: "Timer Concentrazione (Pomodoro)",
-        content: "Usa la tecnica del Pomodoro per massimizzare la tua produttività. Clicca 'Avvia' per iniziare una sessione di studio di 25 minuti. Al termine, il timer ti avviserà e partirà automaticamente una pausa di 5 minuti."
+        title: t('helpGuide.sections.focusTimer.title'),
+        content: t('helpGuide.sections.focusTimer.content')
     }
-]
+  ];
 
-export function HelpGuide() {
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm">
             <HelpCircle className="mr-2 h-4 w-4" />
-            Guida
+            {t('helpGuide.triggerButton')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
             <HelpCircle className="h-6 w-6 text-primary" />
-            Guida di StudioZen
+            {t('helpGuide.title')}
           </DialogTitle>
         </DialogHeader>
         <div className="py-4">
             <p className="text-muted-foreground">
-                Scopri come usare al meglio le funzionalità di StudioZen per migliorare la tua concentrazione e il tuo apprendimento.
+                {t('helpGuide.description')}
             </p>
         </div>
         <Accordion type="single" collapsible className="w-full">

@@ -1,0 +1,389 @@
+
+{
+    "locale": "it-IT",
+    "login": {
+        "title": "Accedi",
+        "subtitle": "Inserisci la tua email per accedere al tuo account",
+        "googleButton": "Accedi con Google",
+        "separator": "Oppure continua con",
+        "form": {
+            "email": {
+                "label": "Email",
+                "invalid": "Inserisci un indirizzo email valido."
+            },
+            "password": {
+                "label": "Password",
+                "required": "Per favore, inserisci la tua password."
+            },
+            "submitButton": {
+                "default": "Accedi",
+                "loading": "Accesso in corso..."
+            }
+        },
+        "forgotPassword": {
+            "link": "Password dimenticata?",
+            "toast": {
+                "emailRequired": {
+                    "title": "Email richiesta",
+                    "description": "Per favore, inserisci la tua email per reimpostare la password."
+                },
+                "success": {
+                    "title": "Email inviata!",
+                    "description": "Controlla la tua casella di posta per le istruzioni su come reimpostare la password."
+                },
+                "error": {
+                    "description": "Impossibile inviare l'email di reimpostazione. Controlla che l'email sia corretta."
+                }
+            }
+        },
+        "noAccount": {
+            "text": "Non hai un account?",
+            "link": "Registrati"
+        },
+        "footer": "Creato dal Team StudioZen",
+        "toast": {
+            "success": {
+                "title": "Accesso effettuato!",
+                "description": "Bentornato, {name}!"
+            },
+            "error": {
+                "title": "Errore di Accesso",
+                "default": "Impossibile accedere. Controlla le tue credenziali e riprova.",
+                "invalidCredentials": "Credenziali non valide. Controlla email e password."
+            }
+        },
+        "googleSignInError": "Impossibile accedere con Google."
+    },
+    "signup": {
+        "title": "Registrati",
+        "subtitle": "Crea un nuovo account per iniziare a usare StudioZen.",
+        "googleButton": "Registrati con Google",
+        "separator": "Oppure registrati con l'email",
+        "form": {
+            "name": {
+                "label": "Nome",
+                "placeholder": "Il tuo nome",
+                "invalid": "Il nome deve contenere almeno 2 caratteri."
+            },
+            "email": {
+                "label": "Email",
+                "invalid": "Inserisci un indirizzo email valido."
+            },
+            "password": {
+                "label": "Password",
+                "invalid": "La password deve contenere almeno 6 caratteri."
+            },
+            "birthDate": {
+                "label": "Data di nascita",
+                "placeholder": "Scegli una data",
+                "required": "È richiesta una data di nascita."
+            },
+            "country": {
+                "label": "Paese",
+                "placeholder": "Es. Italia",
+                "invalid": "Il paese deve contenere almeno 2 caratteri."
+            },
+            "schoolType": {
+                "label": "Tipo di Scuola",
+                "placeholder": "Seleziona il tuo livello di studi",
+                "required": "Per favore, seleziona il tuo tipo di scuola.",
+                "options": {
+                    "middle-school": "Scuola Media",
+                    "high-school": "Scuola Superiore",
+                    "university": "Università",
+                    "other": "Altro"
+                }
+            },
+            "learningStyle": {
+                "label": "Stile di Apprendimento",
+                "placeholder": "Seleziona una preferenza",
+                "required": "Per favore, seleziona uno stile di apprendimento.",
+                "options": {
+                    "standard": "Standard",
+                    "simplified": "Testo Semplificato (per DSA, ecc.)"
+                }
+            },
+            "privacy": {
+                "label": "Accetta i termini e le condizioni",
+                "description": {
+                    "part1": "Dichiaro di aver letto e accettato l'",
+                    "link": "Informativa sulla Privacy"
+                },
+                "required": "Devi accettare l'Informativa sulla Privacy per continuare."
+            },
+            "submitButton": {
+                "default": "Crea Account",
+                "loading": "Creazione in corso..."
+            }
+        },
+        "haveAccount": {
+            "text": "Hai già un account?",
+            "link": "Accedi"
+        },
+        "toast": {
+            "success": {
+                "title": "Account creato!",
+                "description": "Benvenuto, {name}!"
+            }
+        }
+    },
+    "header": {
+        "login": "Accedi",
+        "signup": "Registrati",
+        "dropdown": {
+            "profile": "Profilo",
+            "logout": "Esci"
+        }
+    },
+    "home": {
+        "loading": "Caricamento in corso..."
+    },
+    "profile": {
+        "loading": "Caricamento in corso...",
+        "userProfile": {
+            "title": "Profilo Utente",
+            "description": "Visualizza e gestisci le informazioni del tuo account."
+        },
+        "form": {
+            "name": {
+                "label": "Nome"
+            },
+            "email": {
+                "label": "Email"
+            },
+            "memberSince": {
+                "label": "Membro dal"
+            },
+            "schoolType": {
+                "label": "Tipo di Scuola",
+                "options": {
+                    "middle-school": "Scuola Media",
+                    "high-school": "Scuola Superiore",
+                    "university": "Università",
+                    "other": "Altro"
+                }
+            },
+            "learningStyle": {
+                "label": "Stile di Apprendimento",
+                "options": {
+                    "standard": "Standard",
+                    "simplified": "Testo Semplificato"
+                }
+            },
+            "unspecified": "Non specificato"
+        },
+        "studyStats": {
+            "title": "Statistiche di Studio",
+            "description": "I tuoi progressi e le tue abitudini di studio.",
+            "sessionsCompleted": "Sessioni Completate",
+            "totalMinutes": "Minuti di Studio Totali"
+        },
+        "achievements": {
+            "title": "I Miei Riconoscimenti",
+            "description": "Sblocca obiettivi e celebra i tuoi successi nello studio.",
+            "firstSteps": {
+                "title": "Primi Passi",
+                "description": "Completa la tua prima sessione di concentrazione."
+            },
+            "consistentStudent": {
+                "title": "Studente Costante",
+                "description": "Completa 10 sessioni di concentrazione."
+            },
+            "beginnerMarathoner": {
+                "title": "Maratoneta Principiante",
+                "description": "Raggiungi 120 minuti totali di studio."
+            },
+            "focusGuru": {
+                "title": "Guru della Concentrazione",
+                "description": "Raggiungi 600 minuti totali di studio."
+            }
+        }
+    },
+    "privacy": {
+        "title": "Informativa sulla Privacy per StudioZen",
+        "lastUpdated": "Ultimo aggiornamento",
+        "backButton": "Torna alla Home",
+        "introduction": {
+            "title": "1. Introduzione",
+            "content": "Benvenuto in StudioZen. La tua privacy è importante per noi. Questa Informativa sulla Privacy spiega quali dati personali raccogliamo, come li utilizziamo e quali sono i tuoi diritti in merito."
+        },
+        "dataWeCollect": {
+            "title": "2. Dati che Raccogliamo",
+            "content": "Raccogliamo le seguenti informazioni per fornire e migliorare il nostro servizio:",
+            "accountInfo": {
+                "title": "Informazioni sull'account",
+                "content": "Quando ti registri, raccogliamo il tuo nome, indirizzo email e password (crittografata). Se accedi con Google, riceviamo le informazioni del tuo profilo pubblico (nome, email, immagine del profilo)."
+            },
+            "usageData": {
+                "title": "Dati di utilizzo",
+                "content": "Raccogliamo informazioni su come utilizzi la nostra applicazione, come le sessioni di studio, i materiali riassunti e i siti bloccati. Questi dati sono associati al tuo account per fornirti le funzionalità dell'app."
+            },
+            "cookies": {
+                "title": "Cookie",
+                "content": "Utilizziamo i cookie per gestire la sessione di autenticazione e per ricordare le tue preferenze, come l'accettazione del banner dei cookie."
+            }
+        },
+        "howWeUseData": {
+            "title": "3. Come Utilizziamo i Tuoi Dati",
+            "content": "Utilizziamo i tuoi dati per:",
+            "points": {
+                "provide": "Fornire, mantenere e migliorare l'applicazione StudioZen.",
+                "authenticate": "Autenticare gli utenti e proteggere gli account.",
+                "personalize": "Personalizzare la tua esperienza.",
+                "communicate": "Comunicare con te per questioni relative al servizio."
+            }
+        },
+        "dataSharing": {
+            "title": "4. Condivisione dei Dati",
+            "content": "Non condividiamo le tue informazioni personali con terze parti, ad eccezione dei fornitori di servizi essenziali (come Firebase di Google per l'hosting e l'autenticazione) che sono vincolati da obblighi di riservatezza."
+        },
+        "dataSecurity": {
+            "title": "5. Sicurezza dei Dati",
+            "content": "Adottiamo misure di sicurezza ragionevoli per proteggere i tuoi dati da accessi non autorizzati, alterazioni o distruzione."
+        },
+        "yourRights": {
+            "title": "6. I Tuoi Diritti",
+            "content": "Hai il diritto di accedere, correggere o eliminare i tuoi dati personali. Puoi gestire le informazioni del tuo account direttamente dall'applicazione o contattandoci."
+        },
+        "changes": {
+            "title": "7. Modifiche a questa Informativa",
+            "content": "Potremmo aggiornare questa Informativa sulla Privacy di tanto in tanto. Ti informeremo di eventuali modifiche pubblicando la nuova informativa su questa pagina."
+        },
+        "contact": {
+            "title": "8. Contatti",
+            "content": "Se hai domande su questa Informativa sulla Privacy, non esitare a contattarci."
+        }
+    },
+    "cookieBanner": {
+        "text": {
+            "part1": "Utilizziamo i cookie per garantire la migliore esperienza. Per saperne di più, leggi la nostra",
+            "link": "Informativa sulla Privacy"
+        },
+        "acceptButton": "Accetta"
+    },
+    "summarizer": {
+        "title": "Riassunto AI",
+        "description": "Incolla un testo, carica un'immagine o fai domande specifiche all'IA.",
+        "tabs": {
+            "text": "Testo",
+            "image": "Immagine"
+        },
+        "text": {
+            "placeholder": "Incolla qui il tuo materiale di studio..."
+        },
+        "image": {
+            "alt": "Anteprima immagine caricata",
+            "uploadTitle": "Carica un'immagine",
+            "uploadDescription": "Trascina e rilascia un file o clicca per caricare.",
+            "loading": "L'IA sta analizzando l'immagine...",
+            "outputPlaceholder": "Il riassunto della tua immagine apparirà qui."
+        },
+        "buttons": {
+            "summarize": "Riassumi",
+            "regenerate": "Rigenera Riassunto",
+            "loading": "Elaborazione...",
+            "copy": "Copia",
+            "copied": "Copiato!",
+            "remove": "Rimuovi",
+            "chooseFile": "Scegli File",
+            "send": "Invia"
+        },
+        "outputPlaceholder": "Il tuo riassunto apparirà qui.",
+        "loading": "L'IA sta elaborando...",
+        "styles": {
+            "paragraph": "Paragrafo",
+            "bulletPoints": "Punti Elenco",
+            "keyConcepts": "Concetti Chiave"
+        },
+        "qa": {
+            "title": "Chiedi all'IA",
+            "description": "Fai una domanda specifica sul testo che hai incollato sopra. Funziona solo con l'input di testo.",
+            "placeholder": "Scrivi qui la tua domanda...",
+            "noContext": "Nessun contesto testuale fornito."
+        },
+        "errors": {
+            "fileTooLarge": "Il file è troppo grande. La dimensione massima è 4MB.",
+            "noText": "Per favore, inserisci del testo da riassumere.",
+            "noImage": "Per favore, carica un'immagine da riassumere.",
+            "noQuestion": "Per favore, inserisci una domanda."
+        }
+    },
+    "flashcards": {
+        "title": "Generatore di Quiz",
+        "description": "Trasforma i tuoi appunti in un quiz interattivo per testare la tua conoscenza.",
+        "textareaPlaceholder": "Incolla qui il tuo materiale di studio (appunti, paragrafi di un libro, ecc.)...",
+        "generateButton": {
+            "default": "Genera Domande",
+            "loading": "Generazione..."
+        },
+        "loading": {
+            "title": "L'IA sta creando le tue domande...",
+            "description": "Potrebbe volerci qualche istante."
+        },
+        "results": {
+            "title": "Scegli una domanda per metterti alla prova"
+        },
+        "studyTip": {
+            "title": "Consiglio per lo studio",
+            "description": "Clicca su una domanda per iniziare. Scegli la risposta che ritieni corretta per ricevere un feedback immediato."
+        },
+        "card": {
+            "correct": "Corretto!",
+            "incorrect": "Sbagliato.",
+            "correctAnswer": "Risposta corretta",
+            "explanation": "Spiegazione",
+            "footer": {
+                "selectAnswer": "Seleziona una risposta.",
+                "answered": "Puoi chiudere questa domanda o sceglierne un'altra."
+            }
+        },
+        "errors": {
+            "noText": "Per favore, inserisci del testo da cui generare le flashcard.",
+            "generationFailed": "L'IA non è riuscita a generare flashcard dal testo fornito. Prova con un testo diverso o più dettagliato."
+        }
+    },
+    "focusTimer": {
+        "title": "Timer Concentrazione",
+        "description": "Usa la tecnica del Pomodoro per studiare meglio.",
+        "mode": {
+            "focus": "Concentrazione",
+            "break": "Pausa"
+        },
+        "buttons": {
+            "start": "Avvia",
+            "pause": "Pausa",
+            "resetAriaLabel": "Resetta timer"
+        },
+        "footer": {
+            "focus": "Resta concentrato per 25 minuti.",
+            "break": "Fai una breve pausa di 5 minuti."
+        }
+    },
+    "helpGuide": {
+        "triggerButton": "Guida",
+        "title": "Guida di StudioZen",
+        "description": "Scopri come usare al meglio le funzionalità di StudioZen per migliorare la tua concentrazione e il tuo apprendimento.",
+        "sections": {
+            "summarizer": {
+                "title": "Riassunto AI",
+                "content": "Incolla qualsiasi testo nell'area dedicata, scegli uno stile di riepilogo (Paragrafo, Punti Elenco, Concetti Chiave) e clicca 'Riassumi'. L'IA creerà un riassunto personalizzato per te."
+            },
+            "quizGenerator": {
+                "title": "Generatore di Quiz",
+                "content": "Trasforma i tuoi appunti in un quiz interattivo. Incolla il testo e clicca 'Genera Domande'. Verrà visualizzato un elenco di domande. Clicca su una domanda per visualizzare le opzioni a risposta multipla. Seleziona una risposta per ricevere un feedback immediato."
+            },
+            "focusTimer": {
+                "title": "Timer Concentrazione (Pomodoro)",
+                "content": "Usa la tecnica del Pomodoro per massimizzare la tua produttività. Clicca 'Avvia' per iniziare una sessione di studio di 25 minuti. Al termine, il timer ti avviserà e partirà automaticamente una pausa di 5 minuti."
+            }
+        }
+    },
+    "errors": {
+        "generic": {
+            "title": "Ops! Qualcosa è andato storto.",
+            "default": "Impossibile completare la richiesta. Riprova più tardi."
+        },
+        "rateLimit": "Hai effettuato troppe richieste in un breve periodo. Attendi qualche istante e riprova.",
+        "qaErrorTitle": "Errore Domanda"
+    }
+}
