@@ -101,7 +101,7 @@ export default function Summarizer() {
         setAnswer(result.answer);
       } catch (e) {
         console.error(e);
-        let errorMessage = "Si è verificato un errore durante la richiesta. Riprova.";
+        let errorMessage = "Si è verificato un errore during la richiesta. Riprova.";
         if (e instanceof Error && e.message.includes('429')) {
             errorMessage = "Hai effettuato troppe richieste in un breve periodo. Attendi qualche istante e riprova.";
         }
@@ -223,26 +223,21 @@ export default function Summarizer() {
                     Fai una domanda specifica sul testo che hai incollato sopra.
                 </p>
             </div>
-            <form onSubmit={handleAskQuestion} className="flex items-start gap-4">
-              <Textarea
+            <form onSubmit={handleAskQuestion} className="flex items-center gap-4">
+              <Input
                 placeholder="Scrivi qui la tua domanda..."
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
-                rows={2}
                 className="w-full"
                 disabled={isQAPending || isPending}
               />
-              <Button type="submit" disabled={isQAPending || !question || isPending} className="h-auto">
+              <Button type="submit" disabled={isQAPending || !question || isPending}>
                 {isQAPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  </>
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <>
-                    <Send className="mr-2 h-4 w-4" />
-                  </>
+                  <Send className="h-4 w-4" />
                 )}
-                 Invia
+                 <span className="sr-only">Invia</span>
               </Button>
             </form>
 
@@ -265,3 +260,5 @@ export default function Summarizer() {
     </Card>
   );
 }
+
+    

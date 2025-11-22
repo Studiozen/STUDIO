@@ -12,14 +12,14 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 export const AskQuestionInputSchema = z.object({
-  context: z.string().describe('Il testo del materiale di studio.'),
-  question: z.string().describe('La domanda specifica da porre sul contesto.'),
-  learningStyle: z.string().optional().describe('Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'),
+  context: z.string().describe('The text from the study material.'),
+  question: z.string().describe('The specific question to ask about the context.'),
+  learningStyle: z.string().optional().describe('The user\'s preferred learning style (e.g., "simplified" for simplified text).'),
 });
 export type AskQuestionInput = z.infer<typeof AskQuestionInputSchema>;
 
 export const AskQuestionOutputSchema = z.object({
-  answer: z.string().describe('La risposta alla domanda basata sul contesto fornito.'),
+  answer: z.string().describe('The answer to the question based on the provided context.'),
 });
 export type AskQuestionOutput = z.infer<typeof AskQuestionOutputSchema>;
 
@@ -33,19 +33,19 @@ const prompt = ai.definePrompt({
   name: 'askQuestionPrompt',
   input: { schema: AskQuestionInputSchema },
   output: { schema: AskQuestionOutputSchema },
-  prompt: `Sei un assistente di studio esperto. Il tuo compito è rispondere alla domanda dell'utente basandoti ESCLUSIVAMENTE sul testo fornito. Non usare conoscenze esterne. Fornisci una risposta chiara e concisa.
+  prompt: `You are an expert study assistant. Your task is to answer the user's question based EXCLUSIVELY on the provided text. Do not use external knowledge. Provide a clear and concise answer.
 
-Testo di riferimento:
+Reference Text:
 {{{context}}}
 
-Domanda:
+Question:
 {{{question}}}
 
 {{#if learningStyle}}
-Se il learningStyle è 'simplified', formula la risposta in modo particolarmente semplice, usando frasi brevi e un linguaggio chiaro, adatto a chi ha bisogni specifici di apprendimento.
+If the learningStyle is 'simplified', formulate the answer in a particularly simple way, using short sentences and clear language, suitable for someone with specific learning needs.
 {{/if}}
 
-Risposta:`,
+Answer:`,
 });
 
 const askQuestionFlow = ai.defineFlow(
@@ -59,3 +59,5 @@ const askQuestionFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    
