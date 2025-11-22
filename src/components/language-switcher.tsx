@@ -1,34 +1,32 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Languages } from 'lucide-react';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useLanguage } from '@/context/language-context';
 
 export function LanguageSwitcher() {
-  const { setLanguage } = useLanguage();
+  const { language, setLanguage } = useLanguage();
+
+  const handleLanguageChange = (value: string) => {
+    if (value === 'en' || value === 'it') {
+      setLanguage(value);
+    }
+  };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
-          <Languages className="h-[1.2rem] w-[1.2rem]" />
-          <span className="sr-only">Toggle language</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setLanguage('en')}>
-          English
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setLanguage('it')}>
-          Italiano
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Select value={language} onValueChange={handleLanguageChange}>
+      <SelectTrigger className="w-[120px]">
+        <SelectValue placeholder="Language" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="en">English</SelectItem>
+        <SelectItem value="it">Italiano</SelectItem>
+      </SelectContent>
+    </Select>
   );
 }
