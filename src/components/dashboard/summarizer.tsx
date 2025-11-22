@@ -85,10 +85,6 @@ export default function Summarizer() {
     setQAError(null);
     setAnswer('');
     
-    if (!text) {
-      setQAError("Per favore, incolla prima il materiale di studio nell'area di testo principale.");
-      return;
-    }
     if (!question) {
       setQAError('Per favore, inserisci una domanda.');
       return;
@@ -96,7 +92,9 @@ export default function Summarizer() {
 
     startQATransition(async () => {
       try {
-        const input: AskQuestionInput = { context: text, question, learningStyle: userProfile?.learningStyle };
+        // If there's no main text, use the question itself as the context.
+        const context = text || question;
+        const input: AskQuestionInput = { context, question, learningStyle: userProfile?.learningStyle };
         const result = await askQuestion(input);
         setAnswer(result.answer);
       } catch (e) {
@@ -223,7 +221,7 @@ export default function Summarizer() {
                     Fai una domanda specifica sul testo che hai incollato sopra.
                 </p>
             </div>
-            <form onSubmit={handleAskQuestion} className="flex items-center gap-4">
+            <form onSubmit={handleAskQuestion} className="flex items-start gap-4">
               <Input
                 placeholder="Scrivi qui la tua domanda..."
                 value={question}
@@ -260,5 +258,3 @@ export default function Summarizer() {
     </Card>
   );
 }
-
-    

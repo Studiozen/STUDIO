@@ -12,7 +12,7 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 export const AskQuestionInputSchema = z.object({
-  context: z.string().describe('The text from the study material.'),
+  context: z.string().describe('The text from the study material. If no study material is provided, this will be the same as the question.'),
   question: z.string().describe('The specific question to ask about the context.'),
   learningStyle: z.string().optional().describe('The user\'s preferred learning style (e.g., "simplified" for simplified text).'),
 });
@@ -33,7 +33,7 @@ const prompt = ai.definePrompt({
   name: 'askQuestionPrompt',
   input: { schema: AskQuestionInputSchema },
   output: { schema: AskQuestionOutputSchema },
-  prompt: `You are an expert study assistant. Your task is to answer the user's question based EXCLUSIVELY on the provided text. Do not use external knowledge. Provide a clear and concise answer.
+  prompt: `You are an expert study assistant. Your task is to answer the user's question. If a "Reference Text" is provided and relevant, base your answer EXCLUSIVELY on it. If the reference text is the same as the question or not relevant, use your general knowledge. Provide a clear and concise answer.
 
 Reference Text:
 {{{context}}}
@@ -59,5 +59,3 @@ const askQuestionFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    
