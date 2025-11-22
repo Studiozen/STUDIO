@@ -11,14 +11,14 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
-export const AskQuestionInputSchema = z.object({
+const AskQuestionInputSchema = z.object({
   context: z.string().describe('The text from the study material. If no study material is provided, this will be the same as the question.'),
   question: z.string().describe('The specific question to ask about the context.'),
   learningStyle: z.string().optional().describe('The user\'s preferred learning style (e.g., "simplified" for simplified text).'),
 });
 export type AskQuestionInput = z.infer<typeof AskQuestionInputSchema>;
 
-export const AskQuestionOutputSchema = z.object({
+const AskQuestionOutputSchema = z.object({
   answer: z.string().describe('The answer to the question based on the provided context.'),
 });
 export type AskQuestionOutput = z.infer<typeof AskQuestionOutputSchema>;
