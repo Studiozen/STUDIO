@@ -5,12 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { TextQuote, Loader2, Wand2, Clipboard, ClipboardCheck } from 'lucide-react';
+import { TextQuote, Loader2, Wand2, Clipboard, ClipboardCheck, Send, Sparkles } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { generateSummarizationStyles, GenerateSummarizationStylesInput } from '@/ai/flows/generate-summarization-styles';
 import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { useDoc } from '@/firebase/firestore/use-doc';
+import { askQuestion, AskQuestionInput } from '@/ai/flows/ask-question';
+import { Input } from '../ui/input';
+import { Separator } from '../ui/separator';
 
 type SummaryStyle = 'concise paragraph' | 'bullet points' | 'key concepts';
 
@@ -18,6 +21,7 @@ export default function Summarizer() {
   const { user } = useUser();
   const firestore = useFirestore();
   const [isPending, startTransition] = useTransition();
+  const [isQAPending, startQATransition] = useTransition();
   const [text, setText] = useState('');
   const [activeStyle, setActiveStyle] = useState<SummaryStyle>('concise paragraph');
   const [summaries, setSummaries] = useState({
@@ -26,7 +30,11 @@ export default function Summarizer() {
     'key concepts': '',
   });
   const [error, setError] = useState<string | null>(null);
+  const [qaError, setQAError] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
+  
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState('');
 
   const userDocRef = useMemoFirebase(
     () => (user ? doc(firestore, `users/${user.uid}`) : null),
@@ -71,6 +79,37 @@ export default function Summarizer() {
         }
     });
   };
+  
+  const handleAskQuestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setQAError(null);
+    setAnswer('');
+    
+    if (!text) {
+      setQAError("Per favore, incolla prima il materiale di studio nell'area di testo principale.");
+      return;
+    }
+    if (!question) {
+      setQAError('Per favore, inserisci una domanda.');
+      return;
+    }
+
+    startQATransition(async () => {
+      try {
+        const input: AskQuestionInput = { context: text, question, learningStyle: userProfile?.learningStyle };
+        const result = await askQuestion(input);
+        setAnswer(result.answer);
+      } catch (e) {
+        console.error(e);
+        let errorMessage = "Si è verificato un errore durante la richiesta. Riprova.";
+        if (e instanceof Error && e.message.includes('429')) {
+            errorMessage = "Hai effettuato troppe richieste in un breve periodo. Attendi qualche istante e riprova.";
+        }
+        setQAError(errorMessage);
+      }
+    });
+  };
+
 
   const handleCopy = () => {
     const currentSummary = summaries[activeStyle];
@@ -97,7 +136,7 @@ export default function Summarizer() {
           Riassunto AI
         </CardTitle>
         <CardDescription>
-          Incolla un testo e ottieni un riassunto intelligente in diversi stili.
+          Incolla un testo per ottenere un riassunto o per fare domande specifiche all'IA.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -108,10 +147,10 @@ export default function Summarizer() {
             onChange={(e) => setText(e.target.value)}
             rows={15}
             className="w-full"
-            disabled={isPending}
+            disabled={isPending || isQAPending}
           />
           <div className="relative flex flex-col rounded-lg border bg-muted/30 p-4 min-h-[300px]">
-            {isPending && (
+            {(isPending || isQAPending) && (
                 <div className='absolute inset-0 bg-background/80 flex flex-col items-center justify-center gap-2 z-10'>
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     <p className='font-semibold'>L'IA sta elaborando...</p>
@@ -147,7 +186,7 @@ export default function Summarizer() {
 
         {error && (
           <Alert variant="destructive">
-            <AlertTitle>Errore</AlertTitle>
+            <AlertTitle>Errore Riassunto</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
@@ -160,7 +199,7 @@ export default function Summarizer() {
               <TabsTrigger value="key concepts">Concetti Chiave</TabsTrigger>
             </TabsList>
           </Tabs>
-          <Button onClick={handleSummarize} disabled={isPending || !text} className="w-full sm:w-auto">
+          <Button onClick={handleSummarize} disabled={isPending || !text || isQAPending} className="w-full sm:w-auto">
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -169,11 +208,59 @@ export default function Summarizer() {
             ) : (
               <>
                 <Wand2 className="mr-2 h-4 w-4" />
-                {hasGenerated ? 'Rigenera' : 'Riassumi'}
+                {hasGenerated ? 'Rigenera Riassunto' : 'Riassumi'}
               </>
             )}
           </Button>
         </div>
+        
+        <Separator className='my-6' />
+        
+        <div className='space-y-4'>
+            <div className='space-y-1'>
+                <h3 className='font-semibold flex items-center gap-2'><Sparkles className='text-primary'/>Chiedi all'IA</h3>
+                <p className='text-sm text-muted-foreground'>
+                    Fai una domanda specifica sul testo che hai incollato sopra.
+                </p>
+            </div>
+            <form onSubmit={handleAskQuestion} className="flex items-start gap-4">
+              <Textarea
+                placeholder="Scrivi qui la tua domanda..."
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                rows={2}
+                className="w-full"
+                disabled={isQAPending || isPending}
+              />
+              <Button type="submit" disabled={isQAPending || !question || isPending} className="h-auto">
+                {isQAPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  </>
+                ) : (
+                  <>
+                    <Send className="mr-2 h-4 w-4" />
+                  </>
+                )}
+                 Invia
+              </Button>
+            </form>
+
+            {qaError && (
+              <Alert variant="destructive">
+                <AlertTitle>Errore Domanda</AlertTitle>
+                <AlertDescription>{qaError}</AlertDescription>
+              </Alert>
+            )}
+
+            {answer && !isQAPending && (
+                <div className='prose prose-sm dark:prose-invert max-w-none rounded-lg border bg-muted/30 p-4'>
+                    <p>{answer}</p>
+                </div>
+            )}
+
+        </div>
+
       </CardContent>
     </Card>
   );
