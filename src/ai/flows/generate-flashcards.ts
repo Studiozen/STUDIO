@@ -41,6 +41,8 @@ const prompt = ai.definePrompt({
   output: { schema: GenerateFlashcardsOutputSchema },
   prompt: `Sei un tutor esperto. Crea una serie di 20 domande a scelta multipla diverse basate sul testo fornito per aiutare uno studente a ripassare. Ogni domanda deve avere 4 opzioni di risposta: una corretta e tre verosimili ma errate. Assicurati che ogni domanda sia unica e copra un aspetto diverso del testo. Per ogni domanda, fornisci la risposta corretta e una breve spiegazione.
 
+**Importante**: Tutte le domande, le opzioni e le spiegazioni devono essere generate esclusivamente in lingua italiana.
+
 {{#if learningStyle}}
 Se il learningStyle è 'simplified', adatta la complessità delle domande, opzioni, risposte e spiegazioni per un utente con bisogni specifici di apprendimento (come la dislessia). Usa frasi brevi, un linguaggio semplice e concetti chiari.
 {{/if}}

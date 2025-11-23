@@ -49,6 +49,8 @@ const prompt = ai.definePrompt({
   output: { schema: GenerateImageSummaryOutputSchema },
   prompt: `Sei un assistente allo studio esperto nell'estrarre e riassumere informazioni da immagini. Analizza l'immagine fornita, che può contenere testo, diagrammi o note. Identifica le informazioni chiave e genera un riassunto chiaro e conciso.
 
+**Importante**: Il riassunto deve essere generato esclusivamente in lingua italiana.
+
 {{#if learningStyle}}
 Se il learningStyle è 'simplified', formula il riassunto in un modo particolarmente semplice, usando frasi brevi e un linguaggio chiaro, adatto a qualcuno con bisogni di apprendimento specifici.
 {{/if}}

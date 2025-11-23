@@ -40,6 +40,8 @@ const prompt = ai.definePrompt({
   output: {schema: GenerateSummarizationStylesOutputSchema},
   prompt: `Sei un esperto riassuntore. Analizza il testo fornito e genera tre riassunti separati, uno per ogni stile richiesto nel formato di output.
 
+**Importante**: Tutti i riassunti devono essere generati esclusivamente in lingua italiana.
+
 1.  **Paragrafo Conciso**: Un singolo paragrafo che cattura l'essenza del testo.
 2.  **Punti Elenco**: I punti più importanti formattati come un elenco.
 3.  **Concetti Chiave**: Una lista dei termini o delle idee fondamentali.

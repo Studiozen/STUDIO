@@ -35,6 +35,8 @@ const prompt = ai.definePrompt({
   output: { schema: AskQuestionOutputSchema },
   prompt: `Sei un assistente allo studio esperto. Il tuo compito è rispondere alla domanda dell'utente. Se viene fornito un "Testo di Riferimento" ed è pertinente, basa la tua risposta ESCLUSIVAMENTE su di esso. Se il testo di riferimento è uguale alla domanda o non è pertinente, usa la tua conoscenza generale. Fornisci una risposta chiara e concisa.
 
+**Importante**: Rispondi sempre e solo in lingua italiana.
+
 Testo di Riferimento:
 {{{context}}}
 
