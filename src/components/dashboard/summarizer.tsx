@@ -24,7 +24,7 @@ type InputMode = 'text' | 'image';
 export default function Summarizer() {
   const { user } = useUser();
   const firestore = useFirestore();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [isPending, startTransition] = useTransition();
   const [isQAPending, startQATransition] = useTransition();
   
@@ -102,6 +102,7 @@ export default function Summarizer() {
                 const input: GenerateSummarizationStylesInput = {
                     text,
                     learningStyle: userProfile?.learningStyle,
+                    language: language,
                 };
                 const result = await generateSummarizationStyles(input);
                 setSummaries({
@@ -113,6 +114,7 @@ export default function Summarizer() {
                 const input: GenerateImageSummaryInput = {
                     imageDataUri: imageData,
                     learningStyle: userProfile?.learningStyle,
+                    language: language,
                 };
                 const result = await generateImageSummary(input);
                 setSummaries({
@@ -148,7 +150,12 @@ export default function Summarizer() {
     startQATransition(async () => {
       try {
         const context = text || t('summarizer.qa.noContext');
-        const input: AskQuestionInput = { context, question, learningStyle: userProfile?.learningStyle };
+        const input: AskQuestionInput = { 
+          context, 
+          question, 
+          learningStyle: userProfile?.learningStyle,
+          language: language,
+        };
         const result = await askQuestion(input);
         setAnswer(result.answer);
       } catch (e) {

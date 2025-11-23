@@ -14,6 +14,7 @@ import { z } from 'genkit';
 const GenerateFlashcardsInputSchema = z.object({
   text: z.string().describe('Il testo del materiale di studio da cui generare le flashcard.'),
   learningStyle: z.string().optional().describe('Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'),
+  language: z.enum(['en', 'it']).describe("La lingua in cui l'IA deve generare le flashcard."),
 });
 export type GenerateFlashcardsInput = z.infer<typeof GenerateFlashcardsInputSchema>;
 
@@ -39,15 +40,15 @@ const prompt = ai.definePrompt({
   name: 'generateFlashcardsPrompt',
   input: { schema: GenerateFlashcardsInputSchema },
   output: { schema: GenerateFlashcardsOutputSchema },
-  prompt: `Sei un tutor esperto. Crea una serie di 20 domande a scelta multipla diverse basate sul testo fornito per aiutare uno studente a ripassare. Ogni domanda deve avere 4 opzioni di risposta: una corretta e tre verosimili ma errate. Assicurati che ogni domanda sia unica e copra un aspetto diverso del testo. Per ogni domanda, fornisci la risposta corretta e una breve spiegazione.
+  prompt: `You are an expert tutor. Create a set of 20 different multiple-choice questions based on the provided text to help a student review. Each question should have 4 answer options: one correct and three plausible but incorrect. Ensure each question is unique and covers a different aspect of the text. For each question, provide the correct answer and a brief explanation.
 
-**Importante**: Tutte le domande, le opzioni e le spiegazioni devono essere generate esclusivamente in lingua italiana.
+**Important**: All questions, options, and explanations must be generated exclusively in the language specified by the 'language' parameter. For example, if the language is 'it', generate everything in Italian. If it is 'en', generate everything in English.
 
 {{#if learningStyle}}
-Se il learningStyle è 'simplified', adatta la complessità delle domande, opzioni, risposte e spiegazioni per un utente con bisogni specifici di apprendimento (come la dislessia). Usa frasi brevi, un linguaggio semplice e concetti chiari.
+If the learningStyle is 'simplified', adapt the complexity of the questions, options, answers, and explanations for a user with specific learning needs (such as dyslexia). Use short sentences, simple language, and clear concepts.
 {{/if}}
 
-Testo:
+Text:
 {{{text}}}`,
 });
 

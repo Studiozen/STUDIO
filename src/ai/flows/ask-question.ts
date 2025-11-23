@@ -15,6 +15,7 @@ const AskQuestionInputSchema = z.object({
   context: z.string().describe('Il testo dal materiale di studio. Se non viene fornito alcun materiale di studio, questo sarà uguale alla domanda.'),
   question: z.string().describe('La domanda specifica da porre riguardo al contesto.'),
   learningStyle: z.string().optional().describe('Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'),
+  language: z.enum(['en', 'it']).describe("La lingua in cui l'IA deve rispondere."),
 });
 export type AskQuestionInput = z.infer<typeof AskQuestionInputSchema>;
 
@@ -33,21 +34,21 @@ const prompt = ai.definePrompt({
   name: 'askQuestionPrompt',
   input: { schema: AskQuestionInputSchema },
   output: { schema: AskQuestionOutputSchema },
-  prompt: `Sei un assistente allo studio esperto. Il tuo compito è rispondere alla domanda dell'utente. Se viene fornito un "Testo di Riferimento" ed è pertinente, basa la tua risposta ESCLUSIVAMENTE su di esso. Se il testo di riferimento è uguale alla domanda o non è pertinente, usa la tua conoscenza generale. Fornisci una risposta chiara e concisa.
+  prompt: `You are an expert study assistant. Your task is to answer the user's question. If "Reference Text" is provided and relevant, base your answer EXCLUSIVELY on it. If the reference text is the same as the question or not relevant, use your general knowledge. Provide a clear and concise answer.
 
-**Importante**: Rispondi sempre e solo in lingua italiana.
+**Important**: You must always and only answer in the language specified by the 'language' parameter. For example, if the language is 'it', you must answer in Italian. If it is 'en', you must answer in English.
 
-Testo di Riferimento:
+Reference Text:
 {{{context}}}
 
-Domanda:
+Question:
 {{{question}}}
 
 {{#if learningStyle}}
-Se il learningStyle è 'simplified', formula la risposta in un modo particolarmente semplice, usando frasi brevi e un linguaggio chiaro, adatto a qualcuno con bisogni di apprendimento specifici.
+If the learningStyle is 'simplified', formulate the answer in a particularly simple way, using short sentences and clear language, suitable for someone with specific learning needs.
 {{/if}}
 
-Risposta:`,
+Answer:`,
 });
 
 const askQuestionFlow = ai.defineFlow(

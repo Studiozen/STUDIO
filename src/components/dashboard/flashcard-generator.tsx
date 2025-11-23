@@ -24,7 +24,7 @@ interface FlashcardData {
 export default function FlashcardGenerator() {
   const { user } = useUser();
   const firestore = useFirestore();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
 
   const userDocRef = useMemoFirebase(
     () => (user ? doc(firestore, `users/${user.uid}`) : null),
@@ -50,7 +50,11 @@ export default function FlashcardGenerator() {
     }
 
     startTransition(async () => {
-      const input: GenerateFlashcardsInput = { text, learningStyle: userProfile?.learningStyle };
+      const input: GenerateFlashcardsInput = { 
+        text, 
+        learningStyle: userProfile?.learningStyle,
+        language: language,
+      };
       const res = await generateFlashcards(input);
       if (res.flashcards && res.flashcards.length > 0) {
         setResult(res);

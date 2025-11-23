@@ -23,6 +23,7 @@ const GenerateImageSummaryInputSchema = z.object({
     .describe(
       'Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'
     ),
+  language: z.enum(['en', 'it']).describe("La lingua in cui l'IA deve generare il riassunto."),
 });
 export type GenerateImageSummaryInput = z.infer<
   typeof GenerateImageSummaryInputSchema
@@ -47,15 +48,15 @@ const prompt = ai.definePrompt({
   name: 'generateImageSummaryPrompt',
   input: { schema: GenerateImageSummaryInputSchema },
   output: { schema: GenerateImageSummaryOutputSchema },
-  prompt: `Sei un assistente allo studio esperto nell'estrarre e riassumere informazioni da immagini. Analizza l'immagine fornita, che può contenere testo, diagrammi o note. Identifica le informazioni chiave e genera un riassunto chiaro e conciso.
+  prompt: `You are an expert study assistant specializing in extracting and summarizing information from images. Analyze the provided image, which may contain text, diagrams, or notes. Identify the key information and generate a clear and concise summary.
 
-**Importante**: Il riassunto deve essere generato esclusivamente in lingua italiana.
+**Important**: The summary must be generated exclusively in the language specified by the 'language' parameter. For example, if the language is 'it', you must write in Italian. If it is 'en', you must write in English.
 
 {{#if learningStyle}}
-Se il learningStyle è 'simplified', formula il riassunto in un modo particolarmente semplice, usando frasi brevi e un linguaggio chiaro, adatto a qualcuno con bisogni di apprendimento specifici.
+If the learningStyle is 'simplified', formulate the summary in a particularly simple way, using short sentences and clear language, suitable for someone with specific learning needs.
 {{/if}}
 
-Immagine da analizzare:
+Image to analyze:
 {{media url=imageDataUri}}`,
 });
 
@@ -68,7 +69,7 @@ const generateImageSummaryFlow = ai.defineFlow(
   async input => {
     const { output } = await prompt(input);
     if (!output) {
-        throw new Error("L'IA non è riuscita a generare un riassunto dall'immagine fornita. L'immagine potrebbe non contenere testo riconoscibile.");
+        throw new Error("The AI failed to generate a summary from the provided image. The image may not contain recognizable text.");
     }
     return output;
   }

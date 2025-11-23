@@ -14,6 +14,7 @@ import {z} from 'zod';
 const GenerateSummarizationStylesInputSchema = z.object({
   text: z.string().describe('Il testo da riassumere.'),
   learningStyle: z.string().optional().describe('Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'),
+  language: z.enum(['en', 'it']).describe("La lingua in cui l'IA deve generare i riassunti."),
 });
 export type GenerateSummarizationStylesInput = z.infer<
   typeof GenerateSummarizationStylesInputSchema
@@ -38,19 +39,19 @@ const prompt = ai.definePrompt({
   name: 'generateSummarizationStylesPrompt',
   input: {schema: GenerateSummarizationStylesInputSchema},
   output: {schema: GenerateSummarizationStylesOutputSchema},
-  prompt: `Sei un esperto riassuntore. Analizza il testo fornito e genera tre riassunti separati, uno per ogni stile richiesto nel formato di output.
+  prompt: `You are an expert summarizer. Analyze the provided text and generate three separate summaries, one for each style required in the output format.
 
-**Importante**: Tutti i riassunti devono essere generati esclusivamente in lingua italiana.
+**Important**: All summaries must be generated exclusively in the language specified by the 'language' parameter. For example, if the language is 'it', you must write in Italian. If it is 'en', you must write in English.
 
-1.  **Paragrafo Conciso**: Un singolo paragrafo che cattura l'essenza del testo.
-2.  **Punti Elenco**: I punti più importanti formattati come un elenco.
-3.  **Concetti Chiave**: Una lista dei termini o delle idee fondamentali.
+1.  **Concise Paragraph**: A single paragraph that captures the essence of the text.
+2.  **Bullet Points**: The most important points formatted as a list.
+3.  **Key Concepts**: A list of the fundamental terms or ideas.
 
 {{#if learningStyle}}
-Se il learningStyle è 'simplified', adatta la complessità di tutti e tre i riassunti per un utente con bisogni specifici di apprendimento (come la dislessia). Usa frasi brevi, un linguaggio semplice e concetti chiari.
+If the learningStyle is 'simplified', adapt the complexity of all three summaries for a user with specific learning needs (such as dyslexia). Use short sentences, simple language, and clear concepts.
 {{/if}}
 
-Testo da analizzare:
+Text to analyze:
 {{{text}}}`,
 });
 
