@@ -12,21 +12,21 @@ import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
 const GenerateFlashcardsInputSchema = z.object({
-  text: z.string().describe('Il testo del materiale di studio da cui generare le flashcard.'),
-  learningStyle: z.string().optional().describe('Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'),
-  language: z.enum(['en', 'it']).describe("La lingua in cui l'IA deve generare le flashcard."),
+  text: z.string().describe('The text of the study material from which to generate flashcards.'),
+  learningStyle: z.string().optional().describe('The user\'s preferred learning style (e.g., "simplified" for simplified text).'),
+  language: z.enum(['en', 'it']).describe("The language in which the AI should generate the flashcards."),
 });
 export type GenerateFlashcardsInput = z.infer<typeof GenerateFlashcardsInputSchema>;
 
 const FlashcardSchema = z.object({
-    question: z.string().describe('La domanda a scelta multipla.'),
-    options: z.array(z.string()).describe('Un array di 4 possibili risposte per la domanda.'),
-    answer: z.string().describe('La risposta corretta dall\'array di opzioni.'),
-    explanation: z.string().describe('Una breve spiegazione della risposta corretta.'),
+    question: z.string().describe('The multiple-choice question.'),
+    options: z.array(z.string()).describe('An array of 4 possible answers for the question.'),
+    answer: z.string().describe('The correct answer from the options array.'),
+    explanation: z.string().describe('A brief explanation of the correct answer.'),
 });
 
 const GenerateFlashcardsOutputSchema = z.object({
-  flashcards: z.array(FlashcardSchema).describe('Un elenco di flashcard generate.'),
+  flashcards: z.array(FlashcardSchema).describe('A list of generated flashcards.'),
 });
 export type GenerateFlashcardsOutput = z.infer<typeof GenerateFlashcardsOutputSchema>;
 

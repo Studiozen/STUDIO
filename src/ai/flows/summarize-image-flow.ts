@@ -3,9 +3,9 @@
 /**
  * @fileOverview Agente IA che riassume il contenuto di un'immagine.
  *
- * - generateImageSummary - Una funzione che genera un riassunto da un'immagine fornita.
- * - GenerateImageSummaryInput - Il tipo di input per la funzione generateImageSummary.
- * - GenerateImageSummaryOutput - Il tipo di ritorno per la funzione generateImageSummary.
+ * - generateImageSummary - A function that generates a summary from a provided image.
+ * - GenerateImageSummaryInput - The input type for the generateImageSummary function.
+ * - GenerateImageSummaryOutput - The return type for the generateImageSummary function.
  */
 
 import { ai } from '@/ai/genkit';
@@ -15,15 +15,15 @@ const GenerateImageSummaryInputSchema = z.object({
   imageDataUri: z
     .string()
     .describe(
-      "Una foto di un documento, diagramma o qualsiasi cosa con testo, come un data URI che deve includere un tipo MIME e utilizzare la codifica Base64. Formato previsto: 'data:<mimetype>;base64,<encoded_data>'."
+      "A photo of a document, diagram, or anything with text, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
   learningStyle: z
     .string()
     .optional()
     .describe(
-      'Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'
+      'The user\'s preferred learning style (e.g., "simplified" for simplified text).'
     ),
-  language: z.enum(['en', 'it']).describe("La lingua in cui l'IA deve generare il riassunto."),
+  language: z.enum(['en', 'it']).describe("The language in which the AI should generate the summary."),
 });
 export type GenerateImageSummaryInput = z.infer<
   typeof GenerateImageSummaryInputSchema
@@ -32,7 +32,7 @@ export type GenerateImageSummaryInput = z.infer<
 const GenerateImageSummaryOutputSchema = z.object({
   summary: z
     .string()
-    .describe('Un riassunto del contenuto testuale presente nell\'immagine.'),
+    .describe('A summary of the textual content present in the image.'),
 });
 export type GenerateImageSummaryOutput = z.infer<
   typeof GenerateImageSummaryOutputSchema

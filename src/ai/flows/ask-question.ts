@@ -3,24 +3,24 @@
 /**
  * @fileOverview Agente IA che risponde a domande basate su un dato contesto.
  *
- * - askQuestion - Una funzione che risponde a una domanda basata su un contesto di testo fornito.
- * - AskQuestionInput - Il tipo di input per la funzione askQuestion.
- * - AskQuestionOutput - Il tipo di ritorno per la funzione askQuestion.
+ * - askQuestion - A function that responds to a question based on provided text context.
+ * - AskQuestionInput - The input type for the askQuestion function.
+ * - AskQuestionOutput - The return type for the askQuestion function.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 
 const AskQuestionInputSchema = z.object({
-  context: z.string().describe('Il testo dal materiale di studio. Se non viene fornito alcun materiale di studio, questo sarà uguale alla domanda.'),
-  question: z.string().describe('La domanda specifica da porre riguardo al contesto.'),
-  learningStyle: z.string().optional().describe('Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'),
-  language: z.enum(['en', 'it']).describe("La lingua in cui l'IA deve rispondere."),
+  context: z.string().describe('The text from the study material. If no study material is provided, this will be the same as the question.'),
+  question: z.string().describe('The specific question to ask about the context.'),
+  learningStyle: z.string().optional().describe('The user\'s preferred learning style (e.g., "simplified" for simplified text).'),
+  language: z.enum(['en', 'it']).describe("The language in which the AI should respond."),
 });
 export type AskQuestionInput = z.infer<typeof AskQuestionInputSchema>;
 
 const AskQuestionOutputSchema = z.object({
-  answer: z.string().describe('La risposta alla domanda basata sul contesto fornito.'),
+  answer: z.string().describe('The answer to the question based on the provided context.'),
 });
 export type AskQuestionOutput = z.infer<typeof AskQuestionOutputSchema>;
 

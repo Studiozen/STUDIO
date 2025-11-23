@@ -12,18 +12,18 @@ import {ai} from '@/ai/genkit';
 import {z} from 'zod';
 
 const GenerateSummarizationStylesInputSchema = z.object({
-  text: z.string().describe('Il testo da riassumere.'),
-  learningStyle: z.string().optional().describe('Lo stile di apprendimento preferito dall\'utente (es. "simplified" per testo semplificato).'),
-  language: z.enum(['en', 'it']).describe("La lingua in cui l'IA deve generare i riassunti."),
+  text: z.string().describe('The text to be summarized.'),
+  learningStyle: z.string().optional().describe('The user\'s preferred learning style (e.g., "simplified" for simplified text).'),
+  language: z.enum(['en', 'it']).describe("The language in which the AI should generate the summaries."),
 });
 export type GenerateSummarizationStylesInput = z.infer<
   typeof GenerateSummarizationStylesInputSchema
 >;
 
 const GenerateSummarizationStylesOutputSchema = z.object({
-  conciseParagraph: z.string().describe('Un riassunto in un unico paragrafo conciso.'),
-  bulletPoints: z.string().describe('Un riassunto formattato come elenco puntato.'),
-  keyConcepts: z.string().describe('Un riassunto che elenca i concetti chiave principali.'),
+  conciseParagraph: z.string().describe('A summary in a single concise paragraph.'),
+  bulletPoints: z.string().describe('A summary formatted as a bulleted list.'),
+  keyConcepts: z.string().describe('A summary listing the main key concepts.'),
 });
 export type GenerateSummarizationStylesOutput = z.infer<
   typeof GenerateSummarizationStylesOutputSchema
