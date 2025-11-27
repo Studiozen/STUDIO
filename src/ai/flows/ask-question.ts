@@ -27,7 +27,15 @@ export type AskQuestionOutput = z.infer<typeof AskQuestionOutputSchema>;
 export async function askQuestion(
   input: AskQuestionInput
 ): Promise<AskQuestionOutput> {
-  return askQuestionFlow(input);
+    try {
+        return await askQuestionFlow(input);
+    } catch (e: any) {
+        console.error(`[askQuestion] Error: ${e.message}`, e);
+        if (e.message.includes("503")) {
+            throw new Error("The AI model is temporarily overloaded. Please try again in a few moments.");
+        }
+        throw new Error("An unexpected error occurred while asking the question.");
+    }
 }
 
 const prompt = ai.definePrompt({
@@ -59,6 +67,9 @@ const askQuestionFlow = ai.defineFlow(
   },
   async input => {
     const { output } = await prompt(input);
-    return output!;
+    if (!output) {
+      throw new Error('The AI failed to provide an answer.');
+    }
+    return output;
   }
 );

@@ -127,9 +127,7 @@ export default function Summarizer() {
         } catch (e) {
             console.error(e);
             let errorMessage = t('errors.generic.default');
-            if (e instanceof Error && e.message.includes('429')) {
-                errorMessage = t('errors.rateLimit');
-            } else if (e instanceof Error) {
+            if (e instanceof Error) {
                 errorMessage = e.message;
             }
             setError(errorMessage);
@@ -161,8 +159,8 @@ export default function Summarizer() {
       } catch (e) {
         console.error(e);
         let errorMessage = t('errors.generic.default');
-        if (e instanceof Error && e.message.includes('429')) {
-            errorMessage = t('errors.rateLimit');
+        if (e instanceof Error) {
+            errorMessage = e.message;
         }
         setQAError(errorMessage);
       }
