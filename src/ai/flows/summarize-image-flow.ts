@@ -67,10 +67,18 @@ const generateImageSummaryFlow = ai.defineFlow(
     outputSchema: GenerateImageSummaryOutputSchema,
   },
   async input => {
-    const { output } = await prompt(input);
-    if (!output) {
-        throw new Error("The AI failed to generate a summary from the provided image. The image may not contain recognizable text.");
+    try {
+        const { output } = await prompt(input);
+        if (!output) {
+            throw new Error("The AI failed to generate a summary from the provided image. The image may not contain recognizable text.");
+        }
+        return output;
+    } catch (e: any) {
+        console.error(`[generateImageSummaryFlow] Error: ${e.message}`, e);
+        if (e.message.includes("503")) {
+            throw new Error("The AI model is temporarily overloaded. Please try again in a few moments.");
+        }
+        throw new Error("An unexpected error occurred while summarizing the image.");
     }
-    return output;
   }
 );

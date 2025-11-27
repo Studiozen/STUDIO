@@ -62,7 +62,18 @@ const generateSummarizationStylesFlow = ai.defineFlow(
     outputSchema: GenerateSummarizationStylesOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+        const { output } = await prompt(input);
+        if (!output) {
+            throw new Error("The AI failed to generate summaries. Please try again with a different text.");
+        }
+        return output;
+    } catch (e: any) {
+        console.error(`[generateSummarizationStylesFlow] Error: ${e.message}`, e);
+        if (e.message.includes("503")) {
+            throw new Error("The AI model is temporarily overloaded. Please try again in a few moments.");
+        }
+        throw new Error("An unexpected error occurred while generating the summary.");
+    }
   }
 );
