@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview Agente IA che risponde a domande basate su un dato contesto.
+ * @fileOverview AI agent that answers questions based on a given context.
  *
  * - askQuestion - A function that responds to a question based on provided text context.
  * - AskQuestionInput - The input type for the askQuestion function.
