@@ -1,7 +1,7 @@
 'use server';
 
 /**
- * @fileOverview Agente IA che riassume il contenuto di un'immagine.
+ * @fileOverview AI agent that summarizes the content of an image.
  *
  * - generateImageSummary - A function that generates a summary from a provided image.
  * - GenerateImageSummaryInput - The input type for the generateImageSummary function.
