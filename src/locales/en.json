@@ -308,7 +308,8 @@
             "fileTooLarge": "The file is too large. Maximum size is 4MB.",
             "noText": "Please enter some text to summarize.",
             "noImage": "Please upload an image to summarize.",
-            "noQuestion": "Please enter a question."
+            "noQuestion": "Please enter a question.",
+            "imageNoText": "The AI failed to generate a summary from the provided image. The image may not contain recognizable text."
         }
     },
     "flashcards": {

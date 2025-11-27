@@ -308,7 +308,8 @@
             "fileTooLarge": "Il file è troppo grande. La dimensione massima è 4MB.",
             "noText": "Per favore, inserisci del testo da riassumere.",
             "noImage": "Per favore, carica un'immagine da riassumere.",
-            "noQuestion": "Per favore, inserisci una domanda."
+            "noQuestion": "Per favore, inserisci una domanda.",
+            "imageNoText": "L'IA non è riuscita a generare un riassunto dall'immagine fornita. L'immagine potrebbe non contenere testo riconoscibile."
         }
     },
     "flashcards": {

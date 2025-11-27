@@ -128,7 +128,11 @@ export default function Summarizer() {
             console.error(e);
             let errorMessage = t('errors.generic.default');
             if (e instanceof Error) {
-                errorMessage = e.message;
+                if (e.message === 'IMAGE_NO_TEXT') {
+                    errorMessage = t('summarizer.errors.imageNoText');
+                } else {
+                    errorMessage = e.message;
+                }
             }
             setError(errorMessage);
         }
