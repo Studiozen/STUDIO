@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Brain, Clock, BarChart3, Medal, Trophy, Star, GraduationCap, Accessibility, ShieldCheck } from 'lucide-react';
+import { Brain, Clock, BarChart3, Medal, Trophy, Star, GraduationCap, Accessibility, ShieldCheck, Wifi } from 'lucide-react';
 import { collection, doc, Timestamp } from 'firebase/firestore';
 import type { FocusSession } from '@/types/focus-session';
 import { cn } from '@/lib/utils';
@@ -20,6 +20,7 @@ interface UserProfile {
     learningStyle?: string;
     lastLoginIp?: string;
     lastLoginTimestamp?: Timestamp;
+    authorizedIp?: string;
 }
 
 export default function ProfilePage() {
@@ -186,12 +187,15 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                    <Label htmlFor="lastLoginIp">{t('profile.security.lastLoginIp')}</Label>
-                    <Input id="lastLoginIp" value={userProfile?.lastLoginIp || t('profile.form.unspecified')} readOnly />
+                    <Label htmlFor="authorizedIp" className='flex items-center gap-2'><Wifi/>{t('profile.security.authorizedIp')}</Label>
+                    <Input id="authorizedIp" value={userProfile?.authorizedIp || t('profile.form.unspecified')} readOnly />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="lastLoginDate">{t('profile.security.lastLoginDate')}</Label>
                     <Input id="lastLoginDate" value={formatTimestamp(userProfile?.lastLoginTimestamp) || t('profile.form.unspecified')} readOnly />
+                </div>
+                 <div className="md:col-span-2 text-sm text-muted-foreground">
+                    {t('profile.security.ipNotice')}
                 </div>
             </CardContent>
            </Card>

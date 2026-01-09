@@ -49,7 +49,9 @@
             "error": {
                 "title": "Errore di Accesso",
                 "default": "Impossibile accedere. Controlla le tue credenziali e riprova.",
-                "invalidCredentials": "Credenziali non valide. Controlla email e password."
+                "invalidCredentials": "Credenziali non valide. Controlla email e password.",
+                "ipMismatch": "Accesso bloccato. Tentativo di accesso da un indirizzo IP non riconosciuto.",
+                "ipCheckFailed": "Impossibile verificare la tua posizione. Per motivi di sicurezza, l'accesso è stato bloccato."
             }
         },
         "googleSignInError": "Impossibile accedere con Google."
@@ -174,9 +176,10 @@
         },
         "security": {
             "title": "Informazioni di Sicurezza",
-            "description": "Informazioni sull'attività recente del tuo account.",
-            "lastLoginIp": "Ultimo IP di Accesso",
-            "lastLoginDate": "Data Ultimo Accesso"
+            "description": "Informazioni sulla sicurezza del tuo account.",
+            "authorizedIp": "IP Autorizzato",
+            "lastLoginDate": "Data Ultimo Accesso",
+            "ipNotice": "Per la tua sicurezza, gli accessi sono consentiti solo dal tuo indirizzo IP autorizzato."
         },
         "studyStats": {
             "title": "Statistiche di Studio",
@@ -349,6 +352,7 @@
         },
         "errors": {
             "noText": "Per favore, inserisci del testo da cui generare le flashcard.",
+            "textTooShort": "Il testo è troppo breve. Per favore, inserisci almeno 100 caratteri per generare un quiz.",
             "generationFailed": "L'IA non è riuscita a generare flashcard dal testo fornito. Prova con un testo diverso o più dettagliato."
         }
     },
@@ -376,10 +380,10 @@
         "sections": {
             "summarizer": {
                 "title": "Riassunto AI",
-                "content": {
-                    "text": "Per riassumere un testo, seleziona la scheda 'Testo', incolla il tuo materiale nell'area di testo, scegli uno stile di riepilogo (Paragrafo, Punti Elenco o Concetti Chiave) e clicca 'Riassumi'.",
-                    "image": "Per riassumere un'immagine, seleziona la scheda 'Immagine', carica una foto del tuo documento e clicca 'Riassumi'. L'IA estrarrà il testo e fornirà un riassunto conciso."
-                }
+                "content": [
+                    "Per riassumere un testo, seleziona la scheda 'Testo', incolla il tuo materiale nell'area di testo, scegli uno stile di riepilogo (Paragrafo, Punti Elenco o Concetti Chiave) e clicca 'Riassumi'.",
+                    "Per riassumere un'immagine, seleziona la scheda 'Immagine', carica una foto del tuo documento e clicca 'Riassumi'. L'IA estrarrà il testo e fornirà un riassunto conciso."
+                ]
             },
             "quizGenerator": {
                 "title": "Generatore di Quiz",

@@ -25,7 +25,7 @@ import {
   sendPasswordResetEmail,
   User,
 } from 'firebase/auth';
-import { doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { Flower2 } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -70,37 +70,82 @@ export default function LoginPage() {
     },
   });
 
-  const updateUserLoginInfo = async (user: User) => {
+  const checkIpAndProceed = async (user: User, isNewUser = false) => {
     try {
-      const ipRes = await fetch('https://api.ipify.org?format=json');
-      const { ip } = await ipRes.json();
-
-      if (ip) {
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const { ip } = await ipRes.json();
         const userDocRef = doc(firestore, 'users', user.uid);
+
+        if (isNewUser) {
+            // New user, set authorizedIp
+            await setDoc(userDocRef, {
+                id: user.uid,
+                name: user.displayName,
+                email: user.email,
+                authorizedIp: ip,
+                lastLoginIp: ip,
+                lastLoginTimestamp: serverTimestamp()
+            }, { merge: true });
+            return true;
+        }
+
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            if (userData.authorizedIp) {
+                if (userData.authorizedIp !== ip) {
+                    // IP mismatch, block login
+                    await auth.signOut(); // Force sign out for security
+                    toast({
+                        variant: 'destructive',
+                        title: t('login.toast.error.title'),
+                        description: t('login.toast.error.ipMismatch'),
+                    });
+                    return false;
+                }
+            } else {
+                // authorizedIp not set, so set it on first login
+                await updateDoc(userDocRef, { authorizedIp: ip });
+            }
+        }
+        
+        // IP is valid, update login info
         await updateDoc(userDocRef, {
-          lastLoginIp: ip,
-          lastLoginTimestamp: serverTimestamp()
+            lastLoginIp: ip,
+            lastLoginTimestamp: serverTimestamp()
         });
-      }
+
+        return true;
+
     } catch (error) {
-      console.error("Failed to log user IP:", error);
-      // We don't block the login flow if this fails
+        console.error("IP check/update failed:", error);
+        // In case of IP check failure, we block login to be safe
+        await auth.signOut();
+        toast({
+            variant: 'destructive',
+            title: t('login.toast.error.title'),
+            description: t('login.toast.error.ipCheckFailed'),
+        });
+        return false;
     }
   }
+
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
       
-      await updateUserLoginInfo(user);
+      const canProceed = await checkIpAndProceed(user);
 
-      toast({
-        title: t('login.toast.success.title'),
-        description: t('login.toast.success.description', { name: user.displayName || 'user' }),
-        duration: 3000,
-      });
-      router.push('/');
+      if (canProceed) {
+          toast({
+            title: t('login.toast.success.title'),
+            description: t('login.toast.success.description', { name: user.displayName || 'user' }),
+            duration: 3000,
+          });
+          router.push('/');
+      }
     } catch (error: any) {
       console.error('Login Error:', error);
       let description = t('login.toast.error.default');
@@ -149,27 +194,25 @@ export default function LoginPage() {
       const user = result.user;
       const additionalUserInfo = getAdditionalUserInfo(result);
 
-      if (additionalUserInfo?.isNewUser) {
-        await setDoc(doc(firestore, 'users', user.uid), {
-          id: user.uid,
-          name: user.displayName,
-          email: user.email,
-        });
-        toast({
-          title: t('signup.toast.success.title'),
-          description: t('signup.toast.success.description', { name: user.displayName || 'user' }),
-          duration: 3000,
-        });
-      } else {
-         toast({
-          title: t('login.toast.success.title'),
-          description: t('login.toast.success.description', { name: user.displayName || 'user' }),
-          duration: 3000,
-        });
-      }
+      const isNewUser = !!additionalUserInfo?.isNewUser;
+      const canProceed = await checkIpAndProceed(user, isNewUser);
 
-      await updateUserLoginInfo(user);
-      router.push('/');
+      if (canProceed) {
+          if (isNewUser) {
+            toast({
+              title: t('signup.toast.success.title'),
+              description: t('signup.toast.success.description', { name: user.displayName || 'user' }),
+              duration: 3000,
+            });
+          } else {
+             toast({
+              title: t('login.toast.success.title'),
+              description: t('login.toast.success.description', { name: user.displayName || 'user' }),
+              duration: 3000,
+            });
+          }
+          router.push('/');
+      }
 
     } catch (error: any) {
       console.error(error);

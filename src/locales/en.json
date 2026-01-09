@@ -49,7 +49,9 @@
             "error": {
                 "title": "Login Error",
                 "default": "Could not log in. Check your credentials and try again.",
-                "invalidCredentials": "Invalid credentials. Please check your email and password."
+                "invalidCredentials": "Invalid credentials. Please check your email and password.",
+                "ipMismatch": "Login blocked. Access attempt from an unrecognized IP address.",
+                "ipCheckFailed": "Could not verify your location. For security reasons, login has been blocked."
             }
         },
         "googleSignInError": "Could not log in with Google."
@@ -174,9 +176,10 @@
         },
         "security": {
             "title": "Security Information",
-            "description": "Information about your recent account activity.",
-            "lastLoginIp": "Last Login IP",
-            "lastLoginDate": "Last Login Date"
+            "description": "Information about your account security.",
+            "authorizedIp": "Authorized IP",
+            "lastLoginDate": "Last Login Date",
+            "ipNotice": "For your security, logins are only permitted from your authorized IP address."
         },
         "studyStats": {
             "title": "Study Statistics",
@@ -349,6 +352,7 @@
         },
         "errors": {
             "noText": "Please enter some text to generate flashcards from.",
+            "textTooShort": "The text is too short. Please enter at least 100 characters to generate a quiz.",
             "generationFailed": "The AI failed to generate flashcards from the provided text. Try with a different or more detailed text."
         }
     },
@@ -376,10 +380,10 @@
         "sections": {
             "summarizer": {
                 "title": "AI Summarizer",
-                "content": {
-                    "text": "To summarize text, select the 'Text' tab, paste your material into the text area, choose a summary style (Paragraph, Bullet Points, or Key Concepts), and click 'Summarize'.",
-                    "image": "To summarize an image, select the 'Image' tab, upload a picture of your document, and click 'Summarize'. The AI will extract the text and provide a concise summary."
-                }
+                "content": [
+                    "To summarize text, select the 'Text' tab, paste your material into the text area, choose a summary style (Paragraph, Bullet Points, or Key Concepts), and click 'Summarize'.",
+                    "To summarize an image, select the 'Image' tab, upload a picture of your document, and click 'Summarize'. The AI will extract the text and provide a concise summary."
+                ]
             },
             "quizGenerator": {
                 "title": "Quiz Generator",
