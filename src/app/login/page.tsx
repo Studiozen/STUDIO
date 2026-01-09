@@ -72,63 +72,67 @@ export default function LoginPage() {
 
   const checkIpAndProceed = async (user: User, isNewUser = false) => {
     try {
-        const ipRes = await fetch('https://api.ipify.org?format=json');
-        const { ip } = await ipRes.json();
-        const userDocRef = doc(firestore, 'users', user.uid);
+      const ipRes = await fetch('https://api.ipify.org?format=json');
+      const { ip } = await ipRes.json();
+      const userDocRef = doc(firestore, 'users', user.uid);
+      
+      const userDoc = await getDoc(userDocRef);
 
-        if (isNewUser) {
-            // New user, set authorizedIp
-            await setDoc(userDocRef, {
-                id: user.uid,
-                name: user.displayName,
-                email: user.email,
-                authorizedIp: ip,
-                lastLoginIp: ip,
-                lastLoginTimestamp: serverTimestamp()
-            }, { merge: true });
-            return true;
-        }
-
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-            const userData = userDoc.data();
-            if (userData.authorizedIp) {
-                if (userData.authorizedIp !== ip) {
-                    // IP mismatch, block login
-                    await auth.signOut(); // Force sign out for security
-                    toast({
-                        variant: 'destructive',
-                        title: t('login.toast.error.title'),
-                        description: t('login.toast.error.ipMismatch'),
-                    });
-                    return false;
-                }
-            } else {
-                // authorizedIp not set, so set it on first login
-                await updateDoc(userDocRef, { authorizedIp: ip });
-            }
-        }
-        
-        // IP is valid, update login info
-        await updateDoc(userDocRef, {
-            lastLoginIp: ip,
-            lastLoginTimestamp: serverTimestamp()
-        });
-
+      if (isNewUser || !userDoc.exists()) {
+        // User is new or document doesn't exist, create it with the authorized IP
+        await setDoc(userDocRef, {
+          id: user.uid,
+          name: user.displayName,
+          email: user.email,
+          authorizedIp: ip,
+          lastLoginIp: ip,
+          lastLoginTimestamp: serverTimestamp()
+        }, { merge: true });
         return true;
+      }
 
-    } catch (error) {
-        console.error("IP check/update failed:", error);
-        // In case of IP check failure, we block login to be safe
-        await auth.signOut();
+      const userData = userDoc.data();
+      if (!userData.authorizedIp) {
+        // authorizedIp is not set, so this is the first secure login. Set it.
+        await updateDoc(userDocRef, { 
+          authorizedIp: ip,
+          lastLoginIp: ip,
+          lastLoginTimestamp: serverTimestamp()
+        });
+        return true;
+      }
+      
+      if (userData.authorizedIp !== ip) {
+        // IP mismatch, block login
+        await auth.signOut(); // Force sign out for security
         toast({
-            variant: 'destructive',
-            title: t('login.toast.error.title'),
-            description: t('login.toast.error.ipCheckFailed'),
+          variant: 'destructive',
+          title: t('login.toast.error.title'),
+          description: t('login.toast.error.ipMismatch'),
         });
         return false;
+      }
+
+      // IP is valid, update login info
+      await updateDoc(userDocRef, {
+        lastLoginIp: ip,
+        lastLoginTimestamp: serverTimestamp()
+      });
+
+      return true;
+
+    } catch (error) {
+      console.error("IP check/update failed:", error);
+      // In case of IP check failure, we block login to be safe
+      await auth.signOut();
+      toast({
+        variant: 'destructive',
+        title: t('login.toast.error.title'),
+        description: t('login.toast.error.ipCheckFailed'),
+      });
+      return false;
     }
-  }
+  };
 
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -136,7 +140,7 @@ export default function LoginPage() {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
       
-      const canProceed = await checkIpAndProceed(user);
+      const canProceed = await checkIpAndProceed(user, false);
 
       if (canProceed) {
           toast({
