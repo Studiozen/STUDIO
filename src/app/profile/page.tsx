@@ -8,12 +8,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Brain, Clock, BarChart3, Medal, Trophy, Star, GraduationCap, Accessibility } from 'lucide-react';
-import { collection, doc } from 'firebase/firestore';
+import { Brain, Clock, BarChart3, Medal, Trophy, Star, GraduationCap, Accessibility, ShieldCheck } from 'lucide-react';
+import { collection, doc, Timestamp } from 'firebase/firestore';
 import type { FocusSession } from '@/types/focus-session';
 import { cn } from '@/lib/utils';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { useTranslation } from '@/hooks/use-translation';
+
+interface UserProfile {
+    schoolType?: string;
+    learningStyle?: string;
+    lastLoginIp?: string;
+    lastLoginTimestamp?: Timestamp;
+}
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
@@ -25,7 +32,7 @@ export default function ProfilePage() {
     () => (user ? doc(firestore, `users/${user.uid}`) : null),
     [firestore, user]
   );
-  const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userDocRef);
 
   const focusSessionsQuery = useMemoFirebase(
     () => (user ? collection(firestore, `users/${user.uid}/focusSessions`) : null),
@@ -90,14 +97,16 @@ export default function ProfilePage() {
   ], [studyStats, t]);
 
 
-  const formatCreationTime = (creationTime?: string) => {
-    if (!creationTime) return 'N/A';
+  const formatTimestamp = (timestamp?: Timestamp | string) => {
+    if (!timestamp) return 'N/A';
     try {
-        const date = new Date(creationTime);
-        return date.toLocaleDateString(t('locale'), {
+        const date = typeof timestamp === 'string' ? new Date(timestamp) : timestamp.toDate();
+        return date.toLocaleString(t('locale'), {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
         });
     } catch {
         return 'N/A'
@@ -156,7 +165,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="creationDate">{t('profile.form.memberSince.label')}</Label>
-                    <Input id="creationDate" value={formatCreationTime(user.metadata.creationTime)} readOnly />
+                    <Input id="creationDate" value={formatTimestamp(user.metadata.creationTime)} readOnly />
                 </div>
                  <div className="space-y-2">
                     <Label htmlFor="schoolType" className='flex items-center gap-2'><GraduationCap className='w-4 h-4'/>{t('profile.form.schoolType.label')}</Label>
@@ -169,6 +178,23 @@ export default function ProfilePage() {
               </div>
             </CardContent>
           </Card>
+          
+           <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2"><ShieldCheck/>{t('profile.security.title')}</CardTitle>
+              <CardDescription>{t('profile.security.description')}</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                    <Label htmlFor="lastLoginIp">{t('profile.security.lastLoginIp')}</Label>
+                    <Input id="lastLoginIp" value={userProfile?.lastLoginIp || t('profile.form.unspecified')} readOnly />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="lastLoginDate">{t('profile.security.lastLoginDate')}</Label>
+                    <Input id="lastLoginDate" value={formatTimestamp(userProfile?.lastLoginTimestamp) || t('profile.form.unspecified')} readOnly />
+                </div>
+            </CardContent>
+           </Card>
 
            <Card>
             <CardHeader>

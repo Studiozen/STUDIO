@@ -172,6 +172,12 @@
             },
             "unspecified": "Not specified"
         },
+        "security": {
+            "title": "Security Information",
+            "description": "Information about your recent account activity.",
+            "lastLoginIp": "Last Login IP",
+            "lastLoginDate": "Last Login Date"
+        },
         "studyStats": {
             "title": "Study Statistics",
             "description": "Your progress and study habits.",

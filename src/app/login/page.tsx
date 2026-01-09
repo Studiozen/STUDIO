@@ -23,8 +23,9 @@ import {
   signInWithPopup,
   getAdditionalUserInfo,
   sendPasswordResetEmail,
+  User,
 } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { Flower2 } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -69,10 +70,31 @@ export default function LoginPage() {
     },
   });
 
+  const updateUserLoginInfo = async (user: User) => {
+    try {
+      const ipRes = await fetch('https://api.ipify.org?format=json');
+      const { ip } = await ipRes.json();
+
+      if (ip) {
+        const userDocRef = doc(firestore, 'users', user.uid);
+        await updateDoc(userDocRef, {
+          lastLoginIp: ip,
+          lastLoginTimestamp: serverTimestamp()
+        });
+      }
+    } catch (error) {
+      console.error("Failed to log user IP:", error);
+      // We don't block the login flow if this fails
+    }
+  }
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
+      
+      await updateUserLoginInfo(user);
+
       toast({
         title: t('login.toast.success.title'),
         description: t('login.toast.success.description', { name: user.displayName || 'user' }),
@@ -145,7 +167,10 @@ export default function LoginPage() {
           duration: 3000,
         });
       }
+
+      await updateUserLoginInfo(user);
       router.push('/');
+
     } catch (error: any) {
       console.error(error);
       toast({

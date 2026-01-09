@@ -172,6 +172,12 @@
             },
             "unspecified": "Non specificato"
         },
+        "security": {
+            "title": "Informazioni di Sicurezza",
+            "description": "Informazioni sull'attività recente del tuo account.",
+            "lastLoginIp": "Ultimo IP di Accesso",
+            "lastLoginDate": "Data Ultimo Accesso"
+        },
         "studyStats": {
             "title": "Statistiche di Studio",
             "description": "I tuoi progressi e le tue abitudini di studio.",
