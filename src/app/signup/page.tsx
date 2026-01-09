@@ -98,9 +98,6 @@ export default function SignupPage() {
 
       await updateProfile(user, { displayName: values.name });
 
-      const ipRes = await fetch('https://api.ipify.org?format=json');
-      const { ip } = await ipRes.json();
-
       await setDoc(doc(firestore, 'users', user.uid), {
         id: user.uid,
         name: values.name,
@@ -109,7 +106,6 @@ export default function SignupPage() {
         country: values.country,
         schoolType: values.schoolType,
         learningStyle: values.learningStyle,
-        authorizedIp: ip, // Save authorized IP on creation
       });
 
       toast({
@@ -137,14 +133,11 @@ export default function SignupPage() {
       const additionalUserInfo = getAdditionalUserInfo(result);
 
       if (additionalUserInfo?.isNewUser) {
-        const ipRes = await fetch('https://api.ipify.org?format=json');
-        const { ip } = await ipRes.json();
         await setDoc(doc(firestore, 'users', user.uid), {
           id: user.uid,
           name: user.displayName,
           email: user.email,
           learningStyle: 'standard', // default value
-          authorizedIp: ip, // Save authorized IP on creation
         });
       }
       

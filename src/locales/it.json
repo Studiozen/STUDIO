@@ -174,13 +174,6 @@
             },
             "unspecified": "Non specificato"
         },
-        "security": {
-            "title": "Informazioni di Sicurezza",
-            "description": "Informazioni sulla sicurezza del tuo account.",
-            "authorizedIp": "IP Autorizzato",
-            "lastLoginDate": "Data Ultimo Accesso",
-            "ipNotice": "Per la tua sicurezza, gli accessi sono consentiti solo dal tuo indirizzo IP autorizzato."
-        },
         "studyStats": {
             "title": "Statistiche di Studio",
             "description": "I tuoi progressi e le tue abitudini di studio.",

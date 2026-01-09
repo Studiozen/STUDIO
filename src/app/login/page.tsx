@@ -23,9 +23,8 @@ import {
   signInWithPopup,
   getAdditionalUserInfo,
   sendPasswordResetEmail,
-  User,
 } from 'firebase/auth';
-import { doc, setDoc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { Flower2 } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
@@ -70,89 +69,17 @@ export default function LoginPage() {
     },
   });
 
-  const checkIpAndProceed = async (user: User, isNewUser = false) => {
-    try {
-      const ipRes = await fetch('https://api.ipify.org?format=json');
-      const { ip } = await ipRes.json();
-      const userDocRef = doc(firestore, 'users', user.uid);
-      
-      const userDoc = await getDoc(userDocRef);
-
-      if (isNewUser || !userDoc.exists()) {
-        // This is a new user or their document doesn't exist yet. Create it.
-        await setDoc(userDocRef, {
-          id: user.uid,
-          name: user.displayName,
-          email: user.email,
-          authorizedIp: ip, // Set the authorized IP on creation
-          lastLoginIp: ip,
-          lastLoginTimestamp: serverTimestamp()
-        }, { merge: true });
-        return true;
-      }
-
-      // User exists, now check their IP
-      const userData = userDoc.data();
-      
-      if (!userData.authorizedIp) {
-        // This is an existing user logging in for the first time since the IP lock feature was added.
-        // We'll set their current IP as the authorized IP.
-        await updateDoc(userDocRef, { 
-          authorizedIp: ip,
-          lastLoginIp: ip,
-          lastLoginTimestamp: serverTimestamp()
-        });
-        return true;
-      }
-      
-      if (userData.authorizedIp !== ip) {
-        // IP mismatch, block login
-        await auth.signOut(); // Force sign out for security
-        toast({
-          variant: 'destructive',
-          title: t('login.toast.error.title'),
-          description: t('login.toast.error.ipMismatch'),
-        });
-        return false;
-      }
-
-      // IP is valid, update last login info
-      await updateDoc(userDocRef, {
-        lastLoginIp: ip,
-        lastLoginTimestamp: serverTimestamp()
-      });
-
-      return true;
-
-    } catch (error) {
-      console.error("IP check/update failed:", error);
-      // In case of any failure during the IP check process, block login to be safe
-      await auth.signOut();
-      toast({
-        variant: 'destructive',
-        title: t('login.toast.error.title'),
-        description: t('login.toast.error.ipCheckFailed'),
-      });
-      return false;
-    }
-  };
-
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
       
-      const canProceed = await checkIpAndProceed(user, false);
-
-      if (canProceed) {
-          toast({
-            title: t('login.toast.success.title'),
-            description: t('login.toast.success.description', { name: user.displayName || 'user' }),
-            duration: 3000,
-          });
-          router.push('/');
-      }
+      toast({
+        title: t('login.toast.success.title'),
+        description: t('login.toast.success.description', { name: user.displayName || 'user' }),
+        duration: 3000,
+      });
+      router.push('/');
     } catch (error: any) {
       console.error('Login Error:', error);
       let description = t('login.toast.error.default');
@@ -201,25 +128,27 @@ export default function LoginPage() {
       const user = result.user;
       const additionalUserInfo = getAdditionalUserInfo(result);
 
-      const isNewUser = !!additionalUserInfo?.isNewUser;
-      const canProceed = await checkIpAndProceed(user, isNewUser);
-
-      if (canProceed) {
-          if (isNewUser) {
-            toast({
-              title: t('signup.toast.success.title'),
-              description: t('signup.toast.success.description', { name: user.displayName || 'user' }),
-              duration: 3000,
-            });
-          } else {
-             toast({
-              title: t('login.toast.success.title'),
-              description: t('login.toast.success.description', { name: user.displayName || 'user' }),
-              duration: 3000,
-            });
-          }
-          router.push('/');
+      if (additionalUserInfo?.isNewUser) {
+        // For new users signing in with Google, create their document in Firestore.
+        await setDoc(doc(firestore, 'users', user.uid), {
+          id: user.uid,
+          name: user.displayName,
+          email: user.email,
+          learningStyle: 'standard', // default value
+        });
+        toast({
+          title: t('signup.toast.success.title'),
+          description: t('signup.toast.success.description', { name: user.displayName || 'user' }),
+          duration: 3000,
+        });
+      } else {
+         toast({
+          title: t('login.toast.success.title'),
+          description: t('login.toast.success.description', { name: user.displayName || 'user' }),
+          duration: 3000,
+        });
       }
+      router.push('/');
 
     } catch (error: any) {
       console.error(error);
