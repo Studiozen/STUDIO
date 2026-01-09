@@ -79,21 +79,24 @@ export default function LoginPage() {
       const userDoc = await getDoc(userDocRef);
 
       if (isNewUser || !userDoc.exists()) {
-        // User is new or document doesn't exist, create it with the authorized IP
+        // This is a new user or their document doesn't exist yet. Create it.
         await setDoc(userDocRef, {
           id: user.uid,
           name: user.displayName,
           email: user.email,
-          authorizedIp: ip,
+          authorizedIp: ip, // Set the authorized IP on creation
           lastLoginIp: ip,
           lastLoginTimestamp: serverTimestamp()
         }, { merge: true });
         return true;
       }
 
+      // User exists, now check their IP
       const userData = userDoc.data();
+      
       if (!userData.authorizedIp) {
-        // authorizedIp is not set, so this is the first secure login. Set it.
+        // This is an existing user logging in for the first time since the IP lock feature was added.
+        // We'll set their current IP as the authorized IP.
         await updateDoc(userDocRef, { 
           authorizedIp: ip,
           lastLoginIp: ip,
@@ -113,7 +116,7 @@ export default function LoginPage() {
         return false;
       }
 
-      // IP is valid, update login info
+      // IP is valid, update last login info
       await updateDoc(userDocRef, {
         lastLoginIp: ip,
         lastLoginTimestamp: serverTimestamp()
@@ -123,7 +126,7 @@ export default function LoginPage() {
 
     } catch (error) {
       console.error("IP check/update failed:", error);
-      // In case of IP check failure, we block login to be safe
+      // In case of any failure during the IP check process, block login to be safe
       await auth.signOut();
       toast({
         variant: 'destructive',
