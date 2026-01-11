@@ -192,6 +192,19 @@
             "sessionsCompleted": "Sessions Completed",
             "totalMinutes": "Total Study Minutes"
         },
+        "history": {
+            "title": "Session History",
+            "description": "A log of all your completed focus sessions.",
+            "empty": {
+                "title": "No Sessions Yet",
+                "description": "Complete a focus session to see your history here."
+            },
+            "table": {
+                "date": "Date",
+                "duration": "Duration",
+                "minutes": "min"
+            }
+        },
         "achievements": {
             "title": "My Achievements",
             "description": "Unlock goals and celebrate your study successes.",

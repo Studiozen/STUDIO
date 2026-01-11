@@ -192,6 +192,19 @@
             "sessionsCompleted": "Sessioni Completate",
             "totalMinutes": "Minuti di Studio Totali"
         },
+        "history": {
+            "title": "Cronologia Sessioni",
+            "description": "Un registro di tutte le tue sessioni di concentrazione completate.",
+            "empty": {
+                "title": "Nessuna Sessione",
+                "description": "Completa una sessione di concentrazione per vedere la cronologia qui."
+            },
+            "table": {
+                "date": "Data",
+                "duration": "Durata",
+                "minutes": "min"
+            }
+        },
         "achievements": {
             "title": "I Miei Riconoscimenti",
             "description": "Sblocca obiettivi e celebra i tuoi successi nello studio.",

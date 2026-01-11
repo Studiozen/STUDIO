@@ -8,12 +8,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Brain, Clock, BarChart3, Medal, Trophy, Star, GraduationCap, Accessibility } from 'lucide-react';
+import { Brain, Clock, BarChart3, Medal, Trophy, Star, GraduationCap, Accessibility, History } from 'lucide-react';
 import { collection, doc, Timestamp } from 'firebase/firestore';
 import type { FocusSession } from '@/types/focus-session';
 import { cn } from '@/lib/utils';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { useTranslation } from '@/hooks/use-translation';
+import { FocusSessionHistory } from '@/components/profile/focus-session-history';
 
 interface UserProfile {
     schoolType?: string;
@@ -201,6 +202,16 @@ export default function ProfilePage() {
                         <p className="text-2xl font-bold">{studyStats.totalMinutes}</p>
                     </div>
                 </div>
+            </CardContent>
+           </Card>
+
+           <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2"><History/>{t('profile.history.title')}</CardTitle>
+                <CardDescription>{t('profile.history.description')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <FocusSessionHistory />
             </CardContent>
            </Card>
 
