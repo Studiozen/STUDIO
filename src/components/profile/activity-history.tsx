@@ -47,7 +47,7 @@ export function ActivityHistory() {
     }
   
     if (!timestamp) {
-      return new Date();
+      return new Date(0); // Return a valid but old date
     }
   
     if (timestamp instanceof Timestamp) {
@@ -65,11 +65,11 @@ export function ActivityHistory() {
        try {
          return new Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate();
        } catch (e) {
-        return new Date();
+        return new Date(0);
        }
     }
   
-    return new Date();
+    return new Date(0);
   };
 
   const combinedActivity = useMemo((): ActivityItem[] => {
@@ -84,9 +84,6 @@ export function ActivityHistory() {
     return activities.sort((a, b) => {
         const dateA = getDate(a);
         const dateB = getDate(b);
-        if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
-            return 0;
-        }
         return dateB.getTime() - dateA.getTime();
     }).slice(0, 50);
 
@@ -96,7 +93,7 @@ export function ActivityHistory() {
 
   const formatDate = (item: ActivityItem) => {
     const date = getDate(item);
-     if (!date || isNaN(date.getTime())) {
+     if (date.getTime() === 0) {
        return t('profile.history.item.justNow');
      }
     try {
@@ -119,12 +116,15 @@ export function ActivityHistory() {
         icon = <MessageSquare className="h-5 w-5 text-blue-500" />;
         title = t('profile.history.item.chat.title');
         description = `"${item.data.title}"`;
-        href = `/chat/${item.data.id}`;
+        if (item.data.id) {
+          href = `/chat/${item.data.id}`;
+        }
         break;
       case 'quiz':
         icon = <BookOpen className="h-5 w-5 text-green-500" />;
         title = t('profile.history.item.quiz.title');
         description = t('profile.history.item.quiz.description', { text: item.data.sourceText });
+        // href for quiz is not implemented yet
         break;
       case 'summary':
         icon = item.data.sourceType === 'image' 
@@ -136,18 +136,24 @@ export function ActivityHistory() {
         description = item.data.sourceText 
           ? t('profile.history.item.summary.description', { text: item.data.sourceText })
           : '';
-        href = `/summaries/${item.data.id}`;
+        if (item.data.id) {
+          href = `/summaries/${item.data.id}`;
+        }
         break;
       case 'question':
         icon = <HelpCircle className="h-5 w-5 text-purple-500" />;
         title = t('profile.history.item.question.title');
         description = t('profile.history.item.question.description', { question: item.data.question });
-        href = `/questions/${item.data.id}`;
+        if (item.data.id) {
+          href = `/questions/${item.data.id}`;
+        }
         break;
     }
     
+    const itemKey = `${item.type}-${item.data.id || (item.data as any).startTime || Math.random()}`;
+
     return (
-        <div key={`${item.type}-${item.data.id}`} className="flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors">
+        <div key={itemKey} className="flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors">
             <div className="mt-1">{icon}</div>
             <div className="flex-1 overflow-hidden">
                 <p className="font-semibold">{title}</p>
