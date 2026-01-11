@@ -2,14 +2,14 @@
 
 import { useMemo } from 'react';
 import { useCollection, useUser, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy, limit } from 'firebase/firestore';
+import { collection, query, orderBy, limit, Timestamp } from 'firebase/firestore';
 import type { FocusSession } from '@/types/focus-session';
 import type { Chat } from '@/types/chat';
 import type { GeneratedQuiz, GeneratedSummary } from '@/types/history';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Loader2, Inbox, Timer, MessageSquare, BookOpen, TextQuote, Image as ImageIcon } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
-import { format, formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { it, enUS } from 'date-fns/locale';
 import Link from 'next/link';
 
@@ -34,28 +34,39 @@ export function ActivityHistory() {
   const { data: chats, isLoading: chatsLoading } = useCollection<Chat>(chatsQuery);
   const { data: quizzes, isLoading: quizzesLoading } = useCollection<GeneratedQuiz>(quizzesQuery);
   const { data: summaries, isLoading: summariesLoading } = useCollection<GeneratedSummary>(summariesQuery);
+  
+  const getDate = (item: ActivityItem): Date => {
+      const timestamp = item.data.createdAt || item.data.startTime;
+      if (timestamp instanceof Timestamp) {
+          return timestamp.toDate();
+      }
+      if (typeof timestamp === 'string') {
+          return new Date(timestamp);
+      }
+      return new Date(0);
+  };
 
   const combinedActivity = useMemo((): ActivityItem[] => {
     const activities: ActivityItem[] = [];
 
-    focusSessions?.forEach(s => activities.push({ type: 'focus', data: s }));
-    chats?.forEach(c => activities.push({ type: 'chat', data: c }));
-    quizzes?.forEach(q => activities.push({ type: 'quiz', data: q }));
-    summaries?.forEach(s => activities.push({ type: 'summary', data: s }));
+    (focusSessions || []).forEach(s => activities.push({ type: 'focus', data: s }));
+    (chats || []).forEach(c => c.title !== t('chat.newChat') && activities.push({ type: 'chat', data: c }));
+    (quizzes || []).forEach(q => activities.push({ type: 'quiz', data: q }));
+    (summaries || []).forEach(s => activities.push({ type: 'summary', data: s }));
     
     return activities.sort((a, b) => {
-      const dateA = a.data.startTime?.toDate?.() || a.data.createdAt?.toDate?.() || new Date(0);
-      const dateB = b.data.startTime?.toDate?.() || b.data.createdAt?.toDate?.() || new Date(0);
-      return dateB.getTime() - dateA.getTime();
+        const dateA = getDate(a);
+        const dateB = getDate(b);
+        return dateB.getTime() - dateA.getTime();
     }).slice(0, 50); // Limit total items for performance
 
-  }, [focusSessions, chats, quizzes, summaries]);
+  }, [focusSessions, chats, quizzes, summaries, t]);
   
   const isLoading = focusLoading || chatsLoading || quizzesLoading || summariesLoading;
 
-  const formatDate = (timestamp: any) => {
-    if (!timestamp) return 'N/A';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  const formatDate = (item: ActivityItem) => {
+    const date = getDate(item);
+    if (date.getTime() === 0) return 'N/A';
     return formatDistanceToNow(date, { addSuffix: true, locale: dateFnsLocale });
   };
   
@@ -66,7 +77,7 @@ export function ActivityHistory() {
       case 'focus':
         icon = <Timer className="h-5 w-5 text-primary" />;
         title = t('profile.history.item.focus.title', { duration: item.data.duration });
-        description = formatDate(item.data.startTime);
+        description = formatDate(item);
         break;
       case 'chat':
         icon = <MessageSquare className="h-5 w-5 text-blue-500" />;
@@ -95,10 +106,10 @@ export function ActivityHistory() {
     const content = (
         <div className="flex items-start gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors">
             <div className="mt-1">{icon}</div>
-            <div className="flex-1">
+            <div className="flex-1 overflow-hidden">
                 <p className="font-semibold">{title}</p>
                 <p className="text-sm text-muted-foreground truncate">{description}</p>
-                <p className="text-xs text-muted-foreground/70 mt-1">{formatDate(item.data.createdAt || item.data.startTime)}</p>
+                <p className="text-xs text-muted-foreground/70 mt-1">{formatDate(item)}</p>
             </div>
         </div>
     );
