@@ -427,7 +427,7 @@
     },
     "questions": {
         "title": "Visualizza Domanda",
-        "backToProfile": "Torna al Profilo",
+        "backToProfile": "Torna alla Cronologia",
         "question": {
             "title": "La Tua Domanda"
         },
@@ -440,7 +440,7 @@
     },
     "summaries": {
         "title": "Visualizza Riassunto",
-        "backToProfile": "Torna al Profilo",
+        "backToProfile": "Torna alla Cronologia",
         "sourceText": "Ritaglio di testo originale",
         "placeholder": "Il contenuto del riassunto generato non viene memorizzato, solo la registrazione dell'attività.",
         "errors": {

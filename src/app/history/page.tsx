@@ -141,7 +141,7 @@ export default function HistoryPage() {
           : t('history.item.summary.titleText');
         description = item.data.sourceText 
           ? t('history.item.summary.description', { text: item.data.sourceText })
-          : '';
+          : item.data.summary;
         if (id) {
           href = `/summaries/${id}`;
         }

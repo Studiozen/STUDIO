@@ -45,7 +45,7 @@ export default function SummaryPage() {
             <CardContent>
               <p>{t('summaries.errors.notFound')}</p>
               <Button asChild variant="outline" className="mt-4">
-                <Link href="/profile">
+                <Link href="/history">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   {t('summaries.backToProfile')}
                 </Link>
@@ -63,7 +63,7 @@ export default function SummaryPage() {
        <main className="flex-1 p-4 md:p-8 flex justify-center">
         <div className="w-full max-w-2xl space-y-6">
             <Button asChild variant="outline" className="self-start">
-                <Link href="/profile">
+                <Link href="/history">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   {t('summaries.backToProfile')}
                 </Link>

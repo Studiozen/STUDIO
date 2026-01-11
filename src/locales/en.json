@@ -427,7 +427,7 @@
     },
     "questions": {
         "title": "View Question",
-        "backToProfile": "Back to Profile",
+        "backToProfile": "Back to History",
         "question": {
             "title": "Your Question"
         },
@@ -440,7 +440,7 @@
     },
     "summaries": {
         "title": "View Summary",
-        "backToProfile": "Back to Profile",
+        "backToProfile": "Back to History",
         "sourceText": "Original text snippet",
         "placeholder": "The generated summary content is not stored, only the record of the activity.",
         "errors": {
