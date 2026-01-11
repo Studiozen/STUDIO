@@ -397,8 +397,10 @@
     },
     "chat": {
         "newChatButton": "Nuova Chat",
-        "newConversationTitle": "Nuova Conversazione",
+        "newConversationTitle": "Nuova Chat",
         "recentHeader": "Recenti",
-        "noConversations": "Nessuna conversazione ancora. Iniziane una nuova!"
+        "noConversations": "Nessuna conversazione ancora. Iniziane una nuova!",
+        "startConversation": "Inizia una conversazione scrivendo la tua domanda qui sotto.",
+        "inputPlaceholder": "Chiedimi qualsiasi cosa..."
     }
 }

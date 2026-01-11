@@ -25,7 +25,7 @@ const MessagePartSchema = z.object({
 // Define the schema for the history of messages.
 const HistorySchema = z.array(z.object({
     role: z.enum(['user', 'model']),
-    parts: z.array(MessagePartSchema),
+    content: z.array(z.object({text: z.string()})),
 }));
 
 // Define the schema for the chat input, which includes the history and the new message.
@@ -45,36 +45,6 @@ export async function chat(input: ChatInput): Promise<ChatOutput> {
   return await chatFlow(input);
 }
 
-
-// Define the Genkit prompt.
-const prompt = ai.definePrompt(
-  {
-    name: 'chatPrompt',
-    input: { schema: ChatInputSchema },
-    // Define the prompt function that constructs the prompt from the input.
-    prompt: (input) => {
-        // Map the zod-validated history to the expected MessageData format for Genkit.
-        const history: MessageData[] = input.history.map(h => ({
-            role: h.role,
-            content: h.parts.map(p => {
-                if (p.text) {
-                    return { text: p.text };
-                }
-                if (p.media) {
-                    return { media: { contentType: p.media.contentType, url: p.media.url } };
-                }
-                // This should not happen if validation passes, but it's good practice.
-                return { text: '' };
-            })
-        }));
-
-        // Add the new user message to the history.
-        history.push({ role: 'user', content: [{ text: input.message }] });
-        return history;
-    }
-  },
-);
-
 // Define the Genkit flow.
 const chatFlow = ai.defineFlow(
   {
@@ -83,13 +53,15 @@ const chatFlow = ai.defineFlow(
     outputSchema: ChatOutputSchema,
   },
   async (input) => {
+    const history: MessageData[] = input.history.map(h => ({
+        role: h.role,
+        content: h.content,
+    }));
+
     // Generate the response using the prompt.
     const response = await ai.generate({
-        prompt: await prompt.render({input: input}),
-        history: [], // History is now part of the prompt itself
-        output: {
-            format: 'text'
-        }
+        prompt: input.message,
+        history: history,
     });
 
     // Return the model's response.
