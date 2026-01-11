@@ -168,31 +168,29 @@ export default function QuizPage() {
                    <h3 className="text-lg font-semibold mb-4">{t('quizzes.questionsTitle')}</h3>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
                         {quizData?.flashcards?.map((card, index) => (
-                            <div key={index}>
-                                <div
-                                    className={cn(
-                                        'p-3 border rounded-lg cursor-pointer transition-colors',
-                                        selectedQuestion?.question === card.question ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'
-                                    )}
-                                    onClick={() => handleQuestionSelect(card)}
-                                >
-                                <p className='font-medium text-sm'>{index + 1}. {card.question}</p>
-                                </div>
-                                {selectedQuestion?.question === card.question && (
-                                    <div className="md:col-span-2">
-                                        <Flashcard {...selectedQuestion} />
-                                    </div>
+                            <div
+                                key={index}
+                                className={cn(
+                                    'p-3 border rounded-lg cursor-pointer transition-colors',
+                                    selectedQuestion?.question === card.question ? 'bg-primary/10 border-primary' : 'hover:bg-muted/50'
                                 )}
+                                onClick={() => handleQuestionSelect(card)}
+                            >
+                            <p className='font-medium text-sm'>{index + 1}. {card.question}</p>
                             </div>
                         ))}
                     </div>
 
-                    {!selectedQuestion && (
-                        <div className="text-center text-muted-foreground p-8 border-dashed border-2 rounded-lg mt-4">
-                            <Lightbulb className="mx-auto h-8 w-8 mb-2" />
-                            <p>{t('quizzes.selectAQuestion')}</p>
-                        </div>
-                    )}
+                    <div className="mt-4">
+                        {selectedQuestion ? (
+                            <Flashcard {...selectedQuestion} />
+                        ) : (
+                            <div className="text-center text-muted-foreground p-8 border-dashed border-2 rounded-lg mt-4">
+                                <Lightbulb className="mx-auto h-8 w-8 mb-2" />
+                                <p>{t('quizzes.selectAQuestion')}</p>
+                            </div>
+                        )}
+                    </div>
                 </CardContent>
             </Card>
         </div>
