@@ -49,9 +49,7 @@
             "error": {
                 "title": "Errore di Accesso",
                 "default": "Impossibile accedere. Controlla le tue credenziali e riprova.",
-                "invalidCredentials": "Credenziali non valide. Controlla email e password.",
-                "ipMismatch": "Accesso bloccato. Tentativo di accesso da un indirizzo IP non riconosciuto.",
-                "ipCheckFailed": "Impossibile verificare la tua posizione. Per motivi di sicurezza, l'accesso è stato bloccato."
+                "invalidCredentials": "Credenziali non valide. Controlla email e password."
             }
         },
         "googleSignInError": "Impossibile accedere con Google."

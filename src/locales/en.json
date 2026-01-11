@@ -49,9 +49,7 @@
             "error": {
                 "title": "Login Error",
                 "default": "Could not log in. Check your credentials and try again.",
-                "invalidCredentials": "Invalid credentials. Please check your email and password.",
-                "ipMismatch": "Login blocked. Access attempt from an unrecognized IP address.",
-                "ipCheckFailed": "Could not verify your location. For security reasons, login has been blocked."
+                "invalidCredentials": "Invalid credentials. Please check your email and password."
             }
         },
         "googleSignInError": "Could not log in with Google."
