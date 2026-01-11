@@ -115,17 +115,17 @@ service cloud.firestore {
        */
       match /chats/{chatId} {
         allow get, list, create, update, delete: if isOwner(userId);
-      }
 
-      /**
-       * @description Rules for messages within a chat.
-       * @path /users/{userId}/chats/{chatId}/messages/{messageId}
-       */
-      match /chats/{chatId}/messages/{messageId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId) && isValidChatMessage();
-        // Users should not be able to edit or delete messages to maintain conversation integrity.
-        allow update, delete: if false;
+        /**
+         * @description Rules for messages within a chat.
+         * @path /users/{userId}/chats/{chatId}/messages/{messageId}
+         */
+        match /messages/{messageId} {
+          allow get, list: if isOwner(userId);
+          allow create: if isOwner(userId) && isValidChatMessage();
+          // Users should not be able to edit or delete messages to maintain conversation integrity.
+          allow update, delete: if false;
+        }
       }
 
       /**
