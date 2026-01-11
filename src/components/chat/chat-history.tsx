@@ -61,20 +61,19 @@ export function ChatHistory() {
 
   if (chats && chats.length > 0) {
     return (
-      <div className="p-2 h-full">
+      <div className="p-2">
         <SidebarMenu>
           {chats.map((chat) => (
             <SidebarMenuItem key={chat.id}>
               <SidebarMenuButton
-                asChild
+                as={Link}
+                href={`/chat/${chat.id}`}
                 isActive={chat.id === chatId}
                 tooltip={chat.title}
                 onClick={handleLinkClick}
               >
-                <Link href={`/chat/${chat.id}`}>
-                  <MessageSquare />
-                  <span>{chat.title}</span>
-                </Link>
+                <MessageSquare />
+                <span>{chat.title}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
