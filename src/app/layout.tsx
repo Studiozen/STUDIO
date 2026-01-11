@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { FirebaseClientProvider } from '@/firebase';
 import CookieConsentBanner from '@/components/cookie-consent-banner';
 import { LanguageProvider } from '@/context/language-context';
+import { TimerProvider } from '@/context/timer-context';
 
 export const metadata: Metadata = {
   title: 'StudioZen',
@@ -33,9 +34,11 @@ export default function RootLayout({
       <body className={cn('font-body antialiased bg-background')}>
         <LanguageProvider>
           <FirebaseClientProvider>
-            {children}
-            <Toaster />
-            <CookieConsentBanner />
+            <TimerProvider>
+              {children}
+              <Toaster />
+              <CookieConsentBanner />
+            </TimerProvider>
           </FirebaseClientProvider>
         </LanguageProvider>
       </body>

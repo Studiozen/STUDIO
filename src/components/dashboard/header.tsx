@@ -1,6 +1,6 @@
 'use client';
 
-import { Flower2, LogOut, MessageSquare, User as UserIcon, History } from 'lucide-react';
+import { Flower2, LogOut, MessageSquare, User as UserIcon, History, Timer } from 'lucide-react';
 import type { FC } from 'react';
 import Link from 'next/link';
 import { useAuth, useUser } from '@/firebase';
@@ -18,6 +18,32 @@ import { useRouter } from 'next/navigation';
 import { HelpGuide } from './help-guide';
 import { useTranslation } from '@/hooks/use-translation';
 import { LanguageSwitcher } from '../language-switcher';
+import { useTimer } from '@/context/timer-context';
+import { cn } from '@/lib/utils';
+
+
+const HeaderTimer: FC = () => {
+    const { isActive, timeLeft, formatTime, mode } = useTimer();
+    const router = useRouter();
+
+    if (!isActive) return null;
+
+    return (
+        <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/')}
+            className={cn(
+                "hidden sm:flex items-center gap-2 text-sm font-mono",
+                mode === 'focus' ? 'text-primary' : 'text-green-500'
+            )}
+        >
+            <Timer className="h-4 w-4" />
+            {formatTime(timeLeft)}
+        </Button>
+    );
+};
+
 
 const Header: FC = () => {
   const { user, isUserLoading } = useUser();
@@ -59,6 +85,7 @@ const Header: FC = () => {
         {!isUserLoading &&
           (user ? (
             <div className='flex items-center gap-4'>
+            <HeaderTimer />
             <HelpGuide />
             <LanguageSwitcher />
             <DropdownMenu>
