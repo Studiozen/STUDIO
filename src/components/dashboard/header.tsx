@@ -1,6 +1,13 @@
 'use client';
 
-import { Flower2, LogOut, MessageSquare, User as UserIcon, History, Timer } from 'lucide-react';
+import {
+  Flower2,
+  LogOut,
+  MessageSquare,
+  User as UserIcon,
+  History,
+  Timer,
+} from 'lucide-react';
 import type { FC } from 'react';
 import Link from 'next/link';
 import { useAuth, useUser } from '@/firebase';
@@ -20,30 +27,29 @@ import { useTranslation } from '@/hooks/use-translation';
 import { LanguageSwitcher } from '../language-switcher';
 import { useTimer } from '@/context/timer-context';
 import { cn } from '@/lib/utils';
-
+import { LiveClock } from './live-clock';
 
 const HeaderTimer: FC = () => {
-    const { isActive, timeLeft, formatTime, mode } = useTimer();
-    const router = useRouter();
+  const { isActive, timeLeft, formatTime, mode } = useTimer();
+  const router = useRouter();
 
-    if (!isActive) return null;
+  if (!isActive) return null;
 
-    return (
-        <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push('/')}
-            className={cn(
-                "hidden sm:flex items-center gap-2 text-sm font-mono",
-                mode === 'focus' ? 'text-primary' : 'text-green-500'
-            )}
-        >
-            <Timer className="h-4 w-4" />
-            {formatTime(timeLeft)}
-        </Button>
-    );
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={() => router.push('/')}
+      className={cn(
+        'hidden sm:flex items-center gap-2 text-sm font-mono',
+        mode === 'focus' ? 'text-primary' : 'text-green-500'
+      )}
+    >
+      <Timer className="h-4 w-4" />
+      {formatTime(timeLeft)}
+    </Button>
+  );
 };
-
 
 const Header: FC = () => {
   const { user, isUserLoading } = useUser();
@@ -84,54 +90,58 @@ const Header: FC = () => {
       <div className="flex w-full items-center justify-end gap-4 md:ml-auto md:gap-2 lg:gap-4">
         {!isUserLoading &&
           (user ? (
-            <div className='flex items-center gap-4'>
-            <HeaderTimer />
-            <HelpGuide />
-            <LanguageSwitcher />
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage
-                      src={user.photoURL ?? ''}
-                      alt={user.displayName ?? 'User'}
-                    />
-                    <AvatarFallback>
-                      {getInitials(user.displayName)}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {user.displayName}
-                    </p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/profile">
-                    <UserIcon className="mr-2 h-4 w-4" />
-                    <span>{t('header.dropdown.profile')}</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/history">
-                    <History className="mr-2 h-4 w-4" />
-                    <span>{t('header.dropdown.history')}</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>{t('header.dropdown.logout')}</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center gap-4">
+              <HeaderTimer />
+              <LiveClock />
+              <HelpGuide />
+              <LanguageSwitcher />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="relative h-8 w-8 rounded-full"
+                  >
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        src={user.photoURL ?? ''}
+                        alt={user.displayName ?? 'User'}
+                      />
+                      <AvatarFallback>
+                        {getInitials(user.displayName)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {user.displayName}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">
+                      <UserIcon className="mr-2 h-4 w-4" />
+                      <span>{t('header.dropdown.profile')}</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/history">
+                      <History className="mr-2 h-4 w-4" />
+                      <span>{t('header.dropdown.history')}</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>{t('header.dropdown.logout')}</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ) : (
             <div className="flex gap-2">
