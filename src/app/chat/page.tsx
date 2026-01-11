@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useUser, useFirestore } from '@/firebase';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useTranslation } from '@/hooks/use-translation';
+import { useEffect } from 'react';
 
 export default function NewChatPage() {
   const router = useRouter();
@@ -13,7 +14,7 @@ export default function NewChatPage() {
   const { t } = useTranslation();
 
   const createNewChat = async () => {
-    if (!user) return;
+    if (!user || !firestore) return;
     try {
       const newChatRef = await addDoc(collection(firestore, `users/${user.uid}/chats`), {
         userId: user.uid,
@@ -25,6 +26,15 @@ export default function NewChatPage() {
       console.error('Error creating new chat:', error);
     }
   };
+
+  // Automatically create a new chat if the user lands here.
+  // This improves the user experience by not requiring a button click.
+  useEffect(() => {
+    if (user && firestore) {
+      createNewChat();
+    }
+  }, [user, firestore]);
+
 
   return (
     <div className="flex h-full items-center justify-center">
