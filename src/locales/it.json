@@ -490,6 +490,12 @@
                 "description": "Domanda: \"{question}\""
             },
             "justNow": "Poco fa"
+        },
+        "tabs": {
+            "all": "Tutto",
+            "summaries": "Riassunti",
+            "quizzes": "Quiz",
+            "questions": "Domande"
         }
     }
 }

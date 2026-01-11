@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useCollection, useUser, useFirestore, useMemoFirebase } from '@/firebase';
 import { collection, query, orderBy, limit, Timestamp } from 'firebase/firestore';
@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Inbox, Timer, MessageSquare, BookOpen, TextQuote, Image as ImageIcon, HelpCircle, ChevronRight, ArrowLeft } from 'lucide-react';
 import Header from '@/components/dashboard/header';
 import { useTranslation } from '@/hooks/use-translation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 type ActivityItem = 
   | ({ type: 'focus'; data: FocusSession })
@@ -22,6 +23,8 @@ type ActivityItem =
   | ({ type: 'quiz'; data: GeneratedQuiz })
   | ({ type: 'summary'; data: GeneratedSummary })
   | ({ type: 'question'; data: GeneratedQuestion });
+  
+type ActivityType = ActivityItem['type'];
 
 export default function HistoryPage() {
   const { user, isUserLoading } = useUser();
@@ -49,29 +52,15 @@ export default function HistoryPage() {
       timestamp = item.data.createdAt;
     }
   
-    if (!timestamp) {
-      return new Date(0);
-    }
-  
-    if (timestamp instanceof Timestamp) {
-      return timestamp.toDate();
-    }
-  
+    if (!timestamp) return new Date(0);
+    if (timestamp instanceof Timestamp) return timestamp.toDate();
     if (typeof timestamp === 'string') {
       const date = new Date(timestamp);
-      if (!isNaN(date.getTime())) {
-        return date;
-      }
+      if (!isNaN(date.getTime())) return date;
     }
-    
-    if (typeof timestamp === 'object' && timestamp !== null && 'seconds' in timestamp && 'nanoseconds' in timestamp) {
-       try {
-         return new Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate();
-       } catch (e) {
-        return new Date(0);
-       }
+    if (typeof timestamp === 'object' && 'seconds' in timestamp && 'nanoseconds' in timestamp) {
+       try { return new Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate(); } catch (e) { return new Date(0); }
     }
-  
     return new Date(0);
   };
 
@@ -98,14 +87,8 @@ export default function HistoryPage() {
 
   const formatDate = (item: ActivityItem) => {
     const date = getDate(item);
-     if (date.getTime() === 0) {
-       return t('history.item.justNow');
-     }
-    try {
-        return formatDistanceToNow(date, { addSuffix: true, locale: dateFnsLocale });
-    } catch(e) {
-        return t('history.item.justNow');
-    }
+     if (date.getTime() === 0) return t('history.item.justNow');
+    try { return formatDistanceToNow(date, { addSuffix: true, locale: dateFnsLocale }); } catch(e) { return t('history.item.justNow'); }
   };
   
   const renderActivityItem = (item: ActivityItem) => {
@@ -143,9 +126,7 @@ export default function HistoryPage() {
         icon = <HelpCircle className="h-5 w-5 text-purple-500" />;
         title = t('history.item.question.title');
         description = t('history.item.question.description', { question: item.data.question });
-        if (id) {
-          href = `/questions/${id}`;
-        }
+        if (id) href = `/questions/${id}`;
         break;
     }
     
@@ -159,26 +140,37 @@ export default function HistoryPage() {
                 <p className="text-sm text-muted-foreground truncate">{description}</p>
                 <p className="text-xs text-muted-foreground/70 mt-1">{formatDate(item)}</p>
             </div>
-            {href && (
-                <ChevronRight className="h-5 w-5 text-muted-foreground" />
-            )}
+            {href && <ChevronRight className="h-5 w-5 text-muted-foreground" />}
         </div>
     );
     
     if (href) {
+        return <Link href={href} key={itemKey} className='block'>{content}</Link>
+    }
+    return <div key={itemKey}>{content}</div>;
+  };
+  
+  const ActivityList = ({ items }: { items: ActivityItem[] }) => {
+    if (items.length === 0) {
         return (
-            <Link href={href} key={itemKey} className='block'>
-                {content}
-            </Link>
-        )
+            <div className="flex flex-col justify-center items-center h-60 text-center text-muted-foreground">
+                <Inbox className="h-10 w-10 mb-2" />
+                <p className="font-semibold">{t('history.empty.title')}</p>
+                <p className="text-sm">{t('history.empty.description')}</p>
+            </div>
+        );
     }
 
     return (
-        <div key={itemKey}>
-            {content}
-        </div>
-    );
-  };
+        <ScrollArea className="h-[60vh]">
+            <div className='space-y-2'>
+                {items.map(renderActivityItem)}
+            </div>
+        </ScrollArea>
+    )
+  }
+
+  const filteredActivities = (type: ActivityType) => combinedActivity.filter(item => item.type === type);
 
 
   return (
@@ -203,18 +195,27 @@ export default function HistoryPage() {
                      <div className="flex justify-center items-center h-60">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     </div>
-                ) : combinedActivity.length === 0 ? (
-                    <div className="flex flex-col justify-center items-center h-60 text-center text-muted-foreground">
-                        <Inbox className="h-10 w-10 mb-2" />
-                        <p className="font-semibold">{t('history.empty.title')}</p>
-                        <p className="text-sm">{t('history.empty.description')}</p>
-                    </div>
                 ) : (
-                    <ScrollArea className="h-[60vh]">
-                        <div className='space-y-2'>
-                            {combinedActivity.map(renderActivityItem)}
-                        </div>
-                    </ScrollArea>
+                   <Tabs defaultValue="all" className="w-full">
+                      <TabsList className="grid w-full grid-cols-4">
+                        <TabsTrigger value="all">{t('history.tabs.all')}</TabsTrigger>
+                        <TabsTrigger value="summary">{t('history.tabs.summaries')}</TabsTrigger>
+                        <TabsTrigger value="quiz">{t('history.tabs.quizzes')}</TabsTrigger>
+                        <TabsTrigger value="question">{t('history.tabs.questions')}</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="all" className="mt-4">
+                        <ActivityList items={combinedActivity} />
+                      </TabsContent>
+                       <TabsContent value="summary" className="mt-4">
+                        <ActivityList items={filteredActivities('summary')} />
+                      </TabsContent>
+                      <TabsContent value="quiz" className="mt-4">
+                        <ActivityList items={filteredActivities('quiz')} />
+                      </TabsContent>
+                      <TabsContent value="question" className="mt-4">
+                        <ActivityList items={filteredActivities('question')} />
+                      </TabsContent>
+                   </Tabs>
                 )}
             </CardContent>
           </Card>

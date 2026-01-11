@@ -490,6 +490,12 @@
                 "description": "Question: \"{question}\""
             },
             "justNow": "Just now"
+        },
+        "tabs": {
+            "all": "All",
+            "summaries": "Summaries",
+            "quizzes": "Quizzes",
+            "questions": "Questions"
         }
     }
 }
