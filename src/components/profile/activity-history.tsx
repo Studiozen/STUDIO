@@ -47,8 +47,7 @@ export function ActivityHistory() {
     }
   
     if (!timestamp) {
-      // Return a very old date for sorting purposes if timestamp is null/undefined
-      return new Date(0);
+      return new Date();
     }
   
     if (timestamp instanceof Timestamp) {
@@ -57,19 +56,19 @@ export function ActivityHistory() {
   
     if (typeof timestamp === 'string') {
       const date = new Date(timestamp);
-      // Check if the date is valid
       if (!isNaN(date.getTime())) {
         return date;
       }
     }
     
-    // Fallback for server timestamps that are pending
     if (typeof timestamp === 'object' && timestamp !== null && 'seconds' in timestamp && 'nanoseconds' in timestamp) {
-       return new Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate();
+       try {
+         return new Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate();
+       } catch (e) {
+        return new Date();
+       }
     }
   
-    // If it's a client-side pending timestamp or something else, return now.
-    // This is better than an invalid date which can crash the sort function.
     return new Date();
   };
 
@@ -85,8 +84,11 @@ export function ActivityHistory() {
     return activities.sort((a, b) => {
         const dateA = getDate(a);
         const dateB = getDate(b);
+        if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
+            return 0;
+        }
         return dateB.getTime() - dateA.getTime();
-    }).slice(0, 50); // Limit total items for performance
+    }).slice(0, 50);
 
   }, [focusSessions, chats, quizzes, summaries, questions, t]);
   
@@ -94,13 +96,13 @@ export function ActivityHistory() {
 
   const formatDate = (item: ActivityItem) => {
     const date = getDate(item);
-     if (date.getTime() === 0 || isNaN(date.getTime())) {
-       return t('profile.history.item.justNow', 'just now');
+     if (!date || isNaN(date.getTime())) {
+       return t('profile.history.item.justNow');
      }
     try {
         return formatDistanceToNow(date, { addSuffix: true, locale: dateFnsLocale });
     } catch(e) {
-        return t('profile.history.item.justNow', 'just now');
+        return t('profile.history.item.justNow');
     }
   };
   
@@ -123,7 +125,6 @@ export function ActivityHistory() {
         icon = <BookOpen className="h-5 w-5 text-green-500" />;
         title = t('profile.history.item.quiz.title');
         description = t('profile.history.item.quiz.description', { text: item.data.sourceText });
-        // href for quiz can be added later if a quiz review page is created
         break;
       case 'summary':
         icon = item.data.sourceType === 'image' 
