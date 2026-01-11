@@ -132,8 +132,7 @@
         "signup": "Registrati",
         "dropdown": {
             "profile": "Profilo",
-            "logout": "Esci",
-            "chat": "Chat"
+            "logout": "Esci"
         }
     },
     "home": {
@@ -394,13 +393,5 @@
         },
         "rateLimit": "Hai effettuato troppe richieste in un breve periodo. Attendi qualche istante e riprova.",
         "qaErrorTitle": "Errore Domanda"
-    },
-    "chat": {
-        "newChatButton": "Nuova Chat",
-        "newConversationTitle": "Nuova Chat",
-        "recentHeader": "Recenti",
-        "noConversations": "Nessuna conversazione ancora. Iniziane una nuova!",
-        "startConversation": "Inizia una conversazione scrivendo la tua domanda qui sotto.",
-        "inputPlaceholder": "Chiedimi qualsiasi cosa..."
     }
 }
