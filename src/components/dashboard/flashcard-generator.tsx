@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useTransition, useEffect, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { BookOpen, Loader2, Wand2, Lightbulb } from 'lucide-react';
@@ -150,17 +149,7 @@ export default function FlashcardGenerator() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <BookOpen className="h-6 w-6" />
-          {t('flashcards.title')}
-        </CardTitle>
-        <CardDescription>
-          {t('flashcards.description')}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div className="w-full">
         <form onSubmit={handleSubmit} className="space-y-4">
           <Textarea
             placeholder={t('flashcards.textareaPlaceholder')}
@@ -233,7 +222,6 @@ export default function FlashcardGenerator() {
             </Alert>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useTransition, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -202,17 +201,8 @@ export default function Summarizer() {
   const isSummarizeDisabled = isPending || (inputMode === 'text' && !text) || (inputMode === 'image' && !imageData);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TextQuote className="h-6 w-6" />
-          {t('summarizer.title')}
-        </CardTitle>
-        <CardDescription>
-          {t('summarizer.description')}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="w-full">
+      <div className="space-y-4">
         <Tabs value={inputMode} onValueChange={handleTabChange}>
             <TabsList className='grid w-full grid-cols-2'>
                 <TabsTrigger value="text"><TextQuote className='mr-2'/>{t('summarizer.tabs.text')}</TabsTrigger>
@@ -407,7 +397,7 @@ export default function Summarizer() {
 
         </div>
 
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

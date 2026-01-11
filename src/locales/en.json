@@ -1,4 +1,3 @@
-
 {
     "locale": "en-US",
     "login": {
@@ -137,7 +136,21 @@
         }
     },
     "home": {
-        "loading": "Loading..."
+        "loading": "Loading...",
+        "accordion": {
+            "summarizer": {
+                "title": "AI Summarizer",
+                "description": "Generate summaries from text or images."
+            },
+            "quiz": {
+                "title": "Quiz Generator",
+                "description": "Turn your notes into an interactive quiz."
+            },
+            "timer": {
+                "title": "Focus Timer",
+                "description": "Use the Pomodoro technique to study."
+            }
+        }
     },
     "profile": {
         "loading": "Loading...",

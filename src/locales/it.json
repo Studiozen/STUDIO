@@ -1,4 +1,3 @@
-
 {
     "locale": "it-IT",
     "login": {
@@ -137,7 +136,21 @@
         }
     },
     "home": {
-        "loading": "Caricamento in corso..."
+        "loading": "Caricamento in corso...",
+        "accordion": {
+            "summarizer": {
+                "title": "Riassunto AI",
+                "description": "Genera riassunti da testi o immagini."
+            },
+            "quiz": {
+                "title": "Generatore di Quiz",
+                "description": "Trasforma i tuoi appunti in un quiz interattivo."
+            },
+            "timer": {
+                "title": "Timer di Concentrazione",
+                "description": "Usa la tecnica del Pomodoro per studiare."
+            }
+        }
     },
     "profile": {
         "loading": "Caricamento in corso...",
