@@ -7,7 +7,7 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 import { collection, addDoc, serverTimestamp, doc, updateDoc, query, orderBy } from 'firebase/firestore';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Send, Loader2, Flower2 } from 'lucide-radix';
+import { Send, Loader2, Flower2 } from 'lucide-react';
 import { ChatMessage as ChatMessageType, Chat } from '@/types/chat';
 import { ChatMessage } from '@/components/chat/chat-message';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';

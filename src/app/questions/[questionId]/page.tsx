@@ -6,7 +6,7 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 import { doc } from 'firebase/firestore';
 import { GeneratedQuestion } from '@/types/history';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, ArrowLeft } from 'lucide-radix';
+import { Loader2, ArrowLeft } from 'lucide-react';
 import Header from '@/components/dashboard/header';
 import { useTranslation } from '@/hooks/use-translation';
 import { Button } from '@/components/ui/button';
