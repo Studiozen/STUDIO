@@ -64,7 +64,7 @@ export function ChatSidebar() {
         <SidebarTrigger className="md:hidden" />
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className='p-0'>
         <div className="p-2">
             <SidebarMenu>
                 <SidebarMenuItem>
@@ -76,6 +76,9 @@ export function ChatSidebar() {
             </SidebarMenu>
         </div>
         <div className="flex-1 overflow-y-auto">
+            <h2 className="px-4 text-sm font-semibold text-sidebar-foreground/70 mb-2">
+                Recenti
+            </h2>
             <ChatHistory />
         </div>
       </SidebarContent>

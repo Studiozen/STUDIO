@@ -8,8 +8,6 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarMenuSkeleton,
-  SidebarGroup,
-  SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -61,28 +59,25 @@ export function ChatHistory() {
 
   if (chats && chats.length > 0) {
     return (
-      <SidebarGroup>
-        <SidebarGroupLabel>Recenti</SidebarGroupLabel>
-        <SidebarGroupContent>
-          <SidebarMenu>
-            {chats.map((chat) => (
-              <SidebarMenuItem key={chat.id}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={chat.id === chatId}
-                  tooltip={chat.title}
-                  onClick={handleLinkClick}
-                >
-                  <Link href={`/chat/${chat.id}`}>
-                    <MessageSquare />
-                    <span>{chat.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
+      <div className="p-2">
+        <SidebarMenu>
+          {chats.map((chat) => (
+            <SidebarMenuItem key={chat.id}>
+              <SidebarMenuButton
+                asChild
+                isActive={chat.id === chatId}
+                tooltip={chat.title}
+                onClick={handleLinkClick}
+              >
+                <Link href={`/chat/${chat.id}`}>
+                  <MessageSquare />
+                  <span>{chat.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </div>
     );
   }
 
