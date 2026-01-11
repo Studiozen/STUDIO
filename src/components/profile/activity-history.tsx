@@ -46,6 +46,9 @@ export function ActivityHistory() {
       if (typeof timestamp === 'string') {
           return new Date(timestamp);
       }
+      // Firestore serverTimestamp is null on the client initially
+      if (timestamp === null && item.type === 'chat') return new Date();
+
       return new Date(0);
   };
 
@@ -61,6 +64,7 @@ export function ActivityHistory() {
     return activities.sort((a, b) => {
         const dateA = getDate(a);
         const dateB = getDate(b);
+        if (!dateA || !dateB) return 0;
         return dateB.getTime() - dateA.getTime();
     }).slice(0, 50); // Limit total items for performance
 
@@ -70,8 +74,12 @@ export function ActivityHistory() {
 
   const formatDate = (item: ActivityItem) => {
     const date = getDate(item);
-    if (date.getTime() === 0) return 'N/A';
-    return formatDistanceToNow(date, { addSuffix: true, locale: dateFnsLocale });
+    if (!date || date.getTime() === 0) return 'N/A';
+    try {
+        return formatDistanceToNow(date, { addSuffix: true, locale: dateFnsLocale });
+    } catch(e) {
+        return 'N/A';
+    }
   };
   
   const renderActivityItem = (item: ActivityItem) => {
