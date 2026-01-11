@@ -139,15 +139,12 @@
     },
     "home": {
         "loading": "Loading...",
-        "accordion": {
-            "summarizer": {
-                "title": "AI Summarizer"
-            },
-            "quiz": {
-                "title": "Quiz Generator"
-            },
-            "timer": {
-                "title": "Focus Timer"
+        "toolSelector": {
+            "placeholder": "Select a tool...",
+            "options": {
+                "summarizer": "AI Summarizer",
+                "quiz": "Quiz Generator",
+                "timer": "Focus Timer"
             }
         }
     },
