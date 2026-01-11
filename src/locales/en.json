@@ -461,6 +461,15 @@
             "notFound": "Could not find the requested question. It may have been deleted or never existed."
         }
     },
+    "summaries": {
+        "title": "View Summary",
+        "backToProfile": "Back to Profile",
+        "sourceText": "Original text snippet",
+        "placeholder": "The generated summary content is not stored, only the record of the activity.",
+        "errors": {
+            "notFound": "Could not find the requested summary. It may have been deleted or never existed."
+        }
+    },
     "errors": {
         "generic": {
             "title": "Oops! Something went wrong.",

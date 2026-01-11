@@ -112,6 +112,7 @@ export function ActivityHistory() {
         description = item.data.sourceText 
           ? t('profile.history.item.summary.description', { text: item.data.sourceText })
           : '';
+        href = `/summaries/${item.data.id}`;
         break;
       case 'question':
         icon = <HelpCircle className="h-5 w-5 text-purple-500" />;
@@ -120,9 +121,6 @@ export function ActivityHistory() {
         href = `/questions/${item.data.id}`;
         break;
     }
-    
-    const Wrapper = href ? Link : 'div';
-    const wrapperProps = href ? { href } : {};
     
     return (
         <div key={`${item.type}-${item.data.id}`} className="flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors">

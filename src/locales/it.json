@@ -461,6 +461,15 @@
             "notFound": "Impossibile trovare la domanda richiesta. Potrebbe essere stata eliminata o non essere mai esistita."
         }
     },
+    "summaries": {
+        "title": "Visualizza Riassunto",
+        "backToProfile": "Torna al Profilo",
+        "sourceText": "Ritaglio di testo originale",
+        "placeholder": "Il contenuto del riassunto generato non viene memorizzato, solo la registrazione dell'attività.",
+        "errors": {
+            "notFound": "Impossibile trovare il riassunto richiesto. Potrebbe essere stato eliminato o non essere mai esistito."
+        }
+    },
     "errors": {
         "generic": {
             "title": "Ops! Qualcosa è andato storto.",
