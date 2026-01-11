@@ -401,6 +401,18 @@
             "focusTimer": {
                 "title": "Timer Concentrazione (Pomodoro)",
                 "content": "Usa la tecnica del Pomodoro per massimizzare la tua produttività. Clicca 'Avvia' per iniziare una sessione di studio di 25 minuti. Al termine, il timer ti avviserà e partirà automaticamente una pausa di 5 minuti."
+            },
+            "chat": {
+                "title": "Chat con l'IA",
+                "content": "Clicca su 'Chat' nell'intestazione per avviare una conversazione con l'assistente di studio. Le tue conversazioni recenti vengono salvate nella barra laterale sinistra per un facile accesso."
+            },
+            "profile": {
+                "title": "Profilo e Statistiche",
+                "content": "Accedi al tuo profilo dal menu utente in alto a destra per vedere le tue statistiche di studio e i riconoscimenti sbloccati."
+            },
+            "history": {
+                "title": "Cronologia Attività",
+                "content": "Dal tuo profilo o dal menu utente, puoi accedere alla cronologia completa delle tue attività. Qui puoi rivedere riassunti, quiz e domande passate."
             }
         }
     },
@@ -452,7 +464,7 @@
         "title": "Visualizza Riassunto",
         "backToProfile": "Torna alla Cronologia",
         "sourceText": "Ritaglio di testo originale",
-        "placeholder": "Il contenuto del riassunto generato non viene memorizzato, solo la registrazione dell'attività.",
+        "summary": "Riassunto Generato",
         "errors": {
             "notFound": "Impossibile trovare il riassunto richiesto. Potrebbe essere stato eliminato o non essere mai esistito."
         }
@@ -509,5 +521,3 @@
         }
     }
 }
-
-    

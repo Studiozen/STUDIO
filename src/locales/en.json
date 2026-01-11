@@ -401,6 +401,18 @@
             "focusTimer": {
                 "title": "Focus Timer (Pomodoro)",
                 "content": "Use the Pomodoro technique to maximize your productivity. Click 'Start' to begin a 25-minute study session. When the time is up, the timer will notify you and automatically start a 5-minute break."
+            },
+            "chat": {
+                "title": "AI Chat",
+                "content": "Click on 'Chat' in the header to start a conversation with the study assistant. Your recent conversations are saved on the left sidebar for easy access."
+            },
+            "profile": {
+                "title": "Profile & Stats",
+                "content": "Access your profile from the user menu in the top-right corner to see your study statistics and unlocked achievements."
+            },
+            "history": {
+                "title": "Activity History",
+                "content": "From your profile or the user menu, you can access your full activity history. Here you can review past summaries, quizzes, and questions."
             }
         }
     },
@@ -452,7 +464,7 @@
         "title": "View Summary",
         "backToProfile": "Back to History",
         "sourceText": "Original text snippet",
-        "placeholder": "The generated summary content is not stored, only the record of the activity.",
+        "summary": "Generated Summary",
         "errors": {
             "notFound": "Could not find the requested summary. It may have been deleted or never existed."
         }
@@ -509,5 +521,3 @@
         }
     }
 }
-
-    

@@ -14,7 +14,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Button } from '@/components/ui/button';
-import { HelpCircle, TextQuote, BookOpen, Timer, Image as ImageIcon } from 'lucide-react';
+import { HelpCircle, TextQuote, BookOpen, Timer, Image as ImageIcon, MessageSquare, User, History } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 
 export function HelpGuide() {
@@ -38,6 +38,21 @@ export function HelpGuide() {
         icon: Timer,
         title: t('helpGuide.sections.focusTimer.title'),
         content: [t('helpGuide.sections.focusTimer.content')]
+    },
+    {
+        icon: MessageSquare,
+        title: t('helpGuide.sections.chat.title'),
+        content: [t('helpGuide.sections.chat.content')]
+    },
+    {
+        icon: User,
+        title: t('helpGuide.sections.profile.title'),
+        content: [t('helpGuide.sections.profile.content')]
+    },
+    {
+        icon: History,
+        title: t('helpGuide.sections.history.title'),
+        content: [t('helpGuide.sections.history.content')]
     }
   ];
 
