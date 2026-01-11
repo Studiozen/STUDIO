@@ -132,7 +132,8 @@
         "signup": "Registrati",
         "dropdown": {
             "profile": "Profilo",
-            "logout": "Esci"
+            "logout": "Esci",
+            "chat": "Chat"
         }
     },
     "home": {

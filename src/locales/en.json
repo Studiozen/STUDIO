@@ -132,7 +132,8 @@
         "signup": "Sign up",
         "dropdown": {
             "profile": "Profile",
-            "logout": "Logout"
+            "logout": "Logout",
+            "chat": "Chat"
         }
     },
     "home": {

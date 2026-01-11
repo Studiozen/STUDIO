@@ -1,6 +1,6 @@
 'use client';
 
-import { Flower2, LogOut, User as UserIcon } from 'lucide-react';
+import { Flower2, LogOut, MessageSquare, User as UserIcon } from 'lucide-react';
 import type { FC } from 'react';
 import Link from 'next/link';
 import { useAuth, useUser } from '@/firebase';
@@ -48,6 +48,9 @@ const Header: FC = () => {
           <Flower2 className="h-6 w-6 text-primary" />
           <span className="font-headline">StudioZen</span>
         </Link>
+        <Link href="/chat" className='text-muted-foreground transition-colors hover:text-foreground'>
+            Chat
+        </Link>
       </nav>
       <div className="flex w-full items-center justify-end gap-4 md:ml-auto md:gap-2 lg:gap-4">
         {!isUserLoading &&
@@ -85,6 +88,12 @@ const Header: FC = () => {
                   <Link href="/profile">
                     <UserIcon className="mr-2 h-4 w-4" />
                     <span>{t('header.dropdown.profile')}</span>
+                  </Link>
+                </DropdownMenuItem>
+                 <DropdownMenuItem asChild>
+                  <Link href="/chat">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    <span>{t('header.dropdown.chat')}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>
