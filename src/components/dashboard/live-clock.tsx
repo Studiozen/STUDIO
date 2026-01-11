@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Clock } from 'lucide-react';
-import { useLanguage } from '@/hooks/use-translation';
+import { useLanguage } from '@/context/language-context';
 
 export function LiveClock() {
   const [time, setTime] = useState<Date | null>(null);
