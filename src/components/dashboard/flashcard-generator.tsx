@@ -13,13 +13,7 @@ import { useDoc } from '@/firebase/firestore/use-doc';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/hooks/use-translation';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-
-interface FlashcardData {
-  question: string;
-  options: string[];
-  answer: string;
-  explanation: string;
-}
+import type { Flashcard as FlashcardType } from '@/types/history';
 
 export default function FlashcardGenerator() {
   const { user } = useUser();
@@ -36,17 +30,18 @@ export default function FlashcardGenerator() {
   const [text, setText] = useState('');
   const [result, setResult] = useState<GenerateFlashcardsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedQuestion, setSelectedQuestion] = useState<FlashcardData | null>(null);
+  const [selectedQuestion, setSelectedQuestion] = useState<FlashcardType | null>(null);
   const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
-  const [quizToSave, setQuizToSave] = useState<string | null>(null);
+  const [quizToSave, setQuizToSave] = useState<GenerateFlashcardsOutput & {sourceText: string} | null>(null);
 
-  const saveQuizToHistory = async (sourceText: string) => {
+  const saveQuizToHistory = async (quizData: GenerateFlashcardsOutput, sourceText: string) => {
     if (!user || !firestore) return;
     try {
         await addDoc(collection(firestore, `users/${user.uid}/quizzes`), {
             userId: user.uid,
             createdAt: serverTimestamp(),
             sourceText: sourceText.substring(0, 100) + (sourceText.length > 100 ? '...' : ''),
+            flashcards: quizData.flashcards,
         });
     } catch (error) {
         console.error("Error saving quiz to history:", error);
@@ -55,7 +50,7 @@ export default function FlashcardGenerator() {
 
   const handleSaveConfirmation = (save: boolean) => {
     if (save && quizToSave) {
-        saveQuizToHistory(quizToSave);
+        saveQuizToHistory(quizToSave, quizToSave.sourceText);
     }
     setShowSaveConfirmation(false);
     setQuizToSave(null);
@@ -81,7 +76,7 @@ export default function FlashcardGenerator() {
       const res = await generateFlashcards(input);
       if (res.flashcards && res.flashcards.length > 0) {
         setResult(res);
-        setQuizToSave(text);
+        setQuizToSave({...res, sourceText: text});
         setShowSaveConfirmation(true);
       } else {
         setError(t('flashcards.errors.generationFailed'));
@@ -89,7 +84,7 @@ export default function FlashcardGenerator() {
     });
   };
   
-  const handleQuestionSelect = (flashcard: FlashcardData) => {
+  const handleQuestionSelect = (flashcard: FlashcardType) => {
       if (selectedQuestion?.question === flashcard.question) {
           setSelectedQuestion(null); // Deselect if the same question is clicked
       } else {
@@ -97,7 +92,7 @@ export default function FlashcardGenerator() {
       }
   }
 
-  function Flashcard({ question, options, answer, explanation }: FlashcardData) {
+  function Flashcard({ question, options, answer, explanation }: FlashcardType) {
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [feedback, setFeedback] = useState<{ isCorrect: boolean; message: React.ReactNode } | null>(null);
     const feedbackRef = useRef<HTMLDivElement>(null);
@@ -264,3 +259,5 @@ export default function FlashcardGenerator() {
       </div>
   );
 }
+
+    

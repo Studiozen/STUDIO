@@ -110,6 +110,7 @@ export default function HistoryPage() {
         icon = <BookOpen className="h-5 w-5 text-green-500" />;
         title = t('history.item.quiz.title');
         description = t('history.item.quiz.description', { text: item.data.sourceText });
+        if (id) href = `/quizzes/${id}`;
         break;
       case 'summary':
         icon = item.data.sourceType === 'image' 
@@ -225,3 +226,5 @@ export default function HistoryPage() {
     </div>
   );
 }
+
+    

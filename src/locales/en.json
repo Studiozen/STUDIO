@@ -438,6 +438,16 @@
             "notFound": "Could not find the requested question. It may have been deleted or never existed."
         }
     },
+    "quizzes": {
+        "title": "View Quiz",
+        "backToHistory": "Back to History",
+        "sourceText": "Original text snippet",
+        "questionsTitle": "Quiz Questions",
+        "selectAQuestion": "Select a question to see the details.",
+        "errors": {
+            "notFound": "Could not find the requested quiz. It may have been deleted or never existed."
+        }
+    },
     "summaries": {
         "title": "View Summary",
         "backToProfile": "Back to History",
@@ -499,3 +509,5 @@
         }
     }
 }
+
+    

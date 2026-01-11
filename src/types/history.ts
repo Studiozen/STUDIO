@@ -1,8 +1,16 @@
+export interface Flashcard {
+    question: string;
+    options: string[];
+    answer: string;
+    explanation: string;
+}
+
 export interface GeneratedQuiz {
     id: string;
     userId: string;
     createdAt: any; // Firestore Timestamp
     sourceText: string;
+    flashcards: Flashcard[];
 }
 
 export interface GeneratedSummary {
@@ -21,3 +29,5 @@ export interface GeneratedQuestion {
     question: string;
     answer: string;
 }
+
+    

@@ -142,6 +142,18 @@
       },
       "required": ["id", "chatId", "role", "content", "createdAt"]
     },
+    "Flashcard": {
+      "title": "Flashcard",
+      "type": "object",
+      "description": "Represents a single question-answer flashcard within a quiz.",
+      "properties": {
+        "question": { "type": "string" },
+        "options": { "type": "array", "items": { "type": "string" } },
+        "answer": { "type": "string" },
+        "explanation": { "type": "string" }
+      },
+      "required": ["question", "options", "answer", "explanation"]
+    },
     "GeneratedQuiz": {
       "title": "Generated Quiz",
       "type": "object",
@@ -150,9 +162,13 @@
         "id": { "type": "string" },
         "userId": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" },
-        "sourceText": { "type": "string", "description": "A snippet of the source text used to generate the quiz." }
+        "sourceText": { "type": "string", "description": "A snippet of the source text used to generate the quiz." },
+        "flashcards": {
+            "type": "array",
+            "items": { "$ref": "#/entities/Flashcard" }
+        }
       },
-      "required": ["id", "userId", "createdAt", "sourceText"]
+      "required": ["id", "userId", "createdAt", "sourceText", "flashcards"]
     },
     "GeneratedSummary": {
       "title": "Generated Summary",
@@ -292,3 +308,5 @@
     "reasoning": "The Firestore structure is designed to ensure secure and scalable data management for the StudioZen application, focusing on authorization independence and clear data ownership. User-specific data (FocusSessions, Chats, ChatMessages, Quizzes, Summaries, Questions) is stored under path-based ownership (`/users/{userId}/...`), ensuring only the owning user can access their data. This structure avoids the need for complex security rules that require reading parent documents, thus enabling atomic operations. Chat and FocusSession entities will exist as a subcollection of user documents to ensure that the authenticated user has access to this information. ChatMessage entities are a subcollection of Chat to maintain conversational order. This approach achieves authorization independence by leveraging the inherent path-based ownership in Firestore, which simplifies security rules and enhances performance."
   }
 }
+
+    

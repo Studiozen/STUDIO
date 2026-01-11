@@ -438,6 +438,16 @@
             "notFound": "Impossibile trovare la domanda richiesta. Potrebbe essere stata eliminata o non essere mai esistita."
         }
     },
+    "quizzes": {
+        "title": "Visualizza Quiz",
+        "backToHistory": "Torna alla Cronologia",
+        "sourceText": "Testo originale:",
+        "questionsTitle": "Domande del Quiz",
+        "selectAQuestion": "Seleziona una domanda per vedere i dettagli.",
+        "errors": {
+            "notFound": "Impossibile trovare il quiz richiesto. Potrebbe essere stato eliminato o non essere mai esistito."
+        }
+    },
     "summaries": {
         "title": "Visualizza Riassunto",
         "backToProfile": "Torna alla Cronologia",
@@ -499,3 +509,5 @@
         }
     }
 }
+
+    
