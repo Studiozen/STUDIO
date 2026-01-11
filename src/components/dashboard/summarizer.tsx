@@ -20,6 +20,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 type SummaryStyle = 'concise paragraph' | 'bullet points' | 'key concepts';
 type InputMode = 'text' | 'image';
+type ActivityToSave = 
+  | { type: 'summary'; data: { sourceType: InputMode, sourceText?: string } }
+  | { type: 'qa'; data: { question: string, answer: string } };
+
 
 export default function Summarizer() {
   const { user } = useUser();
@@ -48,7 +52,7 @@ export default function Summarizer() {
   const [answer, setAnswer] = useState('');
 
   const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
-  const [summaryToSave, setSummaryToSave] = useState<{ sourceType: InputMode, sourceText?: string } | null>(null);
+  const [activityToSave, setActivityToSave] = useState<ActivityToSave | null>(null);
 
 
   const userDocRef = useMemoFirebase(
@@ -83,12 +87,30 @@ export default function Summarizer() {
     }
   }
 
+  const saveQuestionToHistory = async (question: string, answer: string) => {
+    if (!user || !firestore) return;
+    try {
+        await addDoc(collection(firestore, `users/${user.uid}/questions`), {
+            userId: user.uid,
+            createdAt: serverTimestamp(),
+            question: question,
+            answer: answer.substring(0, 200) + (answer.length > 200 ? '...' : '')
+        });
+    } catch (error) {
+        console.error("Error saving question to history:", error);
+    }
+  }
+
   const handleSaveConfirmation = (save: boolean) => {
-    if (save && summaryToSave) {
-        saveSummaryToHistory(summaryToSave.sourceType, summaryToSave.sourceText);
+    if (save && activityToSave) {
+        if (activityToSave.type === 'summary') {
+            saveSummaryToHistory(activityToSave.data.sourceType, activityToSave.data.sourceText);
+        } else if (activityToSave.type === 'qa') {
+            saveQuestionToHistory(activityToSave.data.question, activityToSave.data.answer);
+        }
     }
     setShowSaveConfirmation(false);
-    setSummaryToSave(null);
+    setActivityToSave(null);
   }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +161,7 @@ export default function Summarizer() {
                     'bullet points': result.bulletPoints,
                     'key concepts': result.keyConcepts,
                 });
-                setSummaryToSave({ sourceType: 'text', sourceText: text });
+                setActivityToSave({ type: 'summary', data: { sourceType: 'text', sourceText: text }});
                 setShowSaveConfirmation(true);
             } else if (inputMode === 'image' && imageData) {
                 const input: GenerateImageSummaryInput = {
@@ -154,7 +176,7 @@ export default function Summarizer() {
                     'key concepts': '',
                 });
                 setActiveStyle('concise paragraph'); // Default to the only available style
-                setSummaryToSave({ sourceType: 'image' });
+                setActivityToSave({ type: 'summary', data: { sourceType: 'image' }});
                 setShowSaveConfirmation(true);
             }
         } catch (e) {
@@ -193,6 +215,8 @@ export default function Summarizer() {
         };
         const result = await askQuestion(input);
         setAnswer(result.answer);
+        setActivityToSave({ type: 'qa', data: { question, answer: result.answer }});
+        setShowSaveConfirmation(true);
       } catch (e) {
         console.error(e);
         let errorMessage = t('errors.generic.default');

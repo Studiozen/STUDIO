@@ -143,6 +143,14 @@ service cloud.firestore {
       match /summaries/{summaryId} {
         allow get, list, create, update, delete: if isOwner(userId);
       }
+
+      /**
+       * @description Rules for generated questions.
+       * @path /users/{userId}/questions/{questionId}
+       */
+      match /questions/{questionId} {
+        allow get, list, create, update, delete: if isOwner(userId);
+      }
     }
   }
 }

@@ -140,16 +140,13 @@
         "loading": "Caricamento in corso...",
         "accordion": {
             "summarizer": {
-                "title": "Riassunto AI",
-                "description": "Genera riassunti da testi o immagini."
+                "title": "Riassunto AI"
             },
             "quiz": {
-                "title": "Generatore di Quiz",
-                "description": "Trasforma i tuoi appunti in un quiz interattivo."
+                "title": "Generatore di Quiz"
             },
             "timer": {
-                "title": "Timer di Concentrazione",
-                "description": "Usa la tecnica del Pomodoro per studiare."
+                "title": "Timer di Concentrazione"
             }
         }
     },
@@ -215,6 +212,10 @@
                     "titleText": "Generato un riassunto da testo",
                     "titleImage": "Generato un riassunto da un'immagine",
                     "description": "Dal testo: \"{text}\""
+                },
+                "question": {
+                    "title": "Fatta una domanda all'IA",
+                    "description": "Domanda: \"{question}\""
                 }
             }
         },

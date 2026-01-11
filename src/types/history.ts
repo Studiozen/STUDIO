@@ -12,3 +12,11 @@ export interface GeneratedSummary {
     sourceType: 'text' | 'image';
     sourceText?: string;
 }
+
+export interface GeneratedQuestion {
+    id: string;
+    userId: string;
+    createdAt: any; // Firestore Timestamp
+    question: string;
+    answer: string;
+}

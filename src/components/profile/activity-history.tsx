@@ -5,9 +5,9 @@ import { useCollection, useUser, useFirestore, useMemoFirebase } from '@/firebas
 import { collection, query, orderBy, limit, Timestamp } from 'firebase/firestore';
 import type { FocusSession } from '@/types/focus-session';
 import type { Chat } from '@/types/chat';
-import type { GeneratedQuiz, GeneratedSummary } from '@/types/history';
+import type { GeneratedQuiz, GeneratedSummary, GeneratedQuestion } from '@/types/history';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Inbox, Timer, MessageSquare, BookOpen, TextQuote, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Inbox, Timer, MessageSquare, BookOpen, TextQuote, Image as ImageIcon, HelpCircle } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 import { formatDistanceToNow } from 'date-fns';
 import { it, enUS } from 'date-fns/locale';
@@ -17,7 +17,8 @@ type ActivityItem =
   | ({ type: 'focus'; data: FocusSession })
   | ({ type: 'chat'; data: Chat })
   | ({ type: 'quiz'; data: GeneratedQuiz })
-  | ({ type: 'summary'; data: GeneratedSummary });
+  | ({ type: 'summary'; data: GeneratedSummary })
+  | ({ type: 'question'; data: GeneratedQuestion });
 
 export function ActivityHistory() {
   const { user } = useUser();
@@ -29,14 +30,16 @@ export function ActivityHistory() {
   const chatsQuery = useMemoFirebase(() => user ? query(collection(firestore, `users/${user.uid}/chats`), orderBy('createdAt', 'desc'), limit(20)) : null, [user, firestore]);
   const quizzesQuery = useMemoFirebase(() => user ? query(collection(firestore, `users/${user.uid}/quizzes`), orderBy('createdAt', 'desc'), limit(20)) : null, [user, firestore]);
   const summariesQuery = useMemoFirebase(() => user ? query(collection(firestore, `users/${user.uid}/summaries`), orderBy('createdAt', 'desc'), limit(20)) : null, [user, firestore]);
+  const questionsQuery = useMemoFirebase(() => user ? query(collection(firestore, `users/${user.uid}/questions`), orderBy('createdAt', 'desc'), limit(20)) : null, [user, firestore]);
 
   const { data: focusSessions, isLoading: focusLoading } = useCollection<FocusSession>(focusSessionsQuery);
   const { data: chats, isLoading: chatsLoading } = useCollection<Chat>(chatsQuery);
   const { data: quizzes, isLoading: quizzesLoading } = useCollection<GeneratedQuiz>(quizzesQuery);
   const { data: summaries, isLoading: summariesLoading } = useCollection<GeneratedSummary>(summariesQuery);
+  const { data: questions, isLoading: questionsLoading } = useCollection<GeneratedQuestion>(questionsQuery);
   
   const getDate = (item: ActivityItem): Date => {
-      const timestamp = item.data.createdAt || item.data.startTime;
+      const timestamp = item.data.createdAt || (item.type === 'focus' && item.data.startTime);
       if (timestamp instanceof Timestamp) {
           return timestamp.toDate();
       }
@@ -53,6 +56,7 @@ export function ActivityHistory() {
     (chats || []).forEach(c => c.title !== t('chat.newChat') && activities.push({ type: 'chat', data: c }));
     (quizzes || []).forEach(q => activities.push({ type: 'quiz', data: q }));
     (summaries || []).forEach(s => activities.push({ type: 'summary', data: s }));
+    (questions || []).forEach(q => activities.push({ type: 'question', data: q }));
     
     return activities.sort((a, b) => {
         const dateA = getDate(a);
@@ -60,9 +64,9 @@ export function ActivityHistory() {
         return dateB.getTime() - dateA.getTime();
     }).slice(0, 50); // Limit total items for performance
 
-  }, [focusSessions, chats, quizzes, summaries, t]);
+  }, [focusSessions, chats, quizzes, summaries, questions, t]);
   
-  const isLoading = focusLoading || chatsLoading || quizzesLoading || summariesLoading;
+  const isLoading = focusLoading || chatsLoading || quizzesLoading || summariesLoading || questionsLoading;
 
   const formatDate = (item: ActivityItem) => {
     const date = getDate(item);
@@ -100,6 +104,11 @@ export function ActivityHistory() {
         description = item.data.sourceText 
           ? t('profile.history.item.summary.description', { text: item.data.sourceText })
           : '';
+        break;
+      case 'question':
+        icon = <HelpCircle className="h-5 w-5 text-purple-500" />;
+        title = t('profile.history.item.question.title');
+        description = t('profile.history.item.question.description', { question: item.data.question });
         break;
     }
     

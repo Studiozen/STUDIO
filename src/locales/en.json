@@ -140,16 +140,13 @@
         "loading": "Loading...",
         "accordion": {
             "summarizer": {
-                "title": "AI Summarizer",
-                "description": "Generate summaries from text or images."
+                "title": "AI Summarizer"
             },
             "quiz": {
-                "title": "Quiz Generator",
-                "description": "Turn your notes into an interactive quiz."
+                "title": "Quiz Generator"
             },
             "timer": {
-                "title": "Focus Timer",
-                "description": "Use the Pomodoro technique to study."
+                "title": "Focus Timer"
             }
         }
     },
@@ -215,6 +212,10 @@
                     "titleText": "Generated a summary from text",
                     "titleImage": "Generated a summary from an image",
                     "description": "From text: \"{text}\""
+                },
+                "question": {
+                    "title": "Asked a question to the AI",
+                    "description": "Question: \"{question}\""
                 }
             }
         },
