@@ -14,7 +14,7 @@ import type { FocusSession } from '@/types/focus-session';
 import { cn } from '@/lib/utils';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { useTranslation } from '@/hooks/use-translation';
-import { FocusSessionHistory } from '@/components/profile/focus-session-history';
+import { ActivityHistory } from '@/components/profile/activity-history';
 
 interface UserProfile {
     schoolType?: string;
@@ -211,7 +211,7 @@ export default function ProfilePage() {
                 <CardDescription>{t('profile.history.description')}</CardDescription>
             </CardHeader>
             <CardContent>
-                <FocusSessionHistory />
+                <ActivityHistory />
             </CardContent>
            </Card>
 

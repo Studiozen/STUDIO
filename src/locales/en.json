@@ -1,3 +1,4 @@
+
 {
     "locale": "en-US",
     "login": {
@@ -193,16 +194,28 @@
             "totalMinutes": "Total Study Minutes"
         },
         "history": {
-            "title": "Session History",
-            "description": "A log of all your completed focus sessions.",
+            "title": "Activity History",
+            "description": "A log of all your recent activities.",
             "empty": {
-                "title": "No Sessions Yet",
-                "description": "Complete a focus session to see your history here."
+                "title": "No Activities Yet",
+                "description": "Use the app's features to see your history here."
             },
-            "table": {
-                "date": "Date",
-                "duration": "Duration",
-                "minutes": "min"
+            "item": {
+                "focus": {
+                    "title": "Completed a {duration} min focus session"
+                },
+                "chat": {
+                    "title": "Started a new chat"
+                },
+                "quiz": {
+                    "title": "Generated a new quiz",
+                    "description": "From text: \"{text}\""
+                },
+                "summary": {
+                    "titleText": "Generated a summary from text",
+                    "titleImage": "Generated a summary from an image",
+                    "description": "From text: \"{text}\""
+                }
             }
         },
         "achievements": {

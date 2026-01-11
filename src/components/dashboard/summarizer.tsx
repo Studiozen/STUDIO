@@ -8,7 +8,7 @@ import { TextQuote, Loader2, Wand2, Clipboard, ClipboardCheck, Send, Sparkles, I
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { generateSummarizationStyles, GenerateSummarizationStylesInput } from '@/ai/flows/generate-summarization-styles';
 import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { doc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { askQuestion, AskQuestionInput } from '@/ai/flows/ask-question';
 import { Input } from '../ui/input';
@@ -61,6 +61,23 @@ export default function Summarizer() {
     setAnswer('');
   }
 
+  const saveSummaryToHistory = async (sourceType: InputMode, sourceText?: string) => {
+    if (!user || !firestore) return;
+    try {
+        const historyData: any = {
+            userId: user.uid,
+            createdAt: serverTimestamp(),
+            sourceType: sourceType,
+        };
+        if (sourceType === 'text' && sourceText) {
+            historyData.sourceText = sourceText.substring(0, 100) + (sourceText.length > 100 ? '...' : '');
+        }
+        await addDoc(collection(firestore, `users/${user.uid}/summaries`), historyData);
+    } catch (error) {
+        console.error("Error saving summary to history:", error);
+    }
+  }
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -109,6 +126,7 @@ export default function Summarizer() {
                     'bullet points': result.bulletPoints,
                     'key concepts': result.keyConcepts,
                 });
+                await saveSummaryToHistory('text', text);
             } else if (inputMode === 'image' && imageData) {
                 const input: GenerateImageSummaryInput = {
                     imageDataUri: imageData,
@@ -122,6 +140,7 @@ export default function Summarizer() {
                     'key concepts': '',
                 });
                 setActiveStyle('concise paragraph'); // Default to the only available style
+                await saveSummaryToHistory('image');
             }
         } catch (e) {
             console.error(e);

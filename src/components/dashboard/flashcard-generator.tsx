@@ -8,7 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { generateFlashcards, type GenerateFlashcardsOutput, type GenerateFlashcardsInput } from '@/ai/flows/generate-flashcards';
 import React from 'react';
 import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { doc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/hooks/use-translation';
@@ -37,6 +37,19 @@ export default function FlashcardGenerator() {
   const [error, setError] = useState<string | null>(null);
   const [selectedQuestion, setSelectedQuestion] = useState<FlashcardData | null>(null);
 
+  const saveQuizToHistory = async (sourceText: string) => {
+    if (!user || !firestore) return;
+    try {
+        await addDoc(collection(firestore, `users/${user.uid}/quizzes`), {
+            userId: user.uid,
+            createdAt: serverTimestamp(),
+            sourceText: sourceText.substring(0, 100) + (sourceText.length > 100 ? '...' : ''),
+        });
+    } catch (error) {
+        console.error("Error saving quiz to history:", error);
+    }
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -57,6 +70,7 @@ export default function FlashcardGenerator() {
       const res = await generateFlashcards(input);
       if (res.flashcards && res.flashcards.length > 0) {
         setResult(res);
+        await saveQuizToHistory(text);
       } else {
         setError(t('flashcards.errors.generationFailed'));
       }

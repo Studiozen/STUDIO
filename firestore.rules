@@ -106,11 +106,7 @@ service cloud.firestore {
        * @principle Enforces strict data ownership within a user's private subcollection.
        */
       match /focusSessions/{focusSessionId} {
-        allow get: if isOwner(userId);
-        allow list: if isOwner(userId);
-        allow create: if isOwner(userId) && hasValidOwnerIdOnCreate(userId);
-        allow update: if isExistingOwner(userId) && isOwnerIdImmutable();
-        allow delete: if isExistingOwner(userId);
+        allow get, list, create, update, delete: if isOwner(userId);
       }
       
       /**
@@ -130,6 +126,22 @@ service cloud.firestore {
         allow create: if isOwner(userId) && isValidChatMessage();
         // Users should not be able to edit or delete messages to maintain conversation integrity.
         allow update, delete: if false;
+      }
+
+      /**
+       * @description Rules for generated quizzes.
+       * @path /users/{userId}/quizzes/{quizId}
+       */
+      match /quizzes/{quizId} {
+        allow get, list, create, update, delete: if isOwner(userId);
+      }
+
+      /**
+       * @description Rules for generated summaries.
+       * @path /users/{userId}/summaries/{summaryId}
+       */
+      match /summaries/{summaryId} {
+        allow get, list, create, update, delete: if isOwner(userId);
       }
     }
   }

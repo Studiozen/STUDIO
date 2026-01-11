@@ -1,3 +1,4 @@
+
 {
     "locale": "it-IT",
     "login": {
@@ -193,16 +194,28 @@
             "totalMinutes": "Minuti di Studio Totali"
         },
         "history": {
-            "title": "Cronologia Sessioni",
-            "description": "Un registro di tutte le tue sessioni di concentrazione completate.",
+            "title": "Cronologia Attività",
+            "description": "Un registro di tutte le tue attività recenti.",
             "empty": {
-                "title": "Nessuna Sessione",
-                "description": "Completa una sessione di concentrazione per vedere la cronologia qui."
+                "title": "Nessuna Attività",
+                "description": "Usa le funzionalità dell'app per vedere la cronologia qui."
             },
-            "table": {
-                "date": "Data",
-                "duration": "Durata",
-                "minutes": "min"
+            "item": {
+                "focus": {
+                    "title": "Completata una sessione di {duration} min"
+                },
+                "chat": {
+                    "title": "Iniziata una nuova chat"
+                },
+                "quiz": {
+                    "title": "Generato un nuovo quiz",
+                    "description": "Dal testo: \"{text}\""
+                },
+                "summary": {
+                    "titleText": "Generato un riassunto da testo",
+                    "titleImage": "Generato un riassunto da un'immagine",
+                    "description": "Dal testo: \"{text}\""
+                }
             }
         },
         "achievements": {
