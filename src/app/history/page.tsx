@@ -151,8 +151,8 @@ export default function HistoryPage() {
     
     const itemKey = `${item.type}-${id || (item.data as any).startTime?.toString() || Math.random()}`;
 
-    return (
-        <div key={itemKey} className="flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors">
+    const content = (
+        <div className="flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors cursor-pointer">
             <div className="mt-1">{icon}</div>
             <div className="flex-1 overflow-hidden">
                 <p className="font-semibold">{title}</p>
@@ -160,12 +160,22 @@ export default function HistoryPage() {
                 <p className="text-xs text-muted-foreground/70 mt-1">{formatDate(item)}</p>
             </div>
             {href && (
-                <Button asChild variant="ghost" size="icon">
-                  <Link href={href}>
-                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                  </Link>
-                </Button>
+                <ChevronRight className="h-5 w-5 text-muted-foreground" />
             )}
+        </div>
+    );
+    
+    if (href) {
+        return (
+            <Link href={href} key={itemKey} className='block'>
+                {content}
+            </Link>
+        )
+    }
+
+    return (
+        <div key={itemKey}>
+            {content}
         </div>
     );
   };
