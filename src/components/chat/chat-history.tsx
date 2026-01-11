@@ -7,7 +7,8 @@ import { Loader2, MessageSquare, Plus } from 'lucide-react';
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuSkeleton } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useIsMobile, useSidebar } from '../ui/sidebar';
+import { useSidebar } from '../ui/sidebar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface Chat {
   id: string;
