@@ -122,6 +122,9 @@ export function ActivityHistory() {
         break;
     }
     
+    const Wrapper = href ? Link : 'div';
+    const wrapperProps = href ? { href } : {};
+    
     return (
         <div key={`${item.type}-${item.data.id}`} className="flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors">
             <div className="mt-1">{icon}</div>
