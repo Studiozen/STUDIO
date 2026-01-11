@@ -1,6 +1,6 @@
 'use client';
 
-import { Flower2, LogOut, MessageSquare, User as UserIcon } from 'lucide-react';
+import { Flower2, LogOut, MessageSquare, User as UserIcon, History } from 'lucide-react';
 import type { FC } from 'react';
 import Link from 'next/link';
 import { useAuth, useUser } from '@/firebase';
@@ -91,6 +91,12 @@ const Header: FC = () => {
                   <Link href="/profile">
                     <UserIcon className="mr-2 h-4 w-4" />
                     <span>{t('header.dropdown.profile')}</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/history">
+                    <History className="mr-2 h-4 w-4" />
+                    <span>{t('header.dropdown.history')}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleLogout}>

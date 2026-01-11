@@ -8,13 +8,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Brain, Clock, BarChart3, Medal, Trophy, Star, GraduationCap, Accessibility, History } from 'lucide-react';
+import { Brain, Clock, BarChart3, Medal, Trophy, Star, GraduationCap, Accessibility, History, ArrowRight } from 'lucide-react';
 import { collection, doc, Timestamp } from 'firebase/firestore';
 import type { FocusSession } from '@/types/focus-session';
 import { cn } from '@/lib/utils';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { useTranslation } from '@/hooks/use-translation';
-import { ActivityHistory } from '@/components/profile/activity-history';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+
 
 interface UserProfile {
     schoolType?: string;
@@ -184,7 +186,14 @@ export default function ProfilePage() {
                 <CardDescription>{t('profile.history.description')}</CardDescription>
             </CardHeader>
             <CardContent>
-                <ActivityHistory />
+                <div className="flex justify-center">
+                    <Button asChild>
+                        <Link href="/history">
+                            {t('profile.history.viewButton')}
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
+                    </Button>
+                </div>
             </CardContent>
            </Card>
 

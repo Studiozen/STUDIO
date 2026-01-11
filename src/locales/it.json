@@ -133,7 +133,8 @@
         "chat": "Chat",
         "dropdown": {
             "profile": "Profilo",
-            "logout": "Esci"
+            "logout": "Esci",
+            "history": "Cronologia"
         }
     },
     "home": {
@@ -193,31 +194,7 @@
         "history": {
             "title": "Cronologia Attività",
             "description": "Un registro di tutte le tue attività recenti.",
-            "empty": {
-                "title": "Nessuna Attività",
-                "description": "Usa le funzionalità dell'app per vedere la cronologia qui."
-            },
-            "item": {
-                "focus": {
-                    "title": "Completata una sessione di {duration} min"
-                },
-                "chat": {
-                    "title": "Iniziata una nuova chat"
-                },
-                "quiz": {
-                    "title": "Generato un nuovo quiz",
-                    "description": "Dal testo: \"{text}\""
-                },
-                "summary": {
-                    "titleText": "Generato un riassunto da testo",
-                    "titleImage": "Generato un riassunto da un'immagine",
-                    "description": "Dal testo: \"{text}\""
-                },
-                "question": {
-                    "title": "Fatta una domanda all'IA",
-                    "description": "Domanda: \"{question}\""
-                }
-            }
+            "viewButton": "Visualizza Cronologia Completa"
         },
         "achievements": {
             "title": "I Miei Riconoscimenti",
@@ -484,6 +461,35 @@
             "description": "Vuoi salvare questa attività nella tua cronologia?",
             "yes": "Sì",
             "no": "No"
+        },
+        "pageTitle": "Cronologia Attività",
+        "pageDescription": "Un registro di tutte le tue attività recenti.",
+        "backToProfile": "Torna al Profilo",
+        "empty": {
+            "title": "Nessuna Attività",
+            "description": "Usa le funzionalità dell'app per vedere la cronologia qui."
+        },
+        "item": {
+            "focus": {
+                "title": "Completata una sessione di {duration} min"
+            },
+            "chat": {
+                "title": "Iniziata una nuova chat"
+            },
+            "quiz": {
+                "title": "Generato un nuovo quiz",
+                "description": "Dal testo: \"{text}\""
+            },
+            "summary": {
+                "titleText": "Generato un riassunto da testo",
+                "titleImage": "Generato un riassunto da un'immagine",
+                "description": "Dal testo: \"{text}\""
+            },
+            "question": {
+                "title": "Fatta una domanda all'IA",
+                "description": "Domanda: \"{question}\""
+            },
+            "justNow": "Poco fa"
         }
     }
 }

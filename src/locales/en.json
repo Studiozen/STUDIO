@@ -133,7 +133,8 @@
         "chat": "Chat",
         "dropdown": {
             "profile": "Profile",
-            "logout": "Logout"
+            "logout": "Logout",
+            "history": "History"
         }
     },
     "home": {
@@ -193,31 +194,7 @@
         "history": {
             "title": "Activity History",
             "description": "A log of all your recent activities.",
-            "empty": {
-                "title": "No Activities Yet",
-                "description": "Use the app's features to see your history here."
-            },
-            "item": {
-                "focus": {
-                    "title": "Completed a {duration} min focus session"
-                },
-                "chat": {
-                    "title": "Started a new chat"
-                },
-                "quiz": {
-                    "title": "Generated a new quiz",
-                    "description": "From text: \"{text}\""
-                },
-                "summary": {
-                    "titleText": "Generated a summary from text",
-                    "titleImage": "Generated a summary from an image",
-                    "description": "From text: \"{text}\""
-                },
-                "question": {
-                    "title": "Asked a question to the AI",
-                    "description": "Question: \"{question}\""
-                }
-            }
+            "viewButton": "View Full History"
         },
         "achievements": {
             "title": "My Achievements",
@@ -484,6 +461,35 @@
             "description": "Do you want to save this activity in your history?",
             "yes": "Yes",
             "no": "No"
+        },
+        "pageTitle": "Activity History",
+        "pageDescription": "A log of all your recent activities.",
+        "backToProfile": "Back to Profile",
+        "empty": {
+            "title": "No Activities Yet",
+            "description": "Use the app's features to see your history here."
+        },
+        "item": {
+            "focus": {
+                "title": "Completed a {duration} min focus session"
+            },
+            "chat": {
+                "title": "Started a new chat"
+            },
+            "quiz": {
+                "title": "Generated a new quiz",
+                "description": "From text: \"{text}\""
+            },
+            "summary": {
+                "titleText": "Generated a summary from text",
+                "titleImage": "Generated a summary from an image",
+                "description": "From text: \"{text}\""
+            },
+            "question": {
+                "title": "Asked a question to the AI",
+                "description": "Question: \"{question}\""
+            },
+            "justNow": "Just now"
         }
     }
 }
