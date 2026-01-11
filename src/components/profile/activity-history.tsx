@@ -7,7 +7,7 @@ import type { FocusSession } from '@/types/focus-session';
 import type { Chat } from '@/types/chat';
 import type { GeneratedQuiz, GeneratedSummary, GeneratedQuestion } from '@/types/history';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Inbox, Timer, MessageSquare, BookOpen, TextQuote, Image as ImageIcon, HelpCircle } from 'lucide-react';
+import { Loader2, Inbox, Timer, MessageSquare, BookOpen, TextQuote, Image as ImageIcon, HelpCircle, ChevronRight } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 import { formatDistanceToNow } from 'date-fns';
 import { it, enUS } from 'date-fns/locale';
@@ -47,7 +47,7 @@ export function ActivityHistory() {
           return new Date(timestamp);
       }
       // Firestore serverTimestamp is null on the client initially
-      if (timestamp === null && item.type === 'chat') return new Date();
+      if (timestamp === null && (item.type === 'chat' || item.type === 'quiz' || item.type === 'summary' || item.type === 'question' || item.type === 'focus')) return new Date();
 
       return new Date(0);
   };
@@ -120,21 +120,21 @@ export function ActivityHistory() {
         break;
     }
     
-    const content = (
-        <div className="flex items-start gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors">
+    return (
+        <div key={`${item.type}-${item.data.id}`} className="flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors">
             <div className="mt-1">{icon}</div>
             <div className="flex-1 overflow-hidden">
                 <p className="font-semibold">{title}</p>
                 <p className="text-sm text-muted-foreground truncate">{description}</p>
                 <p className="text-xs text-muted-foreground/70 mt-1">{formatDate(item)}</p>
             </div>
+            {href && (
+                <Link href={href} className="p-2 rounded-full hover:bg-muted">
+                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                </Link>
+            )}
         </div>
     );
-    
-    if (href) {
-        return <Link href={href} key={`${item.type}-${item.data.id}`}>{content}</Link>;
-    }
-    return <div key={`${item.type}-${item.data.id}`}>{content}</div>;
   };
 
 
