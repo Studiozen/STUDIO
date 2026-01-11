@@ -167,7 +167,7 @@ export default function QuizPage() {
                 <CardContent>
                    <h3 className="text-lg font-semibold mb-4">{t('quizzes.questionsTitle')}</h3>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
-                        {quizData.flashcards.map((card, index) => (
+                        {quizData?.flashcards?.map((card, index) => (
                             <div key={index}>
                                 <div
                                     className={cn(
@@ -200,5 +200,3 @@ export default function QuizPage() {
     </div>
   );
 }
-
-    
