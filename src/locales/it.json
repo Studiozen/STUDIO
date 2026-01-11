@@ -130,6 +130,7 @@
     "header": {
         "login": "Accedi",
         "signup": "Registrati",
+        "chat": "Chat",
         "dropdown": {
             "profile": "Profilo",
             "logout": "Esci"
@@ -306,7 +307,7 @@
         },
         "errors": {
             "fileTooLarge": "Il file è troppo grande. La dimensione massima è 4MB.",
-            "noText": "Per favore, inserisci del testo da riassumere.",
+            "noText": "Per favore, inserisci del testo da cui generare le flashcard.",
             "noImage": "Per favore, carica un'immagine da riassumere.",
             "noQuestion": "Per favore, inserisci una domanda.",
             "imageNoText": "L'IA non è riuscita a generare un riassunto dall'immagine fornita. L'immagine potrebbe non contenere testo riconoscibile."
@@ -384,6 +385,27 @@
                 "title": "Timer Concentrazione (Pomodoro)",
                 "content": "Usa la tecnica del Pomodoro per massimizzare la tua produttività. Clicca 'Avvia' per iniziare una sessione di studio di 25 minuti. Al termine, il timer ti avviserà e partirà automaticamente una pausa di 5 minuti."
             }
+        }
+    },
+    "chat": {
+        "title": "Chat",
+        "newChat": "Nuova Chat",
+        "sidebar": {
+            "header": "Conversazioni",
+            "recent": "Recenti"
+        },
+        "welcome": {
+            "title": "Ciao, come posso aiutarti oggi?",
+            "description": "Chiedimi qualsiasi cosa o avvia una nuova conversazione."
+        },
+        "form": {
+            "placeholder": "Messaggio a StudioZen AI...",
+            "send": "Invia Messaggio"
+        },
+        "loading": "StudioZen AI sta pensando...",
+        "errors": {
+            "title": "Errore Chat",
+            "description": "Impossibile ottenere una risposta dall'IA. Per favore, riprova."
         }
     },
     "errors": {

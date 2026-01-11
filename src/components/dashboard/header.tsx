@@ -48,6 +48,12 @@ const Header: FC = () => {
           <Flower2 className="h-6 w-6 text-primary" />
           <span className="font-headline">StudioZen</span>
         </Link>
+        <Link
+          href="/chat"
+          className="text-foreground transition-colors hover:text-foreground"
+        >
+          {t('header.chat')}
+        </Link>
       </nav>
       <div className="flex w-full items-center justify-end gap-4 md:ml-auto md:gap-2 lg:gap-4">
         {!isUserLoading &&

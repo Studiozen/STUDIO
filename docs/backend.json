@@ -86,6 +86,61 @@
         "endTime",
         "duration"
       ]
+    },
+     "Chat": {
+      "title": "Chat",
+      "type": "object",
+      "description": "Represents a single chat conversation between a user and the AI.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Chat session."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who owns this chat."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the chat was created."
+        },
+        "title": {
+          "type": "string",
+          "description": "A title for the chat, usually generated from the first user message."
+        }
+      },
+      "required": ["id", "userId", "createdAt", "title"]
+    },
+    "ChatMessage": {
+      "title": "Chat Message",
+      "type": "object",
+      "description": "Represents a single message within a chat.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the message."
+        },
+        "chatId": {
+          "type": "string",
+          "description": "The ID of the chat this message belongs to."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user", "model"],
+          "description": "The role of the sender, either 'user' or 'model' (AI)."
+        },
+        "content": {
+          "type": "string",
+          "description": "The text content of the message."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the message was created."
+        }
+      },
+      "required": ["id", "chatId", "role", "content", "createdAt"]
     }
   },
   "auth": {
@@ -132,8 +187,33 @@
             }
           ]
         }
+      },
+      {
+        "path": "/users/{userId}/chats/{chatId}",
+        "definition": {
+          "entityName": "Chat",
+          "schema": { "$ref": "#/backend/entities/Chat" },
+          "description": "Stores metadata for each chat conversation initiated by a user.",
+          "params": [
+            { "name": "userId", "description": "The user's unique ID." },
+            { "name": "chatId", "description": "The unique ID for the chat." }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/chats/{chatId}/messages/{messageId}",
+        "definition": {
+          "entityName": "ChatMessage",
+          "schema": { "$ref": "#/backend/entities/ChatMessage" },
+          "description": "Stores all messages within a specific chat. Nested under the chat to ensure data locality and enforce ownership rules.",
+          "params": [
+            { "name": "userId", "description": "The user's unique ID." },
+            { "name": "chatId", "description": "The unique ID for the chat." },
+            { "name": "messageId", "description": "The unique ID for the message." }
+          ]
+        }
       }
     ],
-    "reasoning": "The Firestore structure is designed to ensure secure and scalable data management for the StudioZen application, focusing on authorization independence and clear data ownership. User-specific data (FocusSessions) is stored under path-based ownership (`/users/{userId}/...`), ensuring only the owning user can access their data. This structure avoids the need for complex security rules that require reading parent documents, thus enabling atomic operations. FocusSession entities will exist as a subcollection of user documents to ensure that the authenticated user has access to this information. This approach achieves authorization independence by leveraging the inherent path-based ownership in Firestore, which simplifies security rules and enhances performance."
+    "reasoning": "The Firestore structure is designed to ensure secure and scalable data management for the StudioZen application, focusing on authorization independence and clear data ownership. User-specific data (FocusSessions, Chats, ChatMessages) is stored under path-based ownership (`/users/{userId}/...`), ensuring only the owning user can access their data. This structure avoids the need for complex security rules that require reading parent documents, thus enabling atomic operations. Chat and FocusSession entities will exist as a subcollection of user documents to ensure that the authenticated user has access to this information. ChatMessage entities are a subcollection of Chat to maintain conversational order. This approach achieves authorization independence by leveraging the inherent path-based ownership in Firestore, which simplifies security rules and enhances performance."
   }
 }

@@ -130,6 +130,7 @@
     "header": {
         "login": "Login",
         "signup": "Sign up",
+        "chat": "Chat",
         "dropdown": {
             "profile": "Profile",
             "logout": "Logout"
@@ -384,6 +385,27 @@
                 "title": "Focus Timer (Pomodoro)",
                 "content": "Use the Pomodoro technique to maximize your productivity. Click 'Start' to begin a 25-minute study session. When the time is up, the timer will notify you and automatically start a 5-minute break."
             }
+        }
+    },
+    "chat": {
+        "title": "Chat",
+        "newChat": "New Chat",
+        "sidebar": {
+            "header": "Conversations",
+            "recent": "Recent"
+        },
+        "welcome": {
+            "title": "Hello, how can I help you today?",
+            "description": "Ask me anything or start a new conversation."
+        },
+        "form": {
+            "placeholder": "Message StudioZen AI...",
+            "send": "Send Message"
+        },
+        "loading": "StudioZen AI is thinking...",
+        "errors": {
+            "title": "Chat Error",
+            "description": "Could not get a response from the AI. Please try again."
         }
     },
     "errors": {

@@ -70,6 +70,15 @@ service cloud.firestore {
     function isOwnerIdImmutable() {
       return request.resource.data.userId == resource.data.userId;
     }
+    
+    /**
+     * Ensures that a chat message has a valid owner and role.
+     */
+    function isValidChatMessage() {
+      let message = request.resource.data;
+      return message.role == 'user' || message.role == 'model';
+    }
+
 
     /**
      * @description Rules for a user's own profile document.
@@ -102,6 +111,25 @@ service cloud.firestore {
         allow create: if isOwner(userId) && hasValidOwnerIdOnCreate(userId);
         allow update: if isExistingOwner(userId) && isOwnerIdImmutable();
         allow delete: if isExistingOwner(userId);
+      }
+      
+      /**
+       * @description Rules for chat metadata.
+       * @path /users/{userId}/chats/{chatId}
+       */
+      match /chats/{chatId} {
+        allow get, list, create, update, delete: if isOwner(userId);
+      }
+
+      /**
+       * @description Rules for messages within a chat.
+       * @path /users/{userId}/chats/{chatId}/messages/{messageId}
+       */
+      match /chats/{chatId}/messages/{messageId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidChatMessage();
+        // Users should not be able to edit or delete messages to maintain conversation integrity.
+        allow update, delete: if false;
       }
     }
   }
