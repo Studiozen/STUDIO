@@ -11,6 +11,7 @@ export interface GeneratedSummary {
     createdAt: any; // Firestore Timestamp
     sourceType: 'text' | 'image';
     sourceText?: string;
+    summary: string;
 }
 
 export interface GeneratedQuestion {

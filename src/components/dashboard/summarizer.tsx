@@ -21,7 +21,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 type SummaryStyle = 'concise paragraph' | 'bullet points' | 'key concepts';
 type InputMode = 'text' | 'image';
 type ActivityToSave = 
-  | { type: 'summary'; data: { sourceType: InputMode, sourceText?: string } }
+  | { type: 'summary'; data: { sourceType: InputMode, sourceText?: string, summary: string } }
   | { type: 'qa'; data: { question: string, answer: string } };
 
 
@@ -70,13 +70,14 @@ export default function Summarizer() {
     setAnswer('');
   }
 
-  const saveSummaryToHistory = async (sourceType: InputMode, sourceText?: string) => {
+  const saveSummaryToHistory = async (sourceType: InputMode, summary: string, sourceText?: string) => {
     if (!user || !firestore) return;
     try {
         const historyData: any = {
             userId: user.uid,
             createdAt: serverTimestamp(),
             sourceType: sourceType,
+            summary: summary,
         };
         if (sourceType === 'text' && sourceText) {
             historyData.sourceText = sourceText.substring(0, 100) + (sourceText.length > 100 ? '...' : '');
@@ -104,7 +105,7 @@ export default function Summarizer() {
   const handleSaveConfirmation = (save: boolean) => {
     if (save && activityToSave) {
         if (activityToSave.type === 'summary') {
-            saveSummaryToHistory(activityToSave.data.sourceType, activityToSave.data.sourceText);
+            saveSummaryToHistory(activityToSave.data.sourceType, activityToSave.data.summary, activityToSave.data.sourceText);
         } else if (activityToSave.type === 'qa') {
             saveQuestionToHistory(activityToSave.data.question, activityToSave.data.answer);
         }
@@ -161,7 +162,7 @@ export default function Summarizer() {
                     'bullet points': result.bulletPoints,
                     'key concepts': result.keyConcepts,
                 });
-                setActivityToSave({ type: 'summary', data: { sourceType: 'text', sourceText: text }});
+                setActivityToSave({ type: 'summary', data: { sourceType: 'text', sourceText: text, summary: result.conciseParagraph }});
                 setShowSaveConfirmation(true);
             } else if (inputMode === 'image' && imageData) {
                 const input: GenerateImageSummaryInput = {
@@ -170,13 +171,14 @@ export default function Summarizer() {
                     language: language,
                 };
                 const result = await generateImageSummary(input);
+                const summaryText = result.summary;
                 setSummaries({
-                    'concise paragraph': result.summary,
+                    'concise paragraph': summaryText,
                     'bullet points': '', // Image summary provides one block of text
                     'key concepts': '',
                 });
                 setActiveStyle('concise paragraph'); // Default to the only available style
-                setActivityToSave({ type: 'summary', data: { sourceType: 'image' }});
+                setActivityToSave({ type: 'summary', data: { sourceType: 'image', summary: summaryText }});
                 setShowSaveConfirmation(true);
             }
         } catch (e) {

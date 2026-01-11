@@ -163,9 +163,10 @@
         "userId": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" },
         "sourceType": { "type": "string", "enum": ["text", "image"], "description": "The type of source material used for the summary." },
-        "sourceText": { "type": "string", "description": "A snippet of the source text if the source was text." }
+        "sourceText": { "type": "string", "description": "A snippet of the source text if the source was text." },
+        "summary": { "type": "string", "description": "The full content of the generated summary." }
       },
-      "required": ["id", "userId", "createdAt", "sourceType"]
+      "required": ["id", "userId", "createdAt", "sourceType", "summary"]
     },
     "GeneratedQuestion": {
         "title": "Generated Question",

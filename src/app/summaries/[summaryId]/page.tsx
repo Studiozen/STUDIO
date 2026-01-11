@@ -82,7 +82,7 @@ export default function SummaryPage() {
                 </CardHeader>
                 <CardContent>
                    <div className='prose prose-sm dark:prose-invert max-w-none rounded-lg border bg-muted/30 p-4'>
-                        <p>{t('summaries.placeholder')}</p>
+                        <p>{summaryData.summary}</p>
                     </div>
                 </CardContent>
             </Card>
