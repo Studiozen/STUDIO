@@ -180,6 +180,16 @@ export default function ProfilePage() {
           
            <Card>
             <CardHeader>
+                <CardTitle className="flex items-center gap-2"><History/>{t('profile.history.title')}</CardTitle>
+                <CardDescription>{t('profile.history.description')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ActivityHistory />
+            </CardContent>
+           </Card>
+
+           <Card>
+            <CardHeader>
               <CardTitle className="flex items-center gap-2"><BarChart3/>{t('profile.studyStats.title')}</CardTitle>
               <CardDescription>{t('profile.studyStats.description')}</CardDescription>
             </CardHeader>
@@ -202,16 +212,6 @@ export default function ProfilePage() {
                         <p className="text-2xl font-bold">{studyStats.totalMinutes}</p>
                     </div>
                 </div>
-            </CardContent>
-           </Card>
-
-           <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2"><History/>{t('profile.history.title')}</CardTitle>
-                <CardDescription>{t('profile.history.description')}</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <ActivityHistory />
             </CardContent>
            </Card>
 
