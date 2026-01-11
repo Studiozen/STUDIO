@@ -47,7 +47,7 @@ export function ActivityHistory() {
     }
   
     if (!timestamp) {
-      return new Date(0); // Return a valid but old date
+      return new Date(0);
     }
   
     if (timestamp instanceof Timestamp) {
@@ -150,7 +150,7 @@ export function ActivityHistory() {
         break;
     }
     
-    const itemKey = `${item.type}-${item.data.id || (item.data as any).startTime || Math.random()}`;
+    const itemKey = `${item.type}-${item.data.id || (item.data as any).startTime?.toString() || Math.random()}`;
 
     return (
         <div key={itemKey} className="flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors">
