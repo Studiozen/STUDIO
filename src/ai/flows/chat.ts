@@ -12,16 +12,6 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { MessageData } from 'genkit';
 
-// Define the schema for a single message part (either text or media).
-const MessagePartSchema = z.object({
-  text: z.string().optional(),
-  media: z.object({
-    contentType: z.string(),
-    url: z.string(),
-  }).optional(),
-});
-
-
 // Define the schema for the history of messages.
 const HistorySchema = z.array(z.object({
     role: z.enum(['user', 'model']),
@@ -53,15 +43,10 @@ const chatFlow = ai.defineFlow(
     outputSchema: ChatOutputSchema,
   },
   async (input) => {
-    const history: MessageData[] = input.history.map(h => ({
-        role: h.role,
-        content: h.content,
-    }));
-
     // Generate the response using the prompt.
     const response = await ai.generate({
         prompt: input.message,
-        history: history,
+        history: input.history,
     });
 
     // Return the model's response.

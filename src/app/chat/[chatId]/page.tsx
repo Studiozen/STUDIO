@@ -14,7 +14,7 @@ import {
   updateDoc,
   writeBatch,
 } from 'firebase/firestore';
-import { Loader2, Send } from 'lucide-react';
+import { Loader2, Send, Sparkles } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -25,6 +25,7 @@ import type { MessageData } from 'genkit';
 import { useTranslation } from '@/hooks/use-translation';
 
 type ChatMessageEntity = {
+  id: string;
   role: 'user' | 'model';
   content: string;
   createdAt: any;
@@ -37,7 +38,7 @@ export default function ChatPage() {
   const { t } = useTranslation();
   const [input, setInput] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const [isSavingFirstMessage, setIsSavingFirstMessage] = useState(false);
+  const [optimisticUserMessage, setOptimisticUserMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -73,21 +74,20 @@ export default function ChatPage() {
     if (!input.trim() || !user || !firestore || isSending) return;
 
     const userMessageContent = input;
+    setOptimisticUserMessage(userMessageContent); // For optimistic UI update
     setInput('');
     setIsSending(true);
     setError(null);
 
-    const isFirstMessage = messages?.length === 0;
+    const isFirstMessage = !messages || messages.length === 0;
 
     try {
-      const messagesRef = collection(firestore, `users/${user.uid}/chats/${chatId}/messages`);
-
       // 1. Prepare history for AI
-      const history: MessageData[] = (messages || []).map((msg) => ({
+      const history = (messages || []).map((msg) => ({
         role: msg.role,
         content: [{ text: msg.content }],
       }));
-       
+
       // 2. Call AI flow
       const aiResponse = await chat({
         history,
@@ -96,6 +96,7 @@ export default function ChatPage() {
 
       // 3. Save messages to Firestore
       const batch = writeBatch(firestore);
+      const messagesRef = collection(firestore, `users/${user.uid}/chats/${chatId}/messages`);
 
       // Add user message
       const userMessageRef = doc(messagesRef);
@@ -115,7 +116,6 @@ export default function ChatPage() {
       
       // If it's the first message, update the chat title
       if (isFirstMessage) {
-        setIsSavingFirstMessage(true);
         const chatRef = doc(firestore, `users/${user.uid}/chats/${chatId}`);
         const newTitle = userMessageContent.split(' ').slice(0, 5).join(' ');
         batch.update(chatRef, { title: newTitle });
@@ -126,15 +126,15 @@ export default function ChatPage() {
     } catch (err: any) {
       console.error('Error during chat:', err);
       setError(err.message || 'An error occurred while sending the message.');
-      // Optional: Add the user message back to the input
+      // Revert optimistic update on error
       setInput(userMessageContent);
     } finally {
       setIsSending(false);
-      setIsSavingFirstMessage(false);
+      setOptimisticUserMessage(null);
     }
   };
 
-  if (isUserLoading) {
+  if (isUserLoading || isLoadingMessages) {
     return (
       <div className="flex h-full items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
@@ -142,31 +142,27 @@ export default function ChatPage() {
     );
   }
 
-  const displayedMessages = isSavingFirstMessage ? [] : messages;
-
   return (
     <div className="flex h-[calc(100vh-4rem)] flex-col">
       <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="mx-auto max-w-3xl space-y-6">
-          {(isLoadingMessages || isSavingFirstMessage) && <Loader2 className="mx-auto h-6 w-6 animate-spin" />}
-          
-          {!isLoadingMessages && !isSavingFirstMessage && displayedMessages?.length === 0 && (
+          {messages?.length === 0 && !isSending && (
              <div className='flex h-[60vh] flex-col items-center justify-center text-center'>
                 <div className='bg-primary/10 p-4 rounded-full'>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+                    <Sparkles className="h-8 w-8 text-primary" />
                 </div>
                 <h2 className='mt-4 text-2xl font-bold'>StudioZen Chat</h2>
                 <p className='text-muted-foreground'>{t('chat.startConversation')}</p>
              </div>
           )}
 
-          {displayedMessages?.map((message, index) => (
-            <ChatMessage key={index} role={message.role} content={message.content} />
+          {messages?.map((message) => (
+            <ChatMessage key={message.id} role={message.role} content={message.content} />
           ))}
 
-          {isSending && (
+          {isSending && optimisticUserMessage && (
             <>
-                <ChatMessage role="user" content={input} />
+                <ChatMessage role="user" content={optimisticUserMessage} />
                 <ChatMessage role="model" content="" isLoading={true} />
             </>
           )}
@@ -190,10 +186,10 @@ export default function ChatPage() {
             onChange={(e) => setInput(e.target.value)}
             placeholder={t('chat.inputPlaceholder')}
             className="flex-1"
-            disabled={isSending || isSavingFirstMessage}
+            disabled={isSending}
             autoFocus
           />
-          <Button type="submit" disabled={!input.trim() || isSending || isSavingFirstMessage}>
+          <Button type="submit" disabled={!input.trim() || isSending}>
             {isSending ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
