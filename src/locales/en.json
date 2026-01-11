@@ -448,6 +448,19 @@
             "description": "Could not get a response from the AI. Please try again."
         }
     },
+    "questions": {
+        "title": "View Question",
+        "backToProfile": "Back to Profile",
+        "question": {
+            "title": "Your Question"
+        },
+        "answer": {
+            "title": "AI Answer"
+        },
+        "errors": {
+            "notFound": "Could not find the requested question. It may have been deleted or never existed."
+        }
+    },
     "errors": {
         "generic": {
             "title": "Oops! Something went wrong.",

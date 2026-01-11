@@ -117,8 +117,12 @@ export function ActivityHistory() {
         icon = <HelpCircle className="h-5 w-5 text-purple-500" />;
         title = t('profile.history.item.question.title');
         description = t('profile.history.item.question.description', { question: item.data.question });
+        href = `/questions/${item.data.id}`;
         break;
     }
+    
+    const Wrapper = href ? Link : 'div';
+    const wrapperProps = href ? { href } : {};
     
     return (
         <div key={`${item.type}-${item.data.id}`} className="flex items-center gap-4 p-4 hover:bg-muted/50 rounded-lg transition-colors">

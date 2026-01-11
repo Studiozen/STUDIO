@@ -448,6 +448,19 @@
             "description": "Impossibile ottenere una risposta dall'IA. Per favore, riprova."
         }
     },
+    "questions": {
+        "title": "Visualizza Domanda",
+        "backToProfile": "Torna al Profilo",
+        "question": {
+            "title": "La Tua Domanda"
+        },
+        "answer": {
+            "title": "Risposta dell'IA"
+        },
+        "errors": {
+            "notFound": "Impossibile trovare la domanda richiesta. Potrebbe essere stata eliminata o non essere mai esistita."
+        }
+    },
     "errors": {
         "generic": {
             "title": "Ops! Qualcosa è andato storto.",
