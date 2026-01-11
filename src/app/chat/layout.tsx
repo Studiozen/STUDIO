@@ -1,6 +1,10 @@
 'use client';
 
-import { Sidebar, SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import {
+  Sidebar,
+  SidebarProvider,
+  SidebarInset,
+} from '@/components/ui/sidebar';
 import { ChatSidebar } from '@/components/chat/sidebar';
 import Header from '@/components/dashboard/header';
 
@@ -17,9 +21,7 @@ export default function ChatLayout({
           <Sidebar>
             <ChatSidebar />
           </Sidebar>
-          <SidebarInset className="flex-1 overflow-y-auto">
-            {children}
-          </SidebarInset>
+          <SidebarInset>{children}</SidebarInset>
         </SidebarProvider>
       </div>
     </div>
