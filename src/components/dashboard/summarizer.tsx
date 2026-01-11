@@ -16,6 +16,7 @@ import { Separator } from '../ui/separator';
 import { generateImageSummary, type GenerateImageSummaryInput } from '@/ai/flows/summarize-image-flow';
 import Image from 'next/image';
 import { useTranslation } from '@/hooks/use-translation';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 type SummaryStyle = 'concise paragraph' | 'bullet points' | 'key concepts';
 type InputMode = 'text' | 'image';
@@ -45,6 +46,10 @@ export default function Summarizer() {
   
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
+
+  const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
+  const [summaryToSave, setSummaryToSave] = useState<{ sourceType: InputMode, sourceText?: string } | null>(null);
+
 
   const userDocRef = useMemoFirebase(
     () => (user ? doc(firestore, `users/${user.uid}`) : null),
@@ -76,6 +81,14 @@ export default function Summarizer() {
     } catch (error) {
         console.error("Error saving summary to history:", error);
     }
+  }
+
+  const handleSaveConfirmation = (save: boolean) => {
+    if (save && summaryToSave) {
+        saveSummaryToHistory(summaryToSave.sourceType, summaryToSave.sourceText);
+    }
+    setShowSaveConfirmation(false);
+    setSummaryToSave(null);
   }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,7 +139,8 @@ export default function Summarizer() {
                     'bullet points': result.bulletPoints,
                     'key concepts': result.keyConcepts,
                 });
-                await saveSummaryToHistory('text', text);
+                setSummaryToSave({ sourceType: 'text', sourceText: text });
+                setShowSaveConfirmation(true);
             } else if (inputMode === 'image' && imageData) {
                 const input: GenerateImageSummaryInput = {
                     imageDataUri: imageData,
@@ -140,7 +154,8 @@ export default function Summarizer() {
                     'key concepts': '',
                 });
                 setActiveStyle('concise paragraph'); // Default to the only available style
-                await saveSummaryToHistory('image');
+                setSummaryToSave({ sourceType: 'image' });
+                setShowSaveConfirmation(true);
             }
         } catch (e) {
             console.error(e);
@@ -415,6 +430,19 @@ export default function Summarizer() {
             )}
 
         </div>
+
+        <AlertDialog open={showSaveConfirmation} onOpenChange={setShowSaveConfirmation}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>{t('history.saveDialog.title')}</AlertDialogTitle>
+                    <AlertDialogDescription>{t('history.saveDialog.description')}</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => handleSaveConfirmation(false)}>{t('history.saveDialog.no')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleSaveConfirmation(true)}>{t('history.saveDialog.yes')}</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
 
       </div>
     </div>

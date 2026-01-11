@@ -454,5 +454,13 @@
         },
         "rateLimit": "You have made too many requests in a short period. Please wait a moment and try again.",
         "qaErrorTitle": "Question Error"
+    },
+    "history": {
+        "saveDialog": {
+            "title": "Save Activity",
+            "description": "Do you want to save this activity in your history?",
+            "yes": "Yes",
+            "no": "No"
+        }
     }
 }

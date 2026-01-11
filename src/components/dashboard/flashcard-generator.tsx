@@ -12,6 +12,7 @@ import { doc, addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/hooks/use-translation';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 interface FlashcardData {
   question: string;
@@ -36,6 +37,8 @@ export default function FlashcardGenerator() {
   const [result, setResult] = useState<GenerateFlashcardsOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedQuestion, setSelectedQuestion] = useState<FlashcardData | null>(null);
+  const [showSaveConfirmation, setShowSaveConfirmation] = useState(false);
+  const [quizToSave, setQuizToSave] = useState<string | null>(null);
 
   const saveQuizToHistory = async (sourceText: string) => {
     if (!user || !firestore) return;
@@ -48,6 +51,14 @@ export default function FlashcardGenerator() {
     } catch (error) {
         console.error("Error saving quiz to history:", error);
     }
+  }
+
+  const handleSaveConfirmation = (save: boolean) => {
+    if (save && quizToSave) {
+        saveQuizToHistory(quizToSave);
+    }
+    setShowSaveConfirmation(false);
+    setQuizToSave(null);
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -70,7 +81,8 @@ export default function FlashcardGenerator() {
       const res = await generateFlashcards(input);
       if (res.flashcards && res.flashcards.length > 0) {
         setResult(res);
-        await saveQuizToHistory(text);
+        setQuizToSave(text);
+        setShowSaveConfirmation(true);
       } else {
         setError(t('flashcards.errors.generationFailed'));
       }
@@ -236,6 +248,19 @@ export default function FlashcardGenerator() {
             </Alert>
           </div>
         )}
+
+        <AlertDialog open={showSaveConfirmation} onOpenChange={setShowSaveConfirmation}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>{t('history.saveDialog.title')}</AlertDialogTitle>
+                    <AlertDialogDescription>{t('history.saveDialog.description')}</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => handleSaveConfirmation(false)}>{t('history.saveDialog.no')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleSaveConfirmation(true)}>{t('history.saveDialog.yes')}</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
       </div>
   );
 }

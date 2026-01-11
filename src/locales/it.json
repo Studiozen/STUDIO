@@ -454,5 +454,13 @@
         },
         "rateLimit": "Hai effettuato troppe richieste in un breve periodo. Attendi qualche istante e riprova.",
         "qaErrorTitle": "Errore Domanda"
+    },
+     "history": {
+        "saveDialog": {
+            "title": "Salva Attività",
+            "description": "Vuoi salvare questa attività nella tua cronologia?",
+            "yes": "Sì",
+            "no": "No"
+        }
     }
 }
