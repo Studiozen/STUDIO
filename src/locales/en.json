@@ -394,5 +394,11 @@
         },
         "rateLimit": "You have made too many requests in a short period. Please wait a moment and try again.",
         "qaErrorTitle": "Question Error"
+    },
+    "chat": {
+        "newChatButton": "New Chat",
+        "newConversationTitle": "New Conversation",
+        "recentHeader": "Recent",
+        "noConversations": "No conversations yet. Start a new one!"
     }
 }

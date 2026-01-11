@@ -14,6 +14,7 @@ import { useParams } from 'next/navigation';
 import { useSidebar } from '../ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { MessageSquare } from 'lucide-react';
+import { useTranslation } from '@/hooks/use-translation';
 
 interface Chat {
   id: string;
@@ -27,6 +28,7 @@ export function ChatHistory() {
   const { chatId } = useParams() as { chatId: string };
   const { setOpenMobile } = useSidebar();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
   const chatsQuery = useMemoFirebase(
     () =>
@@ -59,7 +61,7 @@ export function ChatHistory() {
 
   if (chats && chats.length > 0) {
     return (
-      <div className="p-2">
+      <div className="p-2 h-full">
         <SidebarMenu>
           {chats.map((chat) => (
             <SidebarMenuItem key={chat.id}>
@@ -83,7 +85,7 @@ export function ChatHistory() {
 
   return (
     <div className="p-4 text-center text-sm text-sidebar-foreground/70">
-      Nessuna conversazione ancora. Iniziane una nuova!
+      {t('chat.noConversations')}
     </div>
   );
 }

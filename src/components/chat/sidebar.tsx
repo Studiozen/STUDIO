@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useSidebar } from '../ui/sidebar';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useTranslation } from '@/hooks/use-translation';
 
 export function ChatSidebar() {
   const { user } = useUser();
@@ -25,6 +26,7 @@ export function ChatSidebar() {
   const [isCreating, setIsCreating] = useState(false);
   const { setOpenMobile } = useSidebar();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
 
 
   const createNewChat = async () => {
@@ -36,7 +38,7 @@ export function ChatSidebar() {
         collection(firestore, `users/${user.uid}/chats`),
         {
           userId: user.uid,
-          title: 'New Conversation',
+          title: t('chat.newConversationTitle'),
           createdAt: serverTimestamp(),
         }
       );
@@ -64,20 +66,20 @@ export function ChatSidebar() {
         <SidebarTrigger className="md:hidden" />
       </SidebarHeader>
 
-      <SidebarContent className='p-0'>
+      <SidebarContent className='p-0 flex flex-col'>
         <div className="p-2">
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton onClick={createNewChat} disabled={isCreating}>
                         <Plus />
-                        <span>Nuova Chat</span>
+                        <span>{t('chat.newChatButton')}</span>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>
         </div>
         <div className="flex-1 overflow-y-auto">
             <h2 className="px-4 text-sm font-semibold text-sidebar-foreground/70 mb-2">
-                Recenti
+                {t('chat.recentHeader')}
             </h2>
             <ChatHistory />
         </div>
