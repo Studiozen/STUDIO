@@ -121,6 +121,7 @@ export default function HistoryPage() {
         description = item.data.sourceText 
           ? t('history.item.summary.description', { text: item.data.sourceText })
           : item.data.summary;
+        if (id) href = `/summaries/${id}`;
         break;
       case 'question':
         icon = <HelpCircle className="h-5 w-5 text-purple-500" />;
