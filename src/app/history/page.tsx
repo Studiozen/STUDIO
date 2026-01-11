@@ -122,15 +122,11 @@ export default function HistoryPage() {
         icon = <MessageSquare className="h-5 w-5 text-blue-500" />;
         title = t('history.item.chat.title');
         description = `"${item.data.title}"`;
-        if (id) {
-          href = `/chat/${id}`;
-        }
         break;
       case 'quiz':
         icon = <BookOpen className="h-5 w-5 text-green-500" />;
         title = t('history.item.quiz.title');
         description = t('history.item.quiz.description', { text: item.data.sourceText });
-        // href for quiz is not implemented yet
         break;
       case 'summary':
         icon = item.data.sourceType === 'image' 
@@ -142,9 +138,6 @@ export default function HistoryPage() {
         description = item.data.sourceText 
           ? t('history.item.summary.description', { text: item.data.sourceText })
           : item.data.summary;
-        if (id) {
-          href = `/summaries/${id}`;
-        }
         break;
       case 'question':
         icon = <HelpCircle className="h-5 w-5 text-purple-500" />;
