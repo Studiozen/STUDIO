@@ -1,0 +1,520 @@
+
+{
+    "locale": "en-US",
+    "login": {
+        "title": "Login",
+        "subtitle": "Enter your email below to login to your account",
+        "googleButton": "Login with Google",
+        "separator": "Or continue with",
+        "form": {
+            "email": {
+                "label": "Email",
+                "invalid": "Please enter a valid email address."
+            },
+            "password": {
+                "label": "Password",
+                "required": "Please enter your password."
+            },
+            "submitButton": {
+                "default": "Login",
+                "loading": "Logging in..."
+            }
+        },
+        "forgotPassword": {
+            "link": "Forgot your password?",
+            "toast": {
+                "emailRequired": {
+                    "title": "Email required",
+                    "description": "Please enter your email to reset your password."
+                },
+                "success": {
+                    "title": "Email sent!",
+                    "description": "Check your inbox for password reset instructions."
+                },
+                "error": {
+                    "description": "Could not send reset email. Check that the email is correct."
+                }
+            }
+        },
+        "noAccount": {
+            "text": "Don't have an account?",
+            "link": "Sign up"
+        },
+        "footer": "Created by the StudioZen Team",
+        "toast": {
+            "success": {
+                "title": "Logged in!",
+                "description": "Welcome back, {name}!"
+            },
+            "error": {
+                "title": "Login Error",
+                "default": "Could not log in. Check your credentials and try again.",
+                "invalidCredentials": "Invalid credentials. Please check your email and password."
+            }
+        },
+        "googleSignInError": "Could not log in with Google."
+    },
+    "signup": {
+        "title": "Sign Up",
+        "subtitle": "Create a new account to start using StudioZen.",
+        "googleButton": "Sign up with Google",
+        "separator": "Or sign up with email",
+        "form": {
+            "name": {
+                "label": "Name",
+                "placeholder": "Your name",
+                "invalid": "Name must be at least 2 characters."
+            },
+            "email": {
+                "label": "Email",
+                "invalid": "Please enter a valid email address."
+            },
+            "password": {
+                "label": "Password",
+                "invalid": "Password must be at least 6 characters."
+            },
+            "birthDate": {
+                "label": "Date of birth",
+                "placeholder": "Pick a date",
+                "required": "A date of birth is required."
+            },
+            "country": {
+                "label": "Country",
+                "placeholder": "e.g. Italy",
+                "invalid": "Country must be at least 2 characters."
+            },
+            "schoolType": {
+                "label": "Type of School",
+                "placeholder": "Select your level of study",
+                "required": "Please select your type of school.",
+                "options": {
+                    "middle-school": "Middle School",
+                    "high-school": "High School",
+                    "university": "University",
+                    "other": "Other"
+                }
+            },
+            "learningStyle": {
+                "label": "Learning Style",
+                "placeholder": "Select a preference",
+                "required": "Please select a learning style.",
+                "options": {
+                    "standard": "Standard",
+                    "simplified": "Simplified Text (for Dyslexia, etc.)"
+                }
+            },
+            "privacy": {
+                "label": "Accept terms and conditions",
+                "description": {
+                    "part1": "I declare that I have read and accepted the",
+                    "link": "Privacy Policy"
+                },
+                "required": "You must accept the Privacy Policy to continue."
+            },
+            "submitButton": {
+                "default": "Create Account",
+                "loading": "Creating..."
+            }
+        },
+        "haveAccount": {
+            "text": "Already have an account?",
+            "link": "Login"
+        },
+        "toast": {
+            "success": {
+                "title": "Account created!",
+                "description": "Welcome, {name}!"
+            }
+        }
+    },
+    "header": {
+        "login": "Login",
+        "signup": "Sign up",
+        "chat": "Chat",
+        "dropdown": {
+            "profile": "Profile",
+            "logout": "Logout",
+            "history": "History"
+        }
+    },
+    "home": {
+        "loading": "Loading...",
+        "toolSelector": {
+            "placeholder": "Select a tool...",
+            "options": {
+                "summarizer": "AI Summarizer",
+                "quiz": "Quiz Generator",
+                "timer": "Focus Timer"
+            }
+        }
+    },
+    "profile": {
+        "loading": "Loading...",
+        "userProfile": {
+            "title": "User Profile",
+            "description": "View and manage your account information."
+        },
+        "form": {
+            "name": {
+                "label": "Name"
+            },
+            "email": {
+                "label": "Email"
+            },
+            "memberSince": {
+                "label": "Member since"
+            },
+            "schoolType": {
+                "label": "Type of School",
+                 "options": {
+                    "middle-school": "Middle School",
+                    "high-school": "High School",
+                    "university": "University",
+                    "other": "Other"
+                }
+            },
+            "learningStyle": {
+                "label": "Learning Style",
+                "options": {
+                    "standard": "Standard",
+                    "simplified": "Simplified Text"
+                }
+            },
+            "unspecified": "Not specified"
+        },
+        "studyStats": {
+            "title": "Study Statistics",
+            "description": "Your progress and study habits.",
+            "sessionsCompleted": "Sessions Completed",
+            "totalMinutes": "Total Study Minutes"
+        },
+        "history": {
+            "title": "Activity History",
+            "description": "A log of all your recent activities.",
+            "viewButton": "View Full History"
+        },
+        "achievements": {
+            "title": "My Achievements",
+            "description": "Unlock goals and celebrate your study successes.",
+            "firstSteps": {
+                "title": "First Steps",
+                "description": "Complete your first focus session."
+            },
+            "consistentStudent": {
+                "title": "Consistent Student",
+                "description": "Complete 10 focus sessions."
+            },
+            "beginnerMarathoner": {
+                "title": "Beginner Marathoner",
+                "description": "Reach 120 total study minutes."
+            },
+            "focusGuru": {
+                "title": "Focus Guru",
+                "description": "Reach 600 total study minutes."
+            }
+        }
+    },
+    "privacy": {
+        "title": "Privacy Policy for StudioZen",
+        "lastUpdated": "Last updated",
+        "backButton": "Back to Home",
+        "introduction": {
+            "title": "1. Introduction",
+            "content": "Welcome to StudioZen. Your privacy is important to us. This Privacy Policy explains what personal data we collect, how we use it, and what your rights are in relation to it."
+        },
+        "dataWeCollect": {
+            "title": "2. Data We Collect",
+            "content": "We collect the following information to provide and improve our service:",
+            "accountInfo": {
+                "title": "Account Information",
+                "content": "When you register, we collect your name, email address, and encrypted password. If you sign in with Google, we receive your public profile information (name, email, profile picture)."
+            },
+            "usageData": {
+                "title": "Usage Data",
+                "content": "We collect information about how you use our application, such as study sessions, summarized materials, and blocked sites. This data is associated with your account to provide you with app functionality."
+            },
+            "cookies": {
+                "title": "Cookies",
+                "content": "We use cookies to manage your authentication session and to remember your preferences, such as accepting the cookie banner."
+            }
+        },
+        "howWeUseData": {
+            "title": "3. How We Use Your Data",
+            "content": "We use your data to:",
+            "points": {
+                "provide": "Provide, maintain, and improve the StudioZen application.",
+                "authenticate": "Authenticate users and protect accounts.",
+                "personalize": "Personalize your experience.",
+                "communicate": "Communicate with you about service-related matters."
+            }
+        },
+        "dataSharing": {
+            "title": "4. Data Sharing",
+            "content": "We do not share your personal information with third parties, except for essential service providers (like Google's Firebase for hosting and authentication) who are bound by confidentiality obligations."
+        },
+        "dataSecurity": {
+            "title": "5. Data Security",
+            "content": "We take reasonable security measures to protect your data from unauthorized access, alteration, or destruction."
+        },
+        "yourRights": {
+            "title": "6. Your Rights",
+            "content": "You have the right to access, correct, or delete your personal data. You can manage your account information directly from the application or by contacting us."
+        },
+        "changes": {
+            "title": "7. Changes to this Policy",
+            "content": "We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page."
+        },
+        "contact": {
+            "title": "8. Contact Us",
+            "content": "If you have any questions about this Privacy Policy, please do not hesitate to contact us."
+        }
+    },
+    "cookieBanner": {
+        "text": {
+            "part1": "We use cookies to ensure the best experience. To learn more, read our",
+            "link": "Privacy Policy"
+        },
+        "acceptButton": "Accept"
+    },
+    "languageSwitcher": {
+        "label": "Language"
+    },
+    "summarizer": {
+        "title": "AI Summarizer",
+        "description": "Paste text, upload an image, or ask the AI specific questions.",
+        "tabs": {
+            "text": "Text",
+            "image": "Image"
+        },
+        "text": {
+            "placeholder": "Paste your study material here..."
+        },
+        "image": {
+            "alt": "Uploaded image preview",
+            "uploadTitle": "Upload an Image",
+            "uploadDescription": "Drag and drop a file or click to upload.",
+            "loading": "AI is analyzing the image...",
+            "outputPlaceholder": "The summary of your image will appear here."
+        },
+        "buttons": {
+            "summarize": "Summarize",
+            "regenerate": "Regenerate Summary",
+            "loading": "Processing...",
+            "copy": "Copy",
+            "copied": "Copied!",
+            "remove": "Remove",
+            "chooseFile": "Choose File",
+            "send": "Send"
+        },
+        "outputPlaceholder": "Your summary will appear here.",
+        "loading": "AI is processing...",
+        "styles": {
+            "paragraph": "Paragraph",
+            "bulletPoints": "Bullet Points",
+            "keyConcepts": "Key Concepts"
+        },
+        "qa": {
+            "title": "Ask the AI",
+            "description": "Ask a specific question about the text you pasted above. Only works with text input.",
+            "placeholder": "Type your question here...",
+            "noContext": "No text context provided."
+        },
+        "errors": {
+            "fileTooLarge": "The file is too large. Maximum size is 4MB.",
+            "noText": "Please enter some text to summarize.",
+            "noImage": "Please upload an image to summarize.",
+            "noQuestion": "Please enter a question.",
+            "imageNoText": "The AI failed to generate a summary from the provided image. The image may not contain recognizable text."
+        }
+    },
+    "flashcards": {
+        "title": "Quiz Generator",
+        "description": "Turn your notes into an interactive quiz to test your knowledge.",
+        "textareaPlaceholder": "Paste your study material here (notes, book paragraphs, etc.)...",
+        "generateButton": {
+            "default": "Generate Questions",
+            "loading": "Generating..."
+        },
+        "loading": {
+            "title": "The AI is creating your questions...",
+            "description": "This might take a moment."
+        },
+        "results": {
+            "title": "Choose a question to test yourself"
+        },
+        "studyTip": {
+            "title": "Study Tip",
+            "description": "Click on a question to begin. Choose the answer you think is correct to get immediate feedback."
+        },
+        "card": {
+            "correct": "Correct!",
+            "incorrect": "Incorrect.",
+            "correctAnswer": "Correct Answer",
+            "explanation": "Explanation",
+            "footer": {
+                "selectAnswer": "Select an answer.",
+                "answered": "You can close this question or choose another one."
+            }
+        },
+        "errors": {
+            "noText": "Please enter some text to generate flashcards from.",
+            "textTooShort": "The text is too short. Please enter at least 100 characters to generate a quiz.",
+            "generationFailed": "The AI failed to generate flashcards from the provided text. Try with a different or more detailed text."
+        }
+    },
+    "focusTimer": {
+        "title": "Focus Timer",
+        "description": "Use the Pomodoro technique to study better.",
+        "mode": {
+            "focus": "Focus",
+            "break": "Break"
+        },
+        "buttons": {
+            "start": "Start",
+            "pause": "Pause",
+            "resetAriaLabel": "Reset timer"
+        },
+        "footer": {
+            "focus": "Stay focused for 25 minutes.",
+            "break": "Take a short 5-minute break."
+        }
+    },
+    "helpGuide": {
+        "triggerButton": "Guide",
+        "title": "StudioZen Guide",
+        "description": "Learn how to make the most of StudioZen's features to improve your focus and learning.",
+        "sections": {
+            "summarizer": {
+                "title": "AI Summarizer",
+                "content": [
+                    "To summarize text, select the 'Text' tab, paste your material into the text area, choose a summary style (Paragraph, Bullet Points, or Key Concepts), and click 'Summarize'.",
+                    "To summarize an image, select the 'Image' tab, upload a picture of your document, and click 'Summarize'. The AI will extract the text and provide a concise summary."
+                ]
+            },
+            "quizGenerator": {
+                "title": "Quiz Generator",
+                "content": "Turn your notes into an interactive quiz. Paste the text and click 'Generate Questions'. A list of questions will appear. Click on a question to see the multiple-choice options. Select an answer to get immediate feedback."
+            },
+            "focusTimer": {
+                "title": "Focus Timer (Pomodoro)",
+                "content": "Use the Pomodoro technique to maximize your productivity. Click 'Start' to begin a 25-minute study session. When the time is up, the timer will notify you and automatically start a 5-minute break."
+            },
+            "chat": {
+                "title": "AI Chat",
+                "content": "Click on 'Chat' in the header to start a conversation with the study assistant. Your recent conversations are saved on the left sidebar for easy access."
+            },
+            "profile": {
+                "title": "Profile & Stats",
+                "content": "Access your profile from the user menu in the top-right corner to see your study statistics and unlocked achievements."
+            },
+            "history": {
+                "title": "Activity History",
+                "content": "From your profile or the user menu, you can access your full activity history. Here you can review past summaries, quizzes, and questions."
+            }
+        }
+    },
+    "chat": {
+        "title": "Chat",
+        "newChat": "New Chat",
+        "sidebar": {
+            "header": "Conversations",
+            "recent": "Recent"
+        },
+        "welcome": {
+            "title": "Hello, how can I help you today?",
+            "description": "Ask me anything or start a new conversation."
+        },
+        "form": {
+            "placeholder": "Message StudioZen AI...",
+            "send": "Send Message"
+        },
+        "loading": "StudioZen AI is thinking...",
+        "errors": {
+            "title": "Chat Error",
+            "description": "Could not get a response from the AI. Please try again."
+        }
+    },
+    "questions": {
+        "title": "View Question",
+        "backToProfile": "Back to History",
+        "question": {
+            "title": "Your Question"
+        },
+        "answer": {
+            "title": "AI Answer"
+        },
+        "errors": {
+            "notFound": "Could not find the requested question. It may have been deleted or never existed."
+        }
+    },
+    "quizzes": {
+        "title": "View Quiz",
+        "backToHistory": "Back to History",
+        "sourceText": "Original text snippet",
+        "questionsTitle": "Quiz Questions",
+        "selectAQuestion": "Select a question to see the details.",
+        "errors": {
+            "notFound": "Could not find the requested quiz. It may have been deleted or never existed."
+        }
+    },
+    "summaries": {
+        "title": "View Summary",
+        "backToProfile": "Back to History",
+        "sourceText": "Original text snippet",
+        "summary": "Generated Summary",
+        "errors": {
+            "notFound": "Could not find the requested summary. It may have been deleted or never existed."
+        }
+    },
+    "errors": {
+        "generic": {
+            "title": "Oops! Something went wrong.",
+            "default": "Could not complete the request. Please try again later."
+        },
+        "rateLimit": "You have made too many requests in a short period. Please wait a moment and try again.",
+        "qaErrorTitle": "Question Error"
+    },
+    "history": {
+        "saveDialog": {
+            "title": "Save Activity",
+            "description": "Do you want to save this activity in your history?",
+            "yes": "Yes",
+            "no": "No"
+        },
+        "pageTitle": "Activity History",
+        "pageDescription": "A log of all your recent activities.",
+        "backToProfile": "Back to Profile",
+        "empty": {
+            "title": "No Activities Yet",
+            "description": "Use the app's features to see your history here."
+        },
+        "item": {
+            "focus": {
+                "title": "Completed a {duration} min focus session"
+            },
+            "chat": {
+                "title": "Started a new chat"
+            },
+            "quiz": {
+                "title": "Generated a new quiz",
+                "description": "From text: \"{text}\""
+            },
+            "summary": {
+                "titleText": "Generated a summary from text",
+                "titleImage": "Generated a summary from an image",
+                "description": "From text: \"{text}\""
+            },
+            "question": {
+                "title": "Asked a question to the AI",
+                "description": "Question: \"{question}\""
+            },
+            "justNow": "Just now"
+        },
+        "tabs": {
+            "all": "All",
+            "summaries": "Summaries",
+            "quizzes": "Quizzes",
+            "questions": "Questions"
+        }
+    }
+}
