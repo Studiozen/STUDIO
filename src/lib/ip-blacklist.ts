@@ -31,11 +31,14 @@ export class IPBlacklist {
     const redisUrl = process.env.REDIS_URL;
     if (redisUrl) {
       try {
-        const Redis = await import('ioredis');
-        this.redisClient = new Redis.default(redisUrl);
+        // Usa require invece di import per evitare problemi di build
+        const Redis = require('ioredis');
+        this.redisClient = new Redis(redisUrl);
         console.log('Redis blacklist initialized');
       } catch (error) {
+        // In caso di errore, usa store in-memory senza bloccare
         console.warn('Redis not available for blacklist, using in-memory store:', error);
+        this.redisClient = null;
       }
     }
   }

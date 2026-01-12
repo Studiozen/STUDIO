@@ -48,11 +48,15 @@ export class RateLimiter {
     if (redisUrl) {
       try {
         // Dynamic import per evitare errori se Redis non è installato
-        const Redis = await import('ioredis');
-        this.redisClient = new Redis.default(redisUrl);
+        // Usa require invece di import per evitare problemi di build
+        const Redis = require('ioredis');
+        this.redisClient = new Redis(redisUrl);
         console.log('Redis rate limiter initialized');
       } catch (error) {
+        // In caso di errore (es: ioredis non disponibile o build nativo fallito),
+        // usa store in-memory senza bloccare
         console.warn('Redis not available, using in-memory store:', error);
+        this.redisClient = null;
       }
     }
   }
