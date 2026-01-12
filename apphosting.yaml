@@ -2,7 +2,7 @@
 # https://firebase.google.com/docs/app-hosting/configure
 
 buildConfig:
-  buildCommand: npm ci --legacy-peer-deps --no-optional --prefer-offline --no-audit --no-fund && npm run build
+  buildCommand: npm install --legacy-peer-deps --no-optional --no-audit --no-fund && npm run build
   outputDirectory: .next
   environmentVariables:
     NODE_ENV: production
