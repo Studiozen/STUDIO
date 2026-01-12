@@ -53,13 +53,16 @@ const ChartContainer = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
     config: ChartConfig
-    children: React.ComponentProps<
-      typeof RechartsPrimitive.ResponsiveContainer
-    >["children"]
+    children: React.ReactNode
   }
 >(({ id, className, children, config, ...props }, ref) => {
   const uniqueId = React.useId()
   const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`
+  const [Recharts, setRecharts] = React.useState<any>(null)
+
+  React.useEffect(() => {
+    loadRecharts().then(setRecharts)
+  }, [])
 
   return (
     <ChartContext.Provider value={{ config }}>
@@ -73,9 +76,13 @@ const ChartContainer = React.forwardRef<
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        <RechartsPrimitive.ResponsiveContainer>
-          {children}
-        </RechartsPrimitive.ResponsiveContainer>
+        {Recharts ? (
+          <Recharts.ResponsiveContainer>
+            {children}
+          </Recharts.ResponsiveContainer>
+        ) : (
+          <div className="flex items-center justify-center h-full">Loading chart...</div>
+        )}
       </div>
     </ChartContext.Provider>
   )
@@ -115,12 +122,18 @@ ${colorConfig
   )
 }
 
-const ChartTooltip = RechartsPrimitive.Tooltip
+const ChartTooltip = React.forwardRef<any, any>((props, ref) => {
+  const [Recharts, setRecharts] = React.useState<any>(null)
+  React.useEffect(() => {
+    loadRecharts().then(setRecharts)
+  }, [])
+  if (!Recharts) return null
+  return <Recharts.Tooltip ref={ref} {...props} />
+})
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
-    React.ComponentProps<"div"> & {
+  React.ComponentProps<"div"> & {
       hideLabel?: boolean
       hideIndicator?: boolean
       indicator?: "line" | "dot" | "dashed"
@@ -271,7 +284,14 @@ const ChartTooltipContent = React.forwardRef<
 )
 ChartTooltipContent.displayName = "ChartTooltip"
 
-const ChartLegend = RechartsPrimitive.Legend
+const ChartLegend = React.forwardRef<any, any>((props, ref) => {
+  const [Recharts, setRecharts] = React.useState<any>(null)
+  React.useEffect(() => {
+    loadRecharts().then(setRecharts)
+  }, [])
+  if (!Recharts) return null
+  return <Recharts.Legend ref={ref} {...props} />
+})
 
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
