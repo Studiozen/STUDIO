@@ -255,8 +255,8 @@ export async function middleware(request: NextRequest) {
 
 // --- Configurazione del Middleware ---
 export const config = {
-  // Esegui il middleware su tutte le rotte, tranne quelle interne di Next.js
+  // Esegui il middleware su tutte le rotte, tranne quelle interne di Next.js e Firebase
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|sounds/.*).*)',
+    '/((?!_next/static|_next/image|favicon.ico|sounds/.*|__.*|api/.*).*)',
   ],
 };
