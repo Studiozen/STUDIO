@@ -3,7 +3,8 @@
 
 buildConfig:
   buildCommand: |
-    npm install --legacy-peer-deps --no-optional --no-audit --no-fund --loglevel=error || true
+    rm -f package-lock.json || true
+    npm install --legacy-peer-deps --no-optional --no-audit --no-fund --loglevel=error
     NODE_OPTIONS="--max-old-space-size=6144" npm run build
   outputDirectory: .next
   environmentVariables:
