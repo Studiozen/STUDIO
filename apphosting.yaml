@@ -2,13 +2,14 @@
 # https://firebase.google.com/docs/app-hosting/configure
 
 buildConfig:
-  buildCommand: npm install --legacy-peer-deps --no-optional && npm run build
+  buildCommand: npm ci --legacy-peer-deps --no-optional --prefer-offline --no-audit --no-fund && npm run build
   outputDirectory: .next
   environmentVariables:
     NODE_ENV: production
     NEXT_TELEMETRY_DISABLED: 1
     SKIP_ENV_VALIDATION: true
     NODE_OPTIONS: "--max-old-space-size=4096"
+    CI: "false"
 
 runConfig:
   # Increase this value if you'd like to automatically spin up

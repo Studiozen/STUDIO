@@ -11,7 +11,7 @@
     "dev": "next dev",
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
-    "build": "NODE_ENV=production next build",
+    "build": "next build",
     "build:firebase": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -57,7 +57,6 @@
     "recharts": "^2.12.7",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
-    "tone": "^14.7.77",
     "zod": "^3.24.2"
   },
   "devDependencies": {
