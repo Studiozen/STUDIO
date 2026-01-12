@@ -117,9 +117,10 @@ export async function checkGeoBlocking(
     return ipApiResult;
   }
 
-  // 4. Fallback: se non riusciamo a determinare, blocchiamo per sicurezza
-  // (o possiamo permettere se configurato diversamente)
-  const allowUnknown = process.env.GEO_BLOCK_ALLOW_UNKNOWN === 'true';
+  // 4. Fallback: se non riusciamo a determinare, permettiamo l'accesso per default
+  // (per evitare falsi positivi, specialmente per utenti legittimi)
+  // Può essere disabilitato impostando GEO_BLOCK_ALLOW_UNKNOWN=false
+  const allowUnknown = process.env.GEO_BLOCK_ALLOW_UNKNOWN !== 'false';
   return {
     country: null,
     countryCode: null,

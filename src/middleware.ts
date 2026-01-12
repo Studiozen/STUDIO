@@ -64,10 +64,18 @@ export async function middleware(request: NextRequest) {
   if (GEO_BLOCKING_CONFIG.enabled) {
     // Skip geoblocking per IP whitelisted
     if (!isGeoWhitelisted(clientIp)) {
-      const vercelCountry = geo?.country || request.headers.get('x-vercel-ip-country');
-      const geoResult = await checkGeoBlocking(clientIp, vercelCountry);
+      // Prova vari header per ottenere il paese (Vercel può usare diversi header)
+      const vercelCountry = 
+        geo?.country || 
+        request.headers.get('x-vercel-ip-country') ||
+        request.headers.get('cf-ipcountry') || // Cloudflare
+        request.headers.get('x-country-code');
+      
+      const geoResult = await checkGeoBlocking(clientIp, vercelCountry || undefined);
 
-      if (!geoResult.isEuropean) {
+      // Solo blocca se abbiamo una certezza che il paese NON è europeo
+      // Se il paese è sconosciuto (null), permettiamo l'accesso per evitare falsi positivi
+      if (!geoResult.isEuropean && geoResult.countryCode !== null) {
         logSecurityEvent({
           type: 'geoblock',
           ip: clientIp,
@@ -78,6 +86,7 @@ export async function middleware(request: NextRequest) {
           metadata: {
             source: geoResult.source,
             country: geoResult.country,
+            vercelCountry: vercelCountry || 'not-provided',
           },
         });
 

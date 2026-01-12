@@ -116,7 +116,7 @@ export const DDOS_PROTECTION_CONFIG = {
  */
 export const GEO_BLOCKING_CONFIG = {
   enabled: process.env.GEO_BLOCKING_ENABLED !== 'false',
-  allowUnknown: process.env.GEO_BLOCK_ALLOW_UNKNOWN === 'true',
+  allowUnknown: process.env.GEO_BLOCK_ALLOW_UNKNOWN !== 'false', // Default: true (più permissivo)
   statusCode: parseInt(process.env.GEO_BLOCK_STATUS_CODE || '451', 10) as 451 | 403,
   message: process.env.GEO_BLOCK_MESSAGE || 'This website is not available in your country.',
 };
