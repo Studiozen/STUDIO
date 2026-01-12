@@ -30,12 +30,21 @@ const nextConfig = {
         tls: false,
         child_process: false,
         dns: false,
+        crypto: false,
+        stream: false,
+        url: false,
+        zlib: false,
+        http: false,
+        https: false,
+        assert: false,
+        os: false,
+        path: false,
       };
       
-      // Ignora genkit nel bundle client
+      // Ignora moduli problematici nel bundle client
       config.plugins.push(
         new webpack.IgnorePlugin({
-          resourceRegExp: /^genkit$/,
+          resourceRegExp: /^(genkit|@genkit-ai\/google-genai|tsx)$/,
           contextRegExp: /.*/,
         })
       );
