@@ -11,10 +11,12 @@
     "dev": "next dev",
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
-    "build": "next build",
+    "build": "NODE_ENV=production next build",
+    "build:firebase": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "postinstall": "echo 'Dependencies installed'"
   },
   "dependencies": {
     "@genkit-ai/google-genai": "^1.0.0-beta.2",
