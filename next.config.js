@@ -81,6 +81,10 @@ const nextConfig = {
     serverComponentsExternalPackages: ['genkit', '@genkit-ai/google-genai', 'tsx', 'zod', 'recharts'],
     // Ottimizza il build
     optimizePackageImports: ['lucide-react', '@radix-ui/react-accordion', '@radix-ui/react-dialog', '@radix-ui/react-select'],
+    // Disabilita server actions se non necessario
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
   },
   // Output configuration
   output: undefined, // Lascia che Next.js decida automaticamente

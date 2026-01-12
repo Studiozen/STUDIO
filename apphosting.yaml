@@ -3,8 +3,12 @@
 
 buildConfig:
   buildCommand: |
-    rm -f package-lock.json || true
-    npm install --legacy-peer-deps --no-optional --no-audit --no-fund --loglevel=error --package-lock=false
+    set -e
+    echo "Cleaning up..."
+    rm -f package-lock.json npm-shrinkwrap.json || true
+    echo "Installing dependencies..."
+    npm install --legacy-peer-deps --no-optional --no-audit --no-fund --loglevel=error --no-save --package-lock=false --no-package-lock || npm install --legacy-peer-deps --no-optional --no-audit --no-fund --loglevel=error
+    echo "Building application..."
     NODE_OPTIONS="--max-old-space-size=6144" npm run build
   outputDirectory: .next
   environmentVariables:
@@ -15,6 +19,8 @@ buildConfig:
     CI: "false"
     BUILDKIT_PROGRESS: "plain"
     SKIP_REQUIRE_BUILD: "false"
+    npm_config_package_lock: "false"
+    npm_config_shrinkwrap: "false"
 
 runConfig:
   # Increase this value if you'd like to automatically spin up

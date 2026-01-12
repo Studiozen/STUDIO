@@ -16,7 +16,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "postinstall": "echo 'Dependencies installed'"
+    "postinstall": "echo 'Dependencies installed'",
+    "prebuild": "rm -f package-lock.json npm-shrinkwrap.json || true"
   },
   "dependencies": {
     "@genkit-ai/google-genai": "^1.0.0-beta.2",

@@ -1,7 +1,41 @@
+# Dependencies
 node_modules
+npm-debug.log
+package-lock.json
+npm-shrinkwrap.json
+yarn.lock
+
+# Build outputs
 .next
-.git
+out
+dist
+build
+
+# Environment
+.env
 .env.local
 .env*.local
-*.log
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Firebase
+.firebase
+firebase-debug.log
+firestore-debug.log
+
+# Misc
+*.log
+.cache
+.turbo
