@@ -128,12 +128,16 @@ const ChartTooltip = React.forwardRef<any, any>((props, ref) => {
     loadRecharts().then(setRecharts)
   }, [])
   if (!Recharts) return null
-  return <Recharts.Tooltip ref={ref} {...props} />
+  const Tooltip = Recharts.Tooltip || (() => null)
+  return <Tooltip ref={ref} {...props} />
 })
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
+    active?: boolean
+    payload?: Array<any>
+    label?: any
       hideLabel?: boolean
       hideIndicator?: boolean
       indicator?: "line" | "dot" | "dashed"
@@ -290,13 +294,15 @@ const ChartLegend = React.forwardRef<any, any>((props, ref) => {
     loadRecharts().then(setRecharts)
   }, [])
   if (!Recharts) return null
-  return <Recharts.Legend ref={ref} {...props} />
+  const Legend = Recharts.Legend || (() => null)
+  return <Legend ref={ref} {...props} />
 })
 
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<"div"> &
-    Pick<RechartsPrimitive.LegendProps, "payload" | "verticalAlign"> & {
+  React.ComponentProps<"div"> & {
+    payload?: Array<{ value?: string; dataKey?: string; color?: string }>
+    verticalAlign?: "top" | "bottom"
       hideIcon?: boolean
       nameKey?: string
     }
