@@ -71,9 +71,15 @@ const nextConfig = {
   // Ottimizzazioni per build - escludi genkit dal bundle
   experimental: {
     serverComponentsExternalPackages: ['genkit', '@genkit-ai/google-genai', 'tsx'],
+    // Ottimizza il build
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-accordion', '@radix-ui/react-dialog'],
   },
   // Disabilita source maps in produzione per build più veloce
   productionBrowserSourceMaps: false,
+  // Disabilita SWC minify per evitare problemi
+  swcMinify: true,
+  // Compress output
+  compress: true,
 };
 
 module.exports = nextConfig;
