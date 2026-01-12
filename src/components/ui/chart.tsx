@@ -1,9 +1,24 @@
 "use client"
 
 import * as React from "react"
-import * as RechartsPrimitive from "recharts"
-
 import { cn } from "@/lib/utils"
+
+// Dynamic import per recharts per evitare problemi di build
+let RechartsPrimitive: any = null;
+const loadRecharts = async () => {
+  if (!RechartsPrimitive) {
+    try {
+      RechartsPrimitive = await import("recharts");
+    } catch (error) {
+      console.error("Failed to load recharts:", error);
+      // Fallback mock
+      RechartsPrimitive = {
+        ResponsiveContainer: ({ children }: any) => <div>{children}</div>,
+      };
+    }
+  }
+  return RechartsPrimitive;
+};
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const

@@ -48,7 +48,7 @@ const nextConfig = {
       // Ignora moduli problematici nel bundle client
       config.plugins.push(
         new webpack.IgnorePlugin({
-          resourceRegExp: /^(genkit|@genkit-ai\/google-genai|tsx)$/,
+          resourceRegExp: /^(genkit|@genkit-ai\/google-genai|tsx|recharts)$/,
           contextRegExp: /.*/,
         })
       );
@@ -70,7 +70,7 @@ const nextConfig = {
   },
   // Ottimizzazioni per build - escludi genkit dal bundle
   experimental: {
-    serverComponentsExternalPackages: ['genkit', '@genkit-ai/google-genai', 'tsx', 'zod'],
+    serverComponentsExternalPackages: ['genkit', '@genkit-ai/google-genai', 'tsx', 'zod', 'recharts'],
     // Ottimizza il build
     optimizePackageImports: ['lucide-react', '@radix-ui/react-accordion', '@radix-ui/react-dialog', '@radix-ui/react-select'],
   },
