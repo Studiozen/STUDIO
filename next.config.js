@@ -48,7 +48,15 @@ const nextConfig = {
       // Ignora moduli problematici nel bundle client
       config.plugins.push(
         new webpack.IgnorePlugin({
-          resourceRegExp: /^(genkit|@genkit-ai\/google-genai|tsx|recharts)$/,
+          resourceRegExp: /^(genkit|@genkit-ai\/google-genai|tsx|recharts|ioredis)$/,
+          contextRegExp: /.*/,
+        })
+      );
+      
+      // Ignora anche le dipendenze di ioredis
+      config.plugins.push(
+        new webpack.IgnorePlugin({
+          resourceRegExp: /^(redis-errors|redis-parser|standard-as-callback|ms)$/,
           contextRegExp: /.*/,
         })
       );

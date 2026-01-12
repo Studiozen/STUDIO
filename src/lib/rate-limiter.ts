@@ -66,15 +66,12 @@ export class RateLimiter {
 
   /**
    * Carica il modulo ioredis in modo sicuro
+   * DISABILITATO: ioredis rimosso per evitare problemi di build
    */
   private async loadRedisModule(): Promise<any> {
-    try {
-      // Usa dynamic import con catch per evitare errori di build
-      return await import('ioredis');
-    } catch (error) {
-      // Se ioredis non è installato o non disponibile, ritorna null
-      return null;
-    }
+    // ioredis completamente disabilitato per evitare problemi di build
+    // Usa solo store in-memory
+    return null;
   }
 
   /**

@@ -45,3 +45,6 @@ next-env.d.ts
 # firebase
 firebase-debug.log
 firestore-debug.log
+
+# package lock (generato automaticamente, non committare)
+package-lock.json
