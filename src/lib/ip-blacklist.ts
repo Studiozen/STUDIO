@@ -26,20 +26,37 @@ export class IPBlacklist {
 
   /**
    * Inizializza connessione Redis se disponibile
+   * Nota: ioredis è opzionale e non bloccante
    */
   private async initRedis() {
     const redisUrl = process.env.REDIS_URL;
     if (redisUrl) {
       try {
-        // Usa require invece di import per evitare problemi di build
-        const Redis = require('ioredis');
-        this.redisClient = new Redis(redisUrl);
-        console.log('Redis blacklist initialized');
+        // Prova a caricare ioredis solo se disponibile
+        const redisModule = await this.loadRedisModule();
+        if (redisModule) {
+          const Redis = redisModule.default || redisModule;
+          this.redisClient = new Redis(redisUrl);
+          console.log('Redis blacklist initialized');
+        }
       } catch (error) {
         // In caso di errore, usa store in-memory senza bloccare
         console.warn('Redis not available for blacklist, using in-memory store:', error);
         this.redisClient = null;
       }
+    }
+  }
+
+  /**
+   * Carica il modulo ioredis in modo sicuro
+   */
+  private async loadRedisModule(): Promise<any> {
+    try {
+      // Usa dynamic import con catch per evitare errori di build
+      return await import('ioredis');
+    } catch (error) {
+      // Se ioredis non è installato o non disponibile, ritorna null
+      return null;
     }
   }
 
