@@ -70,10 +70,12 @@ const nextConfig = {
   },
   // Ottimizzazioni per build - escludi genkit dal bundle
   experimental: {
-    serverComponentsExternalPackages: ['genkit', '@genkit-ai/google-genai', 'tsx'],
+    serverComponentsExternalPackages: ['genkit', '@genkit-ai/google-genai', 'tsx', 'zod'],
     // Ottimizza il build
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-accordion', '@radix-ui/react-dialog'],
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-accordion', '@radix-ui/react-dialog', '@radix-ui/react-select'],
   },
+  // Output configuration
+  output: undefined, // Lascia che Next.js decida automaticamente
   // Disabilita source maps in produzione per build più veloce
   productionBrowserSourceMaps: false,
   // Disabilita SWC minify per evitare problemi
